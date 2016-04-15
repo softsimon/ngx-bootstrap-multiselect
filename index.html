@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Angular-2-dropdown-multiselect by softsimon</title>
+    <title>Angular 2 Dropdown Multiselect by softsimon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -11,8 +11,8 @@
   </head>
   <body>
     <section class="page-header">
-      <h1 class="project-name">Angular-2-dropdown-multiselect</h1>
-      <h2 class="project-tagline">Angular 2 Dropdown Multiselect with Bootstrap</h2>
+      <h1 class="project-name">Angular 2 Dropdown Multiselect</h1>
+      <h2 class="project-tagline">Angular 2 Dropdown Multiselect for Bootstrap</h2>
       <a href="https://github.com/softsimon/angular-2-dropdown-multiselect" class="btn">View on GitHub</a>
       <a href="https://github.com/softsimon/angular-2-dropdown-multiselect/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/softsimon/angular-2-dropdown-multiselect/tarball/master" class="btn">Download .tar.gz</a>
@@ -20,12 +20,91 @@
 
     <section class="main-content">
       <h1>
-<a id="angular-2-dropdown-multiselect" class="anchor" href="#angular-2-dropdown-multiselect" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>angular-2-dropdown-multiselect</h1>
+<a id="angular-2-dropdown-multiselect-for-bootstrap-css" class="anchor" href="#angular-2-dropdown-multiselect-for-bootstrap-css" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Angular 2 Dropdown Multiselect for Bootstrap CSS</h1>
 
-<p>Angular 2 Dropdown Multiselect Bootstrap</p>
+<p>Customizable dropdown multiselect in Angular 2, TypeScript with bootstrap css.</p>
+
+<p>See demo: <a href="http://softsimon.github.io/angular-2-dropdown-multiselect">http://softsimon.github.io/angular-2-dropdown-multiselect</a></p>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<ul>
+<li>Bootstrap CSS 3</li>
+<li>Font Awesome</li>
+</ul>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Import <code>MultiselectDropdown</code> in your component controller:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">import</span> {<span class="pl-smi">MultiselectDropdown</span>, <span class="pl-smi">IMultiSelectOption</span>} <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>multiselect-dropdown<span class="pl-pds">'</span></span>;
+
+@<span class="pl-en">Component</span>({
+    <span class="pl-k">...</span>
+    directives<span class="pl-k">:</span> [MultiselectDropdown]
+    <span class="pl-k">...</span>
+})
+<span class="pl-k">export</span> <span class="pl-k">class</span> <span class="pl-en">MyClass</span> {
+    <span class="pl-k">private</span> myOptions<span class="pl-k">:</span> IMultiSelectOption[] <span class="pl-k">=</span> [
+        { id<span class="pl-k">:</span> <span class="pl-c1">1</span>, name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Option 1<span class="pl-pds">'</span></span> },
+        { id<span class="pl-k">:</span> <span class="pl-c1">2</span>, name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Option 2<span class="pl-pds">'</span></span> },
+    ];
+}</pre></div>
+
+<p>In your template, use the component directive:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">ss</span><span class="pl-e">-multiselect-dropdown</span> [<span class="pl-e">options</span>]=<span class="pl-s"><span class="pl-pds">"</span>myOptions<span class="pl-pds">"</span></span> (<span class="pl-e">selectedModel</span>)=<span class="pl-s"><span class="pl-pds">"</span>optionsUpdated($event)<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">ss</span><span class="pl-e">-multiselect-dropdown</span>&gt;</pre></div>
+
+<h2>
+<a id="customize" class="anchor" href="#customize" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Customize</h2>
+
+<p>Import the IMultiSelectSettings and IMultiSelectTexts interfaces to enable/override settings and text strings:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">private</span> defaultSelected<span class="pl-k">:</span> <span class="pl-c1">Array</span><span class="pl-k">&lt;</span>number<span class="pl-k">&gt;</span> <span class="pl-k">=</span> [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>];
+
+<span class="pl-k">private</span> mySettings<span class="pl-k">:</span> IMultiSelectSettings <span class="pl-k">=</span> {
+    pullRight<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+    enableSearch<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+    checkedStyle<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>checkboxes<span class="pl-pds">'</span></span>,
+    buttonClasses<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>btn btn-default<span class="pl-pds">'</span></span>,
+    selectionLimit<span class="pl-k">:</span> <span class="pl-c1">0</span>,
+    closeOnSelect<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+    showCheckAll<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+    showUncheckAll<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+    dynamicTitleMaxItems<span class="pl-k">:</span> <span class="pl-c1">3</span>,
+    maxHeight<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>300px<span class="pl-pds">'</span></span>,
+};
+
+<span class="pl-k">private</span> myTexts<span class="pl-k">:</span> IMultiSelectTexts <span class="pl-k">=</span> {
+    checkAll<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Check all<span class="pl-pds">'</span></span>,
+    uncheckAll<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Uncheck all<span class="pl-pds">'</span></span>,
+    checked<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>checked<span class="pl-pds">'</span></span>,
+    checkedPlural<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>checked<span class="pl-pds">'</span></span>,
+    searchPlaceholder<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Search...<span class="pl-pds">'</span></span>,
+    defaultTitle<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Select<span class="pl-pds">'</span></span>,
+};</pre></div>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">ss</span><span class="pl-e">-multiselect-dropdown</span> [<span class="pl-e">defaultModel</span>]=<span class="pl-s"><span class="pl-pds">"</span>defaultSelected<span class="pl-pds">"</span></span> [<span class="pl-e">settings</span>]=<span class="pl-s"><span class="pl-pds">"</span>mySettings<span class="pl-pds">"</span></span> [<span class="pl-e">texts</span>]=<span class="pl-s"><span class="pl-pds">"</span>myTexts<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">ss</span><span class="pl-e">-multiselect-dropdown</span>&gt;</pre></div>
+
+<h2>
+<a id="developing" class="anchor" href="#developing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Developing</h2>
+
+<p>Pull requests are welcome!</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>[MIT]</p>
+
+<h2>
+<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>Based on <a href="http://dotansimha.github.io/angularjs-dropdown-multiselect/">http://dotansimha.github.io/angularjs-dropdown-multiselect/</a></p>
 
       <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/softsimon/angular-2-dropdown-multiselect">Angular-2-dropdown-multiselect</a> is maintained by <a href="https://github.com/softsimon">softsimon</a>.</span>
+        <span class="site-footer-owner"><a href="https://github.com/softsimon/angular-2-dropdown-multiselect">Angular 2 Dropdown Multiselect</a> is maintained by <a href="https://github.com/softsimon">softsimon</a>.</span>
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
