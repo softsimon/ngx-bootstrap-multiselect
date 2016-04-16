@@ -15,7 +15,7 @@ a {
   a:hover {
     text-decoration: underline; }
 
-.btn {
+.special-btn {
   display: inline-block;
   margin-bottom: 1rem;
   color: rgba(255, 255, 255, 0.7);
@@ -25,31 +25,31 @@ a {
   border-width: 1px;
   border-radius: 0.3rem;
   transition: color 0.2s, background-color 0.2s, border-color 0.2s; }
-  .btn + .btn {
+  .special-btn + .special-btn {
     margin-left: 1rem; }
 
-.btn:hover {
+.special-btn:hover {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   background-color: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3); }
 
 @media screen and (min-width: 64em) {
-  .btn {
+  .special-btn {
     padding: 0.75rem 1rem; } }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
-  .btn {
+  .special-btn {
     padding: 0.6rem 0.9rem;
     font-size: 0.9rem; } }
 
 @media screen and (max-width: 42em) {
-  .btn {
+  .special-btn {
     display: block;
     width: 100%;
     padding: 0.75rem;
     font-size: 0.9rem; }
-    .btn + .btn {
+    .special-btn + .special-btn {
       margin-top: 1rem;
       margin-left: 0; } }
 
@@ -57,6 +57,7 @@ a {
   color: #fff;
   text-align: center;
   background-color: #159957;
+  margin: 0;
   background-image: linear-gradient(120deg, #155799, #159957); }
 
 @media screen and (min-width: 64em) {
