@@ -25,6 +25,7 @@ Import `MultiselectDropdownModule` into your @NgModule.
 import { IMultiSelectOption } from 'multiselect-dropdown';
 
 export class MyClass {
+    private selectedOptions: number[];
     private myOptions: IMultiSelectOption[] = [
         { id: 1, name: 'Option 1' },
         { id: 2, name: 'Option 2' },
@@ -42,7 +43,7 @@ In your template, use the component directive:
 
 Import the IMultiSelectSettings and IMultiSelectTexts interfaces to enable/override settings and text strings:
 ```js
-private defaultSelected: Array<number> = [1, 2];
+private selectedOptions: number[] = [1, 2]; // Default selection
 
 private mySettings: IMultiSelectSettings = {
     pullRight: false,
