@@ -1,16 +1,24 @@
 /*
  * Angular 2 Dropdown Multiselect for Bootstrap
- * Current version: 0.1.0
+ * Current version: 0.2.0
  * 
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
  
-import {Component, Pipe, OnInit, HostListener, Input, ElementRef, Output, EventEmitter} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import { NgModule, Component, Pipe, OnInit, DoCheck, HostListener, Input, ElementRef, Output, EventEmitter, forwardRef, IterableDiffers } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs/Rx';
+import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+
+const MULTISELECT_VALUE_ACCESSOR: any = {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MultiselectDropdown),
+    multi: true
+};
 
 export interface IMultiSelectOption {
-    id: string;
+    id: number;
     name: string;
 }
 
@@ -39,7 +47,7 @@ export interface IMultiSelectTexts {
 @Pipe({
     name: 'searchFilter'
 })
-class SearchFilter {
+class MultiSelectSearchFilter {
     transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
         return options.filter((option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1);
     }
@@ -47,13 +55,13 @@ class SearchFilter {
 
 @Component({
     selector: 'ss-multiselect-dropdown',
-    pipes: [SearchFilter],
+    providers: [MULTISELECT_VALUE_ACCESSOR],
     styles: [`
-		a { outline: none; }
+		a { outline: none !important; }
 	`],
     template: `
         <div class="btn-group">
-            <button type="button" class="dropdown-toggle btn" [ngClass]="settings.buttonClasses" (click)="toggleDropdown()">{{ getTitle() }}&nbsp;<span class="caret"></span></button>
+            <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
             <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
                 <li style="margin: 0px 5px 5px 5px;" *ngIf="settings.enableSearch">
                     <div class="input-group input-group-sm">
@@ -89,12 +97,11 @@ class SearchFilter {
         </div>
     `
 })
-export class MultiselectDropdown implements OnInit {
+export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor {
+
     @Input() options: Array<IMultiSelectOption>;
     @Input() settings: IMultiSelectSettings;
     @Input() texts: IMultiSelectTexts;
-    @Input('defaultModel') selectedModel: Array<string> = [];
-    @Output('selectedModel') model = new EventEmitter();
     @Output() selectionLimitReached = new EventEmitter();
     @HostListener('document: click', ['$event.target'])
     onClick(target) {
@@ -110,10 +117,15 @@ export class MultiselectDropdown implements OnInit {
         }
     }
 
-    private numSelected: number = 0;
-    private isVisible: boolean = false;
-    private searchFilterText: string = '';
-    private defaultSettings: IMultiSelectSettings = {
+    protected onModelChange: Function = (_: any) => {};
+    protected onModelTouched: Function = () => {};
+    protected model: number[];
+    protected title: string;
+    protected differ: any;
+    protected numSelected: number = 0;
+    protected isVisible: boolean = false;
+    protected searchFilterText: string = '';
+    protected defaultSettings: IMultiSelectSettings = {
         pullRight: false,
         enableSearch: false,
         checkedStyle: 'checkboxes',
@@ -125,7 +137,7 @@ export class MultiselectDropdown implements OnInit {
         dynamicTitleMaxItems: 3,
         maxHeight: '300px',
     };
-    private defaultTexts: IMultiSelectTexts = {
+    protected defaultTexts: IMultiSelectTexts = {
         checkAll: 'Check all',
         uncheckAll: 'Uncheck all',
         checked: 'checked',
@@ -135,74 +147,100 @@ export class MultiselectDropdown implements OnInit {
     };
 
     constructor(
-        private element: ElementRef
-    ) { }
+        protected element: ElementRef,
+        protected differs: IterableDiffers
+    ) {
+        this.differ = differs.find([]).create(null);
+    }
 
     ngOnInit() {
         this.settings = Object.assign(this.defaultSettings, this.settings);
         this.texts = Object.assign(this.defaultTexts, this.texts);
-        this.updateNumSelected();
+    }
+
+    writeValue(value: any) : void {
+        if (value !== undefined) {
+            this.model = value;
+        }
+    }
+
+    registerOnChange(fn: Function): void {
+        this.onModelChange = fn;
+    }
+
+    registerOnTouched(fn: Function): void {
+        this.onModelTouched = fn;
+    }
+
+    ngDoCheck() {
+        let changes = this.differ.diff(this.model);
+        if (changes) {
+            this.updateNumSelected();
+            this.updateTitle();
+        }
     }
 
     clearSearch() {
-        this.searchFilterText = "";
+        this.searchFilterText = '';
     }
 
     toggleDropdown() {
         this.isVisible = !this.isVisible;
     }
 
-    modelChanged() {
-        this.updateNumSelected();
-        this.model.emit(this.selectedModel);
-    }
-
     isSelected(option: IMultiSelectOption): boolean {
-        return this.selectedModel.indexOf(option.id) > -1;
+        return this.model && this.model.indexOf(option.id) > -1;
     }
 
     setSelected(event: Event, option: IMultiSelectOption) {
-        var index = this.selectedModel.indexOf(option.id);
+        var index = this.model.indexOf(option.id);
         if (index > -1) {
-            this.selectedModel.splice(index, 1);
+            this.model.splice(index, 1);
         } else {
-            if (this.settings.selectionLimit === 0 || this.selectedModel.length < this.settings.selectionLimit) {
-                this.selectedModel.push(option.id);
+            if (this.settings.selectionLimit === 0 || this.model.length < this.settings.selectionLimit) {
+                this.model.push(option.id);
             } else {
-                this.selectionLimitReached.emit(this.selectedModel.length);
+                this.selectionLimitReached.emit(this.model.length);
                 return;
             }
         }
         if (this.settings.closeOnSelect) {
             this.toggleDropdown();
         }
-        this.modelChanged();
-    }
-
-    getTitle() {
-        if (this.numSelected === 0) {
-            return this.texts.defaultTitle;
-        }
-        if (this.settings.dynamicTitleMaxItems >= this.numSelected) {
-            return this.options
-                .filter((option: IMultiSelectOption) => this.selectedModel.indexOf(option.id) > -1)
-                .map((option: IMultiSelectOption) => option.name)
-                .join(', ');
-        }
-        return this.numSelected + ' ' + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
+        this.onModelChange(this.model);
     }
 
     updateNumSelected() {
-        this.numSelected = this.selectedModel.length;
+        this.numSelected = this.model && this.model.length || 0;
+    }
+
+    updateTitle() {
+        if (this.numSelected === 0) {
+            this.title = this.texts.defaultTitle;
+        } else if (this.settings.dynamicTitleMaxItems >= this.numSelected) {
+            this.title = this.options
+                .filter((option: IMultiSelectOption) => this.model && this.model.indexOf(option.id) > -1)
+                .map((option: IMultiSelectOption) => option.name)
+                .join(', ');
+        } else {
+            this.title = this.numSelected + ' ' + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
+        }
     }
 
     checkAll() {
-        this.selectedModel = this.options.map(option => option.id);
-        this.modelChanged();
+        this.model = this.options.map(option => option.id);
+        this.onModelChange(this.model);
     }
 
     uncheckAll() {
-        this.selectedModel = [];
-        this.modelChanged();
+        this.model = [];
+        this.onModelChange(this.model);
     }
 }
+
+@NgModule({
+    imports: [CommonModule, FormsModule],
+    exports: [MultiselectDropdown],
+    declarations: [MultiselectDropdown, MultiSelectSearchFilter],
+})
+export class MultiselectDropdownModule { }

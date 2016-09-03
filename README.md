@@ -1,5 +1,7 @@
 # Angular 2 Dropdown Multiselect for Bootstrap CSS
 
+Updated to work with RC6 !
+
 Customizable dropdown multiselect in Angular 2, TypeScript with bootstrap css.
 
 See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
@@ -10,16 +12,11 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 
 ## Usage
 
-Import `MultiselectDropdown` in your component controller:
+Import `MultiselectDropdownModule` into your @NgModule.
 
 ```js
-import {MultiselectDropdown, IMultiSelectOption} from 'multiselect-dropdown';
+import { IMultiSelectOption } from 'multiselect-dropdown';
 
-@Component({
-    ...
-	directives: [MultiselectDropdown]
-	...
-})
 export class MyClass {
     private myOptions: IMultiSelectOption[] = [
         { id: 1, name: 'Option 1' },
@@ -31,7 +28,7 @@ export class MyClass {
 In your template, use the component directive:
 
 ```html
-<ss-multiselect-dropdown [options]="myOptions" (selectedModel)="optionsUpdated($event)"></ss-multiselect-dropdown>
+<ss-multiselect-dropdown [options]="myOptions" [(ngModel)]="selectedOptions" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>
 ```
 
 ## Customize
@@ -64,7 +61,7 @@ private myTexts: IMultiSelectTexts = {
 ```
 
 ```html
-<ss-multiselect-dropdown [defaultModel]="defaultSelected" [settings]="mySettings" [texts]="myTexts"></ss-multiselect-dropdown>
+<ss-multiselect-dropdown [options]="mySettings" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="selectedOptions"></ss-multiselect-dropdown>
 ```
 
 ## Developing
@@ -74,7 +71,3 @@ Pull requests are welcome!
 ## License
 
 [MIT]
-
-## Credits
-
-Based on http://dotansimha.github.io/angularjs-dropdown-multiselect/
