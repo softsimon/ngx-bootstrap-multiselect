@@ -156,6 +156,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     ngOnInit() {
         this.settings = Object.assign(this.defaultSettings, this.settings);
         this.texts = Object.assign(this.defaultTexts, this.texts);
+        this.title = this.texts.defaultTitle;
     }
 
     writeValue(value: any) : void {
@@ -193,6 +194,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
 
     setSelected(event: Event, option: IMultiSelectOption) {
+        if (!this.model) this.model = [];    
         var index = this.model.indexOf(option.id);
         if (index > -1) {
             this.model.splice(index, 1);
