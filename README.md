@@ -19,7 +19,7 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 
 ## Usage
 
-Import `MultiselectDropdownModule` into your @NgModule.
+Import `MultiselectDropdown` into your @NgModule.
 
 ```js
 import { IMultiSelectOption } from 'multiselect-dropdown';
