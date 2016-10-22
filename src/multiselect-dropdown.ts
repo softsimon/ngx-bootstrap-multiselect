@@ -104,7 +104,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     @Input() texts: IMultiSelectTexts;
     @Output() selectionLimitReached = new EventEmitter();
     @HostListener('document: click', ['$event.target'])
-    onClick(target) {
+    onClick(target:HTMLElement) {
         let parentFound = false;
         while (target !== null && !parentFound) {
             if (target === this.element.nativeElement) {

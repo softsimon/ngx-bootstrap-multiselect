@@ -22,8 +22,22 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 Import `MultiselectDropdown` into your @NgModule.
 
 ```js
-import { IMultiSelectOption } from 'multiselect-dropdown';
+import {MultiselectDropdownModule} from "angular-2-dropdown-multiselect/src/multiselect-dropdown";
 
+// ...
+
+@NgModule({
+  // ...
+  imports: [
+    MultiselectDropdownModule,
+    // ...
+  ]
+})
+```
+
+Define options in your consuming component:
+
+```js
 export class MyClass {
     private selectedOptions: number[];
     private myOptions: IMultiSelectOption[] = [
