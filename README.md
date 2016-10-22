@@ -1,6 +1,6 @@
 # Angular 2 Dropdown Multiselect for Bootstrap CSS
 
-Updated to work with RC6 !
+Works with Angular Final and AOT compilation
 
 Customizable dropdown multiselect in Angular 2, TypeScript with bootstrap css.
 
@@ -22,7 +22,7 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 Import `MultiselectDropdown` into your @NgModule.
 
 ```js
-import {MultiselectDropdownModule} from "angular-2-dropdown-multiselect/src/multiselect-dropdown";
+import {MultiselectDropdownModule} from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 
 // ...
 
@@ -38,7 +38,7 @@ import {MultiselectDropdownModule} from "angular-2-dropdown-multiselect/src/mult
 Define options in your consuming component:
 
 ```js
-import {IMultiSelectOption} from "angular-2-dropdown-multiselect/src/multiselect-dropdown";
+import {IMultiSelectOption} from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
 
 export class MyClass {
     private selectedOptions: number[];

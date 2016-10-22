@@ -1,6 +1,6 @@
 /*
  * Angular 2 Dropdown Multiselect for Bootstrap
- * Current version: 0.2.0
+ * Current version: 0.3.0
  * 
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
@@ -47,7 +47,7 @@ export interface IMultiSelectTexts {
 @Pipe({
     name: 'searchFilter'
 })
-class MultiSelectSearchFilter {
+export class MultiSelectSearchFilter {
     transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
         return options.filter((option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1);
     }
@@ -117,15 +117,15 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         }
     }
 
-    protected onModelChange: Function = (_: any) => {};
-    protected onModelTouched: Function = () => {};
-    protected model: number[];
-    protected title: string;
-    protected differ: any;
-    protected numSelected: number = 0;
-    protected isVisible: boolean = false;
-    protected searchFilterText: string = '';
-    protected defaultSettings: IMultiSelectSettings = {
+    onModelChange: Function = (_: any) => {};
+    onModelTouched: Function = () => {};
+    model: number[];
+    title: string;
+    differ: any;
+    numSelected: number = 0;
+    isVisible: boolean = false;
+    searchFilterText: string = '';
+    defaultSettings: IMultiSelectSettings = {
         pullRight: false,
         enableSearch: false,
         checkedStyle: 'checkboxes',
@@ -137,7 +137,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         dynamicTitleMaxItems: 3,
         maxHeight: '300px',
     };
-    protected defaultTexts: IMultiSelectTexts = {
+    defaultTexts: IMultiSelectTexts = {
         checkAll: 'Check all',
         uncheckAll: 'Uncheck all',
         checked: 'checked',
@@ -147,8 +147,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     };
 
     constructor(
-        protected element: ElementRef,
-        protected differs: IterableDiffers
+        private element: ElementRef,
+        private differs: IterableDiffers
     ) {
         this.differ = differs.find([]).create(null);
     }
