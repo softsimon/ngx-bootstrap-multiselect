@@ -38,6 +38,8 @@ import {MultiselectDropdownModule} from "angular-2-dropdown-multiselect/src/mult
 Define options in your consuming component:
 
 ```js
+import {IMultiSelectOption} from "angular-2-dropdown-multiselect/src/multiselect-dropdown";
+
 export class MyClass {
     private selectedOptions: number[];
     private myOptions: IMultiSelectOption[] = [
