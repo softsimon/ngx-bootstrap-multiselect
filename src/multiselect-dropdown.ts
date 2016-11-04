@@ -29,6 +29,7 @@ export interface IMultiSelectSettings {
     buttonClasses?: string;
     selectionLimit?: number;
     closeOnSelect?: boolean;
+    autoUnselect?: boolean;
     showCheckAll?: boolean;
     showUncheckAll?: boolean;
     dynamicTitleMaxItems?: number;
@@ -132,6 +133,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         buttonClasses: 'btn btn-default',
         selectionLimit: 0,
         closeOnSelect: false,
+        autoUnselect: false,
         showCheckAll: false,
         showUncheckAll: false,
         dynamicTitleMaxItems: 3,
@@ -202,8 +204,13 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
             if (this.settings.selectionLimit === 0 || this.model.length < this.settings.selectionLimit) {
                 this.model.push(option.id);
             } else {
-                this.selectionLimitReached.emit(this.model.length);
-                return;
+                if (this.settings.autoUnselect) {
+                    this.model.push(option.id)
+                    this.model.shift();
+                } else {
+                    this.selectionLimitReached.emit(this.model.length);
+                    return;
+                }
             }
         }
         if (this.settings.closeOnSelect) {
