@@ -106,7 +106,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     @HostListener('document: click', ['$event.target'])
     onClick(target:HTMLElement) {
         let parentFound = false;
-        while (target !== null && !parentFound) {
+        while (target != null && !parentFound) {
             if (target === this.element.nativeElement) {
                 parentFound = true;
             }
