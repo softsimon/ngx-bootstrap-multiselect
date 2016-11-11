@@ -1,15 +1,27 @@
 /*
  * Angular 2 Dropdown Multiselect for Bootstrap
- * Current version: 0.3.0
- * 
+ * Current version: 0.3.2
+ *
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
- 
-import { NgModule, Component, Pipe, OnInit, DoCheck, HostListener, Input, ElementRef, Output, EventEmitter, forwardRef, IterableDiffers } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs/Rx';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+
+import {
+    NgModule,
+    Component,
+    Pipe,
+    OnInit,
+    DoCheck,
+    HostListener,
+    Input,
+    ElementRef,
+    Output,
+    EventEmitter,
+    forwardRef,
+    IterableDiffers
+} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
@@ -62,12 +74,15 @@ export class MultiSelectSearchFilter {
 	`],
     template: `
         <div class="btn-group">
-            <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
-            <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
+            <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" 
+            (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
+            <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" 
+            [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
                 <li style="margin: 0px 5px 5px 5px;" *ngIf="settings.enableSearch">
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
-                        <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}" aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
+                        <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}" 
+                        aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
                         <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
                             <button class="btn btn-default" type="button" (click)="clearSearch()"><i class="fa fa-times"></i></button>
                         </span>
@@ -90,7 +105,8 @@ export class MultiSelectSearchFilter {
                 <li *ngFor="let option of options | searchFilter:searchFilterText">
                     <a href="javascript:;" role="menuitem" tabindex="-1" (click)="setSelected($event, option)">
                         <input *ngIf="settings.checkedStyle == 'checkboxes'" type="checkbox" [checked]="isSelected(option)" />
-                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
+                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" 
+                        class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
                         {{ option.name }}
                     </a>
                 </li>
@@ -104,8 +120,9 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     @Input() settings: IMultiSelectSettings;
     @Input() texts: IMultiSelectTexts;
     @Output() selectionLimitReached = new EventEmitter();
+
     @HostListener('document: click', ['$event.target'])
-    onClick(target:HTMLElement) {
+    onClick(target: HTMLElement) {
         let parentFound = false;
         while (target != null && !parentFound) {
             if (target === this.element.nativeElement) {
@@ -118,8 +135,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         }
     }
 
-    onModelChange: Function = (_: any) => {};
-    onModelTouched: Function = () => {};
+    onModelChange: Function = (_: any) => {
+    };
+    onModelTouched: Function = () => {
+    };
     model: number[];
     title: string;
     differ: any;
@@ -148,10 +167,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         defaultTitle: 'Select',
     };
 
-    constructor(
-        private element: ElementRef,
-        private differs: IterableDiffers
-    ) {
+    constructor(private element: ElementRef,
+                private differs: IterableDiffers) {
         this.differ = differs.find([]).create(null);
     }
 
@@ -161,7 +178,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         this.title = this.texts.defaultTitle;
     }
 
-    writeValue(value: any) : void {
+    writeValue(value: any): void {
         if (value !== undefined) {
             this.model = value;
         }
@@ -196,7 +213,9 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
 
     setSelected(event: Event, option: IMultiSelectOption) {
-        if (!this.model) this.model = [];    
+        if (!this.model) {
+            this.model = [];
+        }
         var index = this.model.indexOf(option.id);
         if (index > -1) {
             this.model.splice(index, 1);
@@ -205,7 +224,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
                 this.model.push(option.id);
             } else {
                 if (this.settings.autoUnselect) {
-                    this.model.push(option.id)
+                    this.model.push(option.id);
                     this.model.shift();
                 } else {
                     this.selectionLimitReached.emit(this.model.length);
@@ -252,4 +271,5 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     exports: [MultiselectDropdown],
     declarations: [MultiselectDropdown, MultiSelectSearchFilter],
 })
-export class MultiselectDropdownModule { }
+export class MultiselectDropdownModule {
+}
