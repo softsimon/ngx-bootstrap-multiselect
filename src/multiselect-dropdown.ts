@@ -78,7 +78,7 @@ export class MultiSelectSearchFilter {
             (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
             <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" 
             [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-                <li style="margin: 0px 5px 5px 5px;" *ngIf="settings.enableSearch">
+                <li class="dropdown-item" style="margin: 0px 5px 5px 5px;" *ngIf="settings.enableSearch">
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
                         <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}" 
@@ -88,21 +88,21 @@ export class MultiSelectSearchFilter {
                         </span>
                     </div>
                 </li>
-                <li class="divider" *ngIf="settings.enableSearch"></li>
-                <li *ngIf="settings.showCheckAll">
+                <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
+                <li class="dropdown-item" *ngIf="settings.showCheckAll">
                     <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
                         <span style="width: 16px;" class="glyphicon glyphicon-ok"></span>
                         {{ texts.checkAll }}
                     </a>
                 </li>
-                <li *ngIf="settings.showUncheckAll">
+                <li class="dropdown-item" *ngIf="settings.showUncheckAll">
                     <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
                         <span style="width: 16px;" class="glyphicon glyphicon-remove"></span>
                         {{ texts.uncheckAll }}
                     </a>
                 </li>
-                <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="divider"></li>
-                <li *ngFor="let option of options | searchFilter:searchFilterText">
+                <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
+                <li class="dropdown-item" *ngFor="let option of options | searchFilter:searchFilterText">
                     <a href="javascript:;" role="menuitem" tabindex="-1" (click)="setSelected($event, option)">
                         <input *ngIf="settings.checkedStyle == 'checkboxes'" type="checkbox" [checked]="isSelected(option)" />
                         <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" 
