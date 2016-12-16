@@ -30,7 +30,7 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
 };
 
 export interface IMultiSelectOption {
-    id: number;
+    id: any;
     name: string;
 }
 
