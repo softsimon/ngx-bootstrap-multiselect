@@ -1,6 +1,5 @@
 /*
  * Angular 2 Dropdown Multiselect for Bootstrap
- * Current version: 0.3.2
  *
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
