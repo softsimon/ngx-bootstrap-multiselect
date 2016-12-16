@@ -20,6 +20,8 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
 export interface IMultiSelectOption {
     id: number;
     name: string;
+    isLabel?: boolean;
+    parentId?: number;
 }
 
 export interface IMultiSelectSettings {
@@ -50,7 +52,14 @@ export interface IMultiSelectTexts {
 })
 export class MultiSelectSearchFilter {
     transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
-        return options.filter((option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1);
+        let matchPredicate = option => option && option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
+            getChildren = option => options.filter(child => child.parentId == option.id),
+            getParent = option => options.find(parent => option.parentId == parent.id);
+        return options.filter((option: IMultiSelectOption) => {
+            return matchPredicate(option) ||
+                (option.isLabel && getChildren(option).some(matchPredicate)) ||
+                (typeof(option.parentId) != 'undefined' && matchPredicate(getParent(option)));
+        });
     }
 }
 
@@ -87,8 +96,11 @@ export class MultiSelectSearchFilter {
                     </a>
                 </li>
                 <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="divider"></li>
-                <li *ngFor="let option of options | searchFilter:searchFilterText">
-                    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="setSelected($event, option)">
+                <li *ngFor="let option of options | searchFilter:searchFilterText" [class.dropdown-header]="option.isLabel">
+                    <div *ngIf="option.isLabel">
+                        {{ option.name }}
+                    </div>
+                    <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1" (click)="setSelected($event, option)">
                         <input *ngIf="settings.checkedStyle == 'checkboxes'" type="checkbox" [checked]="isSelected(option)" />
                         <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
                         {{ option.name }}
