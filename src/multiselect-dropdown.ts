@@ -72,15 +72,15 @@ export class MultiSelectSearchFilter {
 		a { outline: none !important; }
 	`],
     template: `
-        <div class="btn-group">
-            <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" 
+        <div class="dropdown">
+            <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
             (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
-            <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" 
+            <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight"
             [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-                <li class="dropdown-item" style="margin: 0px 5px 5px 5px;" *ngIf="settings.enableSearch">
+                <li class="dropdown-item" *ngIf="settings.enableSearch">
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
-                        <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}" 
+                        <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
                         aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
                         <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
                             <button class="btn btn-default" type="button" (click)="clearSearch()"><i class="fa fa-times"></i></button>
@@ -104,7 +104,7 @@ export class MultiSelectSearchFilter {
                 <li class="dropdown-item" *ngFor="let option of options | searchFilter:searchFilterText">
                     <a href="javascript:;" role="menuitem" tabindex="-1" (click)="setSelected($event, option)">
                         <input *ngIf="settings.checkedStyle == 'checkboxes'" type="checkbox" [checked]="isSelected(option)" />
-                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" 
+                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;"
                         class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
                         {{ option.name }}
                     </a>
