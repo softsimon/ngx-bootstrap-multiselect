@@ -19,8 +19,8 @@ import {
   forwardRef,
   IterableDiffers
 } from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
