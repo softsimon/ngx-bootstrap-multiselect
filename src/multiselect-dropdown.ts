@@ -85,6 +85,18 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   @Output() dropdownClosed = new EventEmitter();
 
   @HostListener('document: click', ['$event.target'])
+  onClick(target: HTMLElement) {
+    let parentFound = false;
+    while (target != null && !parentFound) {
+      if (target === this.element.nativeElement) {
+        parentFound = true;
+      }
+      target = target.parentElement;
+    }
+    if (!parentFound) {
+      this.isVisible = false;
+    }
+  }
 
   model: number[];
   title: string;
@@ -125,18 +137,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.title = this.texts.defaultTitle;
   }
 
-  onClick(target: HTMLElement) {
-    let parentFound = false;
-    while (target != null && !parentFound) {
-      if (target === this.element.nativeElement) {
-        parentFound = true;
-      }
-      target = target.parentElement;
-    }
-    if (!parentFound) {
-      this.isVisible = false;
-    }
-  }
   onModelChange: Function = (_: any) => { };
   onModelTouched: Function = () => { };
 
