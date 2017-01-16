@@ -36,7 +36,7 @@ export interface IMultiSelectOption {
 export interface IMultiSelectSettings {
   pullRight?: boolean;
   enableSearch?: boolean;
-  checkedStyle?: 'checkboxes' | 'glyphicon';
+  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawsome';
   buttonClasses?: string;
   selectionLimit?: number;
   closeOnSelect?: boolean;
@@ -108,7 +108,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     pullRight: false,
     enableSearch: false,
     checkedStyle: 'checkboxes',
-    buttonClasses: 'btn btn-default',
+    buttonClasses: 'btn btn-default btn-secondary',
     selectionLimit: 0,
     closeOnSelect: false,
     autoUnselect: false,
