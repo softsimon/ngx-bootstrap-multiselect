@@ -1,5 +1,6 @@
 /*
  * Angular 2 Dropdown Multiselect for Bootstrap
+ * Current version: 0.3.2
  *
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
@@ -19,8 +20,8 @@ import {
   forwardRef,
   IterableDiffers
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -29,14 +30,14 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
 };
 
 export interface IMultiSelectOption {
-  id: any;
+  id: number;
   name: string;
 }
 
 export interface IMultiSelectSettings {
   pullRight?: boolean;
   enableSearch?: boolean;
-  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawsome';
+  checkedStyle?: 'checkboxes' | 'glyphicon';
   buttonClasses?: string;
   selectionLimit?: number;
   closeOnSelect?: boolean;
@@ -54,6 +55,7 @@ export interface IMultiSelectTexts {
   checkedPlural?: string;
   searchPlaceholder?: string;
   defaultTitle?: string;
+  allSelectedText?: string;
 }
 
 @Pipe({
@@ -61,10 +63,7 @@ export interface IMultiSelectTexts {
 })
 export class MultiSelectSearchFilter {
   transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
-    return options.filter((option: IMultiSelectOption) =>
-      option.name
-        .toLowerCase()
-        .indexOf((args || '').toLowerCase()) > -1);
+    return options.filter((option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1);
   }
 }
 
@@ -72,9 +71,57 @@ export class MultiSelectSearchFilter {
   selector: 'ss-multiselect-dropdown',
   providers: [MULTISELECT_VALUE_ACCESSOR],
   styles: [`
-	   a { outline: none !important; }
-  `],
-  templateUrl: './multiselect-dropdown.html'
+  a { outline: none !important; }
+  .text-cut {
+      overflow:hidden;
+      display:inline-block;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width : 150px;
+      vertical-align: bottom;
+  }
+ `],
+  template: `
+        <div class="btn-group">
+            <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" 
+            (click)="toggleDropdown()"><span class="text-cut">{{ title }}</span>&nbsp;<span class="caret"></span></button>
+            <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" 
+            [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
+                <li style="margin: 0px 5px 5px 5px;" *ngIf="settings.enableSearch">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}" 
+                        aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
+                        <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
+                            <button class="btn btn-default" type="button" (click)="clearSearch()"><i class="fa fa-times"></i></button>
+                        </span>
+                    </div>
+                </li>
+                <li class="divider" *ngIf="settings.enableSearch"></li>
+                <li *ngIf="settings.showCheckAll">
+                    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
+                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" class="glyphicon glyphicon-ok"></span>
+                        {{ texts.checkAll }}
+                    </a>
+                </li>
+                <li *ngIf="settings.showUncheckAll">
+                    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
+                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" class="glyphicon glyphicon-remove"></span>
+                        {{ texts.uncheckAll }}
+                    </a>
+                </li>
+                <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="divider"></li>
+                <li *ngFor="let option of options | searchFilter:searchFilterText">
+                    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="setSelected($event, option)">
+                        <input *ngIf="settings.checkedStyle == 'checkboxes'" type="checkbox" [checked]="isSelected(option)" />
+                        <span *ngIf="settings.checkedStyle == 'glyphicon'" style="width: 16px;" 
+                        class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
+                        {{ option.name }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    `
 })
 export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor {
 
@@ -98,6 +145,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
   }
 
+  onModelChange: Function = (_: any) => {
+  };
+  onModelTouched: Function = () => {
+  };
   model: number[];
   title: string;
   differ: any;
@@ -108,7 +159,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     pullRight: false,
     enableSearch: false,
     checkedStyle: 'checkboxes',
-    buttonClasses: 'btn btn-default btn-secondary',
+    buttonClasses: 'btn btn-default',
     selectionLimit: 0,
     closeOnSelect: false,
     autoUnselect: false,
@@ -124,10 +175,11 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
+    allSelectedText: 'All Selected'
   };
 
   constructor(private element: ElementRef,
-    private differs: IterableDiffers) {
+              private differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
   }
 
@@ -136,10 +188,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle;
   }
-
-  onModelChange: Function = (_: any) => { };
-  onModelTouched: Function = () => { };
-
 
   writeValue(value: any): void {
     if (value !== undefined) {
@@ -182,7 +230,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     if (!this.model) {
       this.model = [];
     }
-    let index = this.model.indexOf(option.id);
+    var index = this.model.indexOf(option.id);
     if (index > -1) {
       this.model.splice(index, 1);
     } else {
@@ -213,15 +261,11 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
       this.title = this.texts.defaultTitle;
     } else if (this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
-        .filter((option: IMultiSelectOption) =>
-          this.model && this.model.indexOf(option.id) > -1
-        )
+        .filter((option: IMultiSelectOption) => this.model && this.model.indexOf(option.id) > -1)
         .map((option: IMultiSelectOption) => option.name)
         .join(', ');
     } else {
-      this.title = this.numSelected
-        + ' '
-        + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
+      this.title = this.defaultTexts.allSelectedText ;//? this.numSelected + ' ' + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
     }
   }
 
@@ -241,4 +285,5 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   exports: [MultiselectDropdown],
   declarations: [MultiselectDropdown, MultiSelectSearchFilter],
 })
-export class MultiselectDropdownModule {}
+export class MultiselectDropdownModule {
+}
