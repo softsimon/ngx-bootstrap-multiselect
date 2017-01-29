@@ -68,7 +68,7 @@ export class MultiSelectSearchFilter {
             getParent = option => options.find(parent => option.parentId === parent.id);
     return options.filter((option: IMultiSelectOption) => {
         return matchPredicate(option) ||
-            (option.isLabel && getChildren(option).some(matchPredicate)) ||
+            (typeof(option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
             (typeof(option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
     });
   }
