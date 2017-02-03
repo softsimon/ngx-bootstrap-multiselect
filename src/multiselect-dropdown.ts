@@ -170,7 +170,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   };
 
   constructor(private element: ElementRef,
-    private differs: IterableDiffers) {
+    differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
   }
 
