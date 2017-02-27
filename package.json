@@ -1,6 +1,6 @@
 {
   "name": "angular-2-dropdown-multiselect",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Customizable dropdown multiselect in Angular 2 with bootstrap css.",
   "main": "src/multiselect-dropdown.ts",
   "repository": {
@@ -25,10 +25,9 @@
     "@angular/compiler": "^2.4.3",
     "@angular/core": "^2.4.3",
     "@angular/forms": "^2.4.3",
-    "rxjs": "^5.0.3",
-    "zone.js": "^0.7.5",
-    "codelyzer": "^2.0.0-beta.4",
-    "tslint": "^4.3.1",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.7.6",
+    "codelyzer": "^2.0.0",
     "typescript": "^2.1.5"
   }
 }

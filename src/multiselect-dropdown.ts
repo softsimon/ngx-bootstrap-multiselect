@@ -17,7 +17,8 @@ import {
   Output,
   EventEmitter,
   forwardRef,
-  IterableDiffers
+  IterableDiffers,
+  PipeTransform
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
@@ -61,11 +62,11 @@ export interface IMultiSelectTexts {
 @Pipe({
   name: 'searchFilter'
 })
-export class MultiSelectSearchFilter {
+export class MultiSelectSearchFilter implements PipeTransform {
   transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
-    let matchPredicate = option => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
-            getChildren = option => options.filter(child => child.parentId === option.id),
-            getParent = option => options.find(parent => option.parentId === parent.id);
+    const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
+            getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
+            getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
     return options.filter((option: IMultiSelectOption) => {
         return matchPredicate(option) ||
             (typeof(option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
@@ -187,7 +188,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   ngOnInit() {
     this.settings = Object.assign(this.defaultSettings, this.settings);
     this.texts = Object.assign(this.defaultTexts, this.texts);
-    this.title = this.texts.defaultTitle;
+    this.title = this.texts.defaultTitle || '';
   }
 
   onModelChange: Function = (_: any) => { };
@@ -209,7 +210,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   ngDoCheck() {
-    let changes = this.differ.diff(this.model);
+    const changes = this.differ.diff(this.model);
     if (changes) {
       this.updateNumSelected();
       this.updateTitle();
@@ -235,11 +236,11 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     if (!this.model) {
       this.model = [];
     }
-    let index = this.model.indexOf(option.id);
+    const index = this.model.indexOf(option.id);
     if (index > -1) {
       this.model.splice(index, 1);
     } else {
-      if (this.settings.selectionLimit === 0 || this.model.length < this.settings.selectionLimit) {
+      if (this.settings.selectionLimit === 0 || (this.settings.selectionLimit && this.model.length < this.settings.selectionLimit)) {
         this.model.push(option.id);
       } else {
         if (this.settings.autoUnselect) {
@@ -263,8 +264,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
   updateTitle() {
     if (this.numSelected === 0) {
-      this.title = this.texts.defaultTitle;
-    } else if (this.settings.dynamicTitleMaxItems >= this.numSelected) {
+      this.title = this.texts.defaultTitle || '';
+    } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
         .filter((option: IMultiSelectOption) =>
           this.model && this.model.indexOf(option.id) > -1
