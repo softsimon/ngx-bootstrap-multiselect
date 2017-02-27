@@ -113,11 +113,11 @@ export class MultiSelectSearchFilter implements PipeTransform {
   		<li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
   		<li class="dropdown-item" [style]="!option.isLabel && 'cursor: pointer'" *ngFor="let option of options | searchFilter:searchFilterText"
         (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
-          <template [ngIf]="option.isLabel">
+          <ng-template [ngIf]="option.isLabel">
             {{ option.name }}
-          </template>
+          </ng-template>
   		    <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
-  			    <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" />
+  			    <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)" />
   			    <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
   			      class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
             <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
@@ -287,6 +287,15 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   uncheckAll() {
     this.model = [];
     this.onModelChange(this.model);
+  }
+
+  preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
+    if (this.settings.selectionLimit &&
+      this.model.length >= this.settings.selectionLimit &&
+      this.model.indexOf(option.id) === -1
+    ) {
+      event.preventDefault();
+    }
   }
 }
 

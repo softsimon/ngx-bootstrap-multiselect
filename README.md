@@ -91,7 +91,7 @@ myTexts: IMultiSelectTexts = {
 <ss-multiselect-dropdown [options]="myOptions" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="optionsModel"></ss-multiselect-dropdown>
 ```
 
-Use model driven forms with ReactiveFormsModule:
+## Use model driven forms with ReactiveFormsModule:
 
 ```js
 import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
@@ -105,11 +105,11 @@ export class MyClass implements OnInit {
 
     ngOnInit() {
         this.myForm = this.formBuilder.group({
-            optionsModel: [1, 2],
+            optionsModel: [1, 2], // Default model
         });
 
         this.myForm.controls['optionsModel'].valueChanges
-            .subscribe((values) => {
+            .subscribe((selectedOptions) => {
                 // changes
             });
     }
