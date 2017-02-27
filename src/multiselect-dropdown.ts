@@ -48,6 +48,7 @@ export interface IMultiSelectSettings {
   showUncheckAll?: boolean;
   dynamicTitleMaxItems?: number;
   maxHeight?: string;
+  displayAllSelectedText?: boolean;
 }
 
 export interface IMultiSelectTexts {
@@ -57,6 +58,7 @@ export interface IMultiSelectTexts {
   checkedPlural?: string;
   searchPlaceholder?: string;
   defaultTitle?: string;
+  allSelected?: string;
 }
 
 @Pipe({
@@ -179,6 +181,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
+    allSelected: 'All selected',
   };
 
   constructor(private element: ElementRef,
@@ -273,6 +276,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         )
         .map((option: IMultiSelectOption) => option.name)
         .join(', ');
+    } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+      this.title = this.texts.allSelected || '';
     } else {
       this.title = this.numSelected
         + ' '
