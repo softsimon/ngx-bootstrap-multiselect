@@ -139,6 +139,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   @Input() texts: IMultiSelectTexts;
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
+  @Output() onAdded = new EventEmitter();
+  @Output() onRemoved = new EventEmitter();
 
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
@@ -198,7 +200,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   onModelChange: Function = (_: any) => { };
   onModelTouched: Function = () => { };
 
-
   writeValue(value: any): void {
     if (value !== undefined) {
       this.model = value;
@@ -243,13 +244,17 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     const index = this.model.indexOf(option.id);
     if (index > -1) {
       this.model.splice(index, 1);
+      this.onRemoved.emit(option.id);
     } else {
       if (this.settings.selectionLimit === 0 || (this.settings.selectionLimit && this.model.length < this.settings.selectionLimit)) {
         this.model.push(option.id);
+        this.onAdded.emit(option.id);
       } else {
         if (this.settings.autoUnselect) {
           this.model.push(option.id);
-          this.model.shift();
+          this.onAdded.emit(option.id);
+          const removedOption = this.model.shift();
+          this.onRemoved.emit(removedOption);
         } else {
           this.selectionLimitReached.emit(this.model.length);
           return;
@@ -286,11 +291,18 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   checkAll() {
-    this.model = this.options.map(option => option.id);
+    this.model = this.options
+      .map((option: IMultiSelectOption) => {
+        if (this.model.indexOf(option.id) === -1) {
+          this.onAdded.emit(option.id);
+        }
+        return option.id;
+      });
     this.onModelChange(this.model);
   }
 
   uncheckAll() {
+    this.model.forEach((id: number) => this.onRemoved.emit(id));
     this.model = [];
     this.onModelChange(this.model);
   }
