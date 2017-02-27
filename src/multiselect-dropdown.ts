@@ -95,7 +95,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
   			<input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
   			aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
   			<span class="input-group-btn" *ngIf="searchFilterText.length > 0">
-  			    <button class="btn btn-default" type="button" (click)="clearSearch()"><i class="fa fa-times"></i></button>
+  			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
   			</span>
   		    </div>
   		</li>
@@ -222,7 +222,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
   }
 
-  clearSearch() {
+  clearSearch(event: Event) {
+    event.stopPropagation();
     this.searchFilterText = '';
   }
 
