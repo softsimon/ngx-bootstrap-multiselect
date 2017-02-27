@@ -301,7 +301,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
       this.model.indexOf(option.id) === -1
     ) {
       event.preventDefault();
-      this.selectionLimitReached.emit(this.model.length);
     }
   }
 }
