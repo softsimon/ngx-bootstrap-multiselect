@@ -85,6 +85,15 @@ myTexts: IMultiSelectTexts = {
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
 };
+
+/* Labels */
+myOptions: IMultiSelectOption[] = [
+    { id: 1, name: 'Car brands', isLabel: true },
+    { id: 2, name: 'Volvo', parentId: 1 },
+    { id: 3, name: 'Colors', isLabel: true },
+    { id: 4, name: 'Blue', parentId: 3 }
+];
+
 ```
 
 ```html
