@@ -95,7 +95,7 @@ private myTexts: IMultiSelectTexts = {
 | -------------------- | ------------------------------------------------------------------ | ----------------  |
 | pullRight            | Display the dropdown with a right-aligned style                    | false             |
 | enableSearch         | Enable searching the dropdown items                                | false             |
-| checkedStyle         | Style of items when "checking"                                     | 'checkboxes'      |
+| checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon' or 'none'  | 'checkboxes'      |
 | buttonClasses        | CSS classes to apply to buttons                                    | 'btn btn-default' |
 | selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
 | autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
