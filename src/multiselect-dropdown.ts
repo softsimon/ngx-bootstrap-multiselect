@@ -115,9 +115,9 @@ export class MultiSelectSearchFilter implements PipeTransform {
   		<li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
   		<li class="dropdown-item" [style]="!option.isLabel && 'cursor: pointer'" *ngFor="let option of options | searchFilter:searchFilterText"
         (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
-          <ng-template [ngIf]="option.isLabel">
+          <template [ngIf]="option.isLabel">
             {{ option.name }}
-          </ng-template>
+          </template>
   		    <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
   			    <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)" />
   			    <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
