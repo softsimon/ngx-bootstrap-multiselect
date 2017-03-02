@@ -21,7 +21,7 @@ import {
   PipeTransform
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor, Validator, AbstractControl } from '@angular/forms';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -67,12 +67,12 @@ export interface IMultiSelectTexts {
 export class MultiSelectSearchFilter implements PipeTransform {
   transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
     const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
-            getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
-            getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
+      getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
+      getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
     return options.filter((option: IMultiSelectOption) => {
-        return matchPredicate(option) ||
-            (typeof(option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
-            (typeof(option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
+      return matchPredicate(option) ||
+        (typeof (option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
+        (typeof (option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
     });
   }
 }
@@ -132,8 +132,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
 	</div>
 `
 })
-export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor {
-
+export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor, Validator {
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
@@ -222,6 +221,18 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
   }
 
+  validate(c: AbstractControl): { [key: string]: any; } {
+    return (this.model && this.model.length) ? null : {
+        required: {
+            valid: false,
+        },
+    };
+  }
+
+  registerOnValidatorChange(fn: () => void): void {
+    throw new Error('Method not implemented.');
+  }
+
   clearSearch(event: Event) {
     event.stopPropagation();
     this.searchFilterText = '';
@@ -266,6 +277,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
       this.toggleDropdown();
     }
     this.onModelChange(this.model);
+    this.onModelTouched();
   }
 
   updateNumSelected() {
@@ -300,12 +312,14 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         return option.id;
       });
     this.onModelChange(this.model);
+    this.onModelTouched();
   }
 
   uncheckAll() {
     this.model.forEach((id: number) => this.onRemoved.emit(id));
     this.model = [];
     this.onModelChange(this.model);
+    this.onModelTouched();
   }
 
   preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
@@ -323,4 +337,4 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   exports: [MultiselectDropdown],
   declarations: [MultiselectDropdown, MultiSelectSearchFilter],
 })
-export class MultiselectDropdownModule {}
+export class MultiselectDropdownModule { }
