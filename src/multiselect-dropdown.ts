@@ -22,6 +22,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor, Validator, AbstractControl } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -81,56 +82,58 @@ export class MultiSelectSearchFilter implements PipeTransform {
   selector: 'ss-multiselect-dropdown',
   providers: [MULTISELECT_VALUE_ACCESSOR],
   styles: [`
-	   a { outline: none !important; }
+    a {
+      outline: none !important;
+    }
   `],
   template: `
-	<div class="dropdown">
-	    <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
-	    (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
-    <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
-  	    [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-  		<li class="dropdown-item" *ngIf="settings.enableSearch">
-  		    <div class="input-group input-group-sm">
-  			<span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
-  			<input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
-  			aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
-  			<span class="input-group-btn" *ngIf="searchFilterText.length > 0">
+    <div class="dropdown">
+      <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
+              (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
+      <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
+          [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
+        <li class="dropdown-item" *ngIf="settings.enableSearch">
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
+                   aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
+            <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
   			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
   			</span>
-  		    </div>
-  		</li>
-  		<li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
-  		<li class="dropdown-item" *ngIf="settings.showCheckAll">
-  		    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
-  			<span style="width: 16px;" class="glyphicon glyphicon-ok"></span>
-  			{{ texts.checkAll }}
-  		    </a>
-  		</li>
-  		<li class="dropdown-item" *ngIf="settings.showUncheckAll">
-  		    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
-  			<span style="width: 16px;" class="glyphicon glyphicon-remove"></span>
-  			{{ texts.uncheckAll }}
-  		    </a>
-  		</li>
-  		<li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
-  		<li class="dropdown-item" [style]="!option.isLabel && 'cursor: pointer'" *ngFor="let option of options | searchFilter:searchFilterText"
-        (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
+          </div>
+        </li>
+        <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
+        <li class="dropdown-item" *ngIf="settings.showCheckAll">
+          <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
+            <span style="width: 16px;" class="glyphicon glyphicon-ok"></span>
+            {{ texts.checkAll }}
+          </a>
+        </li>
+        <li class="dropdown-item" *ngIf="settings.showUncheckAll">
+          <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
+            <span style="width: 16px;" class="glyphicon glyphicon-remove"></span>
+            {{ texts.uncheckAll }}
+          </a>
+        </li>
+        <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
+        <li class="dropdown-item" [style]="!option.isLabel && cursorpointer" *ngFor="let option of options | searchFilter:searchFilterText"
+            (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
           <template [ngIf]="option.isLabel">
             {{ option.name }}
           </template>
-  		    <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
-  			    <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)" />
-  			    <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
-  			      class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
+          <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
+            <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
+            <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
+                  class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
             <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
   			      <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
   			    </span>
-  	        {{ option.name }}
-  		    </a>
-  	  </li>
-    </ul>
-	</div>
-`
+            {{ option.name }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  `
 })
 export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor, Validator {
   @Input() options: Array<IMultiSelectOption>;
@@ -162,6 +165,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   numSelected: number = 0;
   isVisible: boolean = false;
   searchFilterText: string = '';
+  cursorPointer = this.sanitizer.bypassSecurityTrustStyle('cursor: pointer');
+
   defaultSettings: IMultiSelectSettings = {
     pullRight: false,
     enableSearch: false,
@@ -186,7 +191,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   };
 
   constructor(private element: ElementRef,
-    differs: IterableDiffers) {
+              private sanitizer: DomSanitizer,
+              differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
   }
 
@@ -196,8 +202,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.title = this.texts.defaultTitle || '';
   }
 
-  onModelChange: Function = (_: any) => { };
-  onModelTouched: Function = () => { };
+  onModelChange: Function = (_: any) => {
+  };
+  onModelTouched: Function = () => {
+  };
 
   writeValue(value: any): void {
     if (value !== undefined) {
@@ -223,9 +231,9 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
   validate(c: AbstractControl): { [key: string]: any; } {
     return (this.model && this.model.length) ? null : {
-        required: {
-            valid: false,
-        },
+      required: {
+        valid: false,
+      },
     };
   }
 
@@ -337,4 +345,5 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   exports: [MultiselectDropdown],
   declarations: [MultiselectDropdown, MultiSelectSearchFilter],
 })
-export class MultiselectDropdownModule { }
+export class MultiselectDropdownModule {
+}
