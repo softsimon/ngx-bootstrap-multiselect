@@ -221,6 +221,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.onModelTouched = fn;
   }
 
+  setDisabledState(isDisabled: boolean) {
+    this.disabled = isDisabled;
+  }
+
   ngDoCheck() {
     const changes = this.differ.diff(this.model);
     if (changes) {
