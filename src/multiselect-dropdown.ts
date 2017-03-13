@@ -89,7 +89,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
   template: `
     <div class="dropdown">
       <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
-              (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
+              (click)="toggleDropdown()" [disabled]="disabled">{{ title }}&nbsp;<span class="caret"></span></button>
       <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
           [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
         <li class="dropdown-item" *ngIf="settings.enableSearch">
@@ -122,7 +122,8 @@ export class MultiSelectSearchFilter implements PipeTransform {
             {{ option.name }}
           </template>
           <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
-            <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
+            <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox"
+              [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
             <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
                   class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
             <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
@@ -139,6 +140,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
+  @Input() disabled: boolean = false;
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
   @Output() onAdded = new EventEmitter();
@@ -202,10 +204,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.title = this.texts.defaultTitle || '';
   }
 
-  onModelChange: Function = (_: any) => {
-  };
-  onModelTouched: Function = () => {
-  };
+  onModelChange: Function = (_: any) => {};
+  onModelTouched: Function = () => {};
 
   writeValue(value: any): void {
     if (value !== undefined) {
