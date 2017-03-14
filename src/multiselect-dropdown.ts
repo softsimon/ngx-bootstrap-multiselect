@@ -35,6 +35,7 @@ export interface IMultiSelectOption {
   name: string;
   isLabel?: boolean;
   parentId?: any;
+  params?: any;
 }
 
 export interface IMultiSelectSettings {
@@ -42,6 +43,7 @@ export interface IMultiSelectSettings {
   enableSearch?: boolean;
   checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
   buttonClasses?: string;
+  itemClasses?: string;
   selectionLimit?: number;
   closeOnSelect?: boolean;
   autoUnselect?: boolean;
@@ -129,7 +131,9 @@ export class MultiSelectSearchFilter implements PipeTransform {
             <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
   			      <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
   			    </span>
-            {{ option.name }}
+            <span [ngClass]="settings.itemClasses">
+              {{ option.name }}
+            </span>
           </a>
         </li>
       </ul>
@@ -346,7 +350,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
 @NgModule({
   imports: [CommonModule, FormsModule],
-  exports: [MultiselectDropdown],
+  exports: [MultiselectDropdown, MultiSelectSearchFilter],
   declarations: [MultiselectDropdown, MultiSelectSearchFilter],
 })
 export class MultiselectDropdownModule {
