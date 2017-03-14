@@ -107,13 +107,17 @@ export class MultiSelectSearchFilter implements PipeTransform {
         <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
         <li class="dropdown-item" *ngIf="settings.showCheckAll">
           <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
-            <span style="width: 16px;" class="glyphicon glyphicon-ok"></span>
+            <span style="width: 16px;"
+              [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome',
+              'fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
             {{ texts.checkAll }}
           </a>
         </li>
         <li class="dropdown-item" *ngIf="settings.showUncheckAll">
           <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
-            <span style="width: 16px;" class="glyphicon glyphicon-remove"></span>
+            <span style="width: 16px;"
+              [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome',
+              'fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
             {{ texts.uncheckAll }}
           </a>
         </li>
