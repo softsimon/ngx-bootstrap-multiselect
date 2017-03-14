@@ -22,7 +22,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor, Validator, AbstractControl } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -122,7 +121,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
           </a>
         </li>
         <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
-        <li class="dropdown-item" [style]="!option.isLabel && cursorpointer" *ngFor="let option of options | searchFilter:searchFilterText"
+        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of options | searchFilter:searchFilterText"
             (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
           <template [ngIf]="option.isLabel">
             {{ option.name }}
@@ -175,7 +174,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   numSelected: number = 0;
   isVisible: boolean = false;
   searchFilterText: string = '';
-  cursorPointer = this.sanitizer.bypassSecurityTrustStyle('cursor: pointer');
 
   defaultSettings: IMultiSelectSettings = {
     pullRight: false,
@@ -201,9 +199,14 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   };
 
   constructor(private element: ElementRef,
-              private sanitizer: DomSanitizer,
               differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
+  }
+
+  getItemStyle(option: IMultiSelectOption): any {
+    if (!option.isLabel) {
+      return {'cursor': 'pointer'};
+    }
   }
 
   ngOnInit() {
