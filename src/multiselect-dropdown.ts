@@ -93,18 +93,18 @@ export class MultiSelectSearchFilter implements PipeTransform {
               (click)="toggleDropdown()" [disabled]="disabled">{{ title }}&nbsp;<span class="caret"></span></button>
       <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
           [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-        <li class="dropdown-item" *ngIf="settings.enableSearch">
+        <li class="dropdown-item search" *ngIf="settings.enableSearch">
           <div class="input-group input-group-sm">
             <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
             <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
                    aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
             <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
   			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
-  			</span>
+	          </span>
           </div>
         </li>
         <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
-        <li class="dropdown-item" *ngIf="settings.showCheckAll">
+        <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll">
           <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
             <span style="width: 16px;"
               [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome',
@@ -112,7 +112,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
             {{ texts.checkAll }}
           </a>
         </li>
-        <li class="dropdown-item" *ngIf="settings.showUncheckAll">
+        <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll">
           <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
             <span style="width: 16px;"
               [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome',
