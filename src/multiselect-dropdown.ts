@@ -21,7 +21,7 @@ import {
   PipeTransform
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor, Validator, AbstractControl } from '@angular/forms';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -34,6 +34,7 @@ export interface IMultiSelectOption {
   name: string;
   isLabel?: boolean;
   parentId?: any;
+  params?: any;
 }
 
 export interface IMultiSelectSettings {
@@ -41,6 +42,7 @@ export interface IMultiSelectSettings {
   enableSearch?: boolean;
   checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
   buttonClasses?: string;
+  itemClasses?: string;
   selectionLimit?: number;
   closeOnSelect?: boolean;
   autoUnselect?: boolean;
@@ -67,12 +69,12 @@ export interface IMultiSelectTexts {
 export class MultiSelectSearchFilter implements PipeTransform {
   transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
     const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
-            getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
-            getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
+      getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
+      getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
     return options.filter((option: IMultiSelectOption) => {
-        return matchPredicate(option) ||
-            (typeof(option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
-            (typeof(option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
+      return matchPredicate(option) ||
+        (typeof (option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
+        (typeof (option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
     });
   }
 }
@@ -81,62 +83,71 @@ export class MultiSelectSearchFilter implements PipeTransform {
   selector: 'ss-multiselect-dropdown',
   providers: [MULTISELECT_VALUE_ACCESSOR],
   styles: [`
-	   a { outline: none !important; }
+    a {
+      outline: none !important;
+    }
   `],
   template: `
-	<div class="dropdown">
-	    <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
-	    (click)="toggleDropdown()">{{ title }}&nbsp;<span class="caret"></span></button>
-    <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
-  	    [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-  		<li class="dropdown-item" *ngIf="settings.enableSearch">
-  		    <div class="input-group input-group-sm">
-  			<span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
-  			<input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
-  			aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText">
-  			<span class="input-group-btn" *ngIf="searchFilterText.length > 0">
+    <div class="dropdown">
+      <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
+              (click)="toggleDropdown()" [disabled]="disabled">{{ title }}&nbsp;<span class="caret"></span></button>
+      <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
+          [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
+        <li class="dropdown-item search" *ngIf="settings.enableSearch">
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
+            <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
+                   aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText" [ngModelOptions]="{standalone: true}">
+            <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
   			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
-  			</span>
-  		    </div>
-  		</li>
-  		<li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
-  		<li class="dropdown-item" *ngIf="settings.showCheckAll">
-  		    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
-  			<span style="width: 16px;" class="glyphicon glyphicon-ok"></span>
-  			{{ texts.checkAll }}
-  		    </a>
-  		</li>
-  		<li class="dropdown-item" *ngIf="settings.showUncheckAll">
-  		    <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
-  			<span style="width: 16px;" class="glyphicon glyphicon-remove"></span>
-  			{{ texts.uncheckAll }}
-  		    </a>
-  		</li>
-  		<li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
-  		<li class="dropdown-item" [style]="!option.isLabel && 'cursor: pointer'" *ngFor="let option of options | searchFilter:searchFilterText"
-        (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
-          <ng-template [ngIf]="option.isLabel">
+	          </span>
+          </div>
+        </li>
+        <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
+        <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll">
+          <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
+            <span style="width: 16px;"
+              [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome',
+              'fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
+            {{ texts.checkAll }}
+          </a>
+        </li>
+        <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll">
+          <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
+            <span style="width: 16px;"
+              [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome',
+              'fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
+            {{ texts.uncheckAll }}
+          </a>
+        </li>
+        <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
+        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of options | searchFilter:searchFilterText"
+            (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
+          <template [ngIf]="option.isLabel">
             {{ option.name }}
-          </ng-template>
-  		    <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
-  			    <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)" />
-  			    <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
-  			      class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
+          </template>
+          <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
+            <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox"
+              [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
+            <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
+                  class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
             <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
   			      <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
   			    </span>
-  	        {{ option.name }}
-  		    </a>
-  	  </li>
-    </ul>
-	</div>
-`
+            <span [ngClass]="settings.itemClasses">
+              {{ option.name }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  `
 })
-export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor {
-
+export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor, Validator {
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
+  @Input() disabled: boolean = false;
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
   @Output() onAdded = new EventEmitter();
@@ -163,6 +174,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   numSelected: number = 0;
   isVisible: boolean = false;
   searchFilterText: string = '';
+
   defaultSettings: IMultiSelectSettings = {
     pullRight: false,
     enableSearch: false,
@@ -187,8 +199,14 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   };
 
   constructor(private element: ElementRef,
-    differs: IterableDiffers) {
+              differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
+  }
+
+  getItemStyle(option: IMultiSelectOption): any {
+    if (!option.isLabel) {
+      return {'cursor': 'pointer'};
+    }
   }
 
   ngOnInit() {
@@ -197,8 +215,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.title = this.texts.defaultTitle || '';
   }
 
-  onModelChange: Function = (_: any) => { };
-  onModelTouched: Function = () => { };
+  onModelChange: Function = (_: any) => {};
+  onModelTouched: Function = () => {};
 
   writeValue(value: any): void {
     if (value !== undefined) {
@@ -214,12 +232,28 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.onModelTouched = fn;
   }
 
+  setDisabledState(isDisabled: boolean) {
+    this.disabled = isDisabled;
+  }
+
   ngDoCheck() {
     const changes = this.differ.diff(this.model);
     if (changes) {
       this.updateNumSelected();
       this.updateTitle();
     }
+  }
+
+  validate(c: AbstractControl): { [key: string]: any; } {
+    return (this.model && this.model.length) ? null : {
+      required: {
+        valid: false,
+      },
+    };
+  }
+
+  registerOnValidatorChange(fn: () => void): void {
+    throw new Error('Method not implemented.');
   }
 
   clearSearch(event: Event) {
@@ -266,6 +300,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
       this.toggleDropdown();
     }
     this.onModelChange(this.model);
+    this.onModelTouched();
   }
 
   updateNumSelected() {
@@ -300,12 +335,14 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         return option.id;
       });
     this.onModelChange(this.model);
+    this.onModelTouched();
   }
 
   uncheckAll() {
     this.model.forEach((id: number) => this.onRemoved.emit(id));
     this.model = [];
     this.onModelChange(this.model);
+    this.onModelTouched();
   }
 
   preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
@@ -320,7 +357,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
 @NgModule({
   imports: [CommonModule, FormsModule],
-  exports: [MultiselectDropdown],
+  exports: [MultiselectDropdown, MultiSelectSearchFilter],
   declarations: [MultiselectDropdown, MultiSelectSearchFilter],
 })
-export class MultiselectDropdownModule {}
+export class MultiselectDropdownModule {
+}
