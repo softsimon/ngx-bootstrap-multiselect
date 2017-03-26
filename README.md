@@ -7,8 +7,8 @@ Customizable dropdown multiselect in Angular 2, TypeScript with bootstrap css.
 See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 
 ## Dependencies
-* Bootstrap CSS 3
-* Font Awesome *(only with search box and checkbox mode)*
+* Bootstrap CSS 3 or 4
+* Font Awesome (optional)
 
 ## Quick start options
 
@@ -22,46 +22,49 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 Import `MultiselectDropdown` into your @NgModule.
 
 ```js
-import {MultiselectDropdownModule} from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
-
-// ...
+import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 
 @NgModule({
   // ...
   imports: [
     MultiselectDropdownModule,
-    // ...
   ]
+  // ...
 })
 ```
 
 Define options in your consuming component:
 
 ```js
-import {IMultiSelectOption} from 'angular-2-dropdown-multiselect/src/multiselect-dropdown';
+import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
 
-export class MyClass {
-    private selectedOptions: number[];
-    private myOptions: IMultiSelectOption[] = [
-        { id: 1, name: 'Option 1' },
-        { id: 2, name: 'Option 2' },
-    ];
+export class MyClass implements OnInit {
+    optionsModel: number[];
+    ngOnInit() {
+        myOptions: IMultiSelectOption[] = [
+            { id: 1, name: 'Option 1' },
+            { id: 2, name: 'Option 2' },
+        ];
+    }
+    onChange() {
+        console.log(this.optionsModel);
+    }
 }
 ```
 
 In your template, use the component directive:
 
 ```html
-<ss-multiselect-dropdown [options]="myOptions" [(ngModel)]="selectedOptions" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>
+<ss-multiselect-dropdown [options]="myOptions" [(ngModel)]="optionsModel" (ngModelChange)="onChange($event)"></ss-multiselect-dropdown>
 ```
 
 ## Customize
 
-Import the IMultiSelectSettings and IMultiSelectTexts interfaces to enable/override settings and text strings:
+Import the IMultiSelectOption and IMultiSelectTexts interfaces to enable/override settings and text strings:
 ```js
-private selectedOptions: number[] = [1, 2]; // Default selection
+optionsModel: number[] = [1, 2]; // Default selection
 
-private mySettings: IMultiSelectSettings = {
+mySettings: IMultiSelectSettings = {
     pullRight: false,
     enableSearch: false,
     checkedStyle: 'checkboxes',
@@ -74,7 +77,7 @@ private mySettings: IMultiSelectSettings = {
     maxHeight: '300px',
 };
 
-private myTexts: IMultiSelectTexts = {
+myTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
     uncheckAll: 'Uncheck all',
     checked: 'checked',
@@ -82,10 +85,50 @@ private myTexts: IMultiSelectTexts = {
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
 };
+
+/* Labels */
+myOptions: IMultiSelectOption[] = [
+    { id: 1, name: 'Car brands', isLabel: true },
+    { id: 2, name: 'Volvo', parentId: 1 },
+    { id: 3, name: 'Colors', isLabel: true },
+    { id: 4, name: 'Blue', parentId: 3 }
+];
+
 ```
 
 ```html
-<ss-multiselect-dropdown [options]="mySettings" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="selectedOptions"></ss-multiselect-dropdown>
+<ss-multiselect-dropdown [options]="myOptions" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="optionsModel"></ss-multiselect-dropdown>
+```
+
+## Use model driven forms with ReactiveFormsModule:
+
+```js
+import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
+
+export class MyClass implements OnInit {
+    model: number[];
+    myOptions: IMultiSelectOption[] = [
+        { id: 1, name: 'Option 1' },
+        { id: 2, name: 'Option 2' },
+    ];
+
+    ngOnInit() {
+        this.myForm = this.formBuilder.group({
+            optionsModel: [1, 2], // Default model
+        });
+
+        this.myForm.controls['optionsModel'].valueChanges
+            .subscribe((selectedOptions) => {
+                // changes
+            });
+    }
+}
+```
+
+```html
+<form [formGroup]="myForm">
+    <ss-multiselect-dropdown [options]="myOptions" formControlName="optionsModel"></ss-multiselect-dropdown>
+</form>
 ```
 
 ## Developing
