@@ -99,6 +99,32 @@ myOptions: IMultiSelectOption[] = [
 ```html
 <ss-multiselect-dropdown [options]="myOptions" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="optionsModel"></ss-multiselect-dropdown>
 ```
+### Settings ####
+| Setting              | Description                                                        | Default Value     |
+| -------------------- | ------------------------------------------------------------------ | ----------------  |
+| pullRight            | Float the dropdown to the right                    | false             |
+| enableSearch         | Enable searching the dropdown items                                | false             |
+| checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon' or 'none'  | 'checkboxes'      |
+| buttonClasses        | CSS classes to apply to buttons                                    | 'btn btn-default' |
+| selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
+| autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
+| closeOnSelect        | If enabled, dropdown will be closed after selection                | false             |
+| showCheckAll         | Display the check all item to select all options                   | false             |
+| showUncheckAll       | Display the uncheck all item to unselect all options               | false             |
+| dynamicTitleMaxItems | The maximum number of options to display in the dynamic title      | 3                 |
+| maxHeight            | The maximum height for the dropdown                                | '300px'           |
+
+### Single select ###
+Although this dropdown is designed for multiple selections, a common request is to only allow a single selection without requiring the user to unselect their previous selection each time. This can be accomplished by setting selectionLimit to 1 and autoUnselect to true.
+```
+{
+  ...
+  selectionLimit: 1,
+  autoUnselect: true,
+  ...
+}
+```
+
 
 ## Use model driven forms with ReactiveFormsModule:
 
