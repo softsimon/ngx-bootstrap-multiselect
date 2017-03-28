@@ -123,10 +123,10 @@ export class MultiSelectSearchFilter implements PipeTransform {
         <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
         <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of options | searchFilter:searchFilterText"
             (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
-          <template [ngIf]="option.isLabel">
+          <ng-template [ngIf]="option.isLabel">
             {{ option.name }}
-          </template>
-          <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
+          </ng-template>
+          <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'">
             <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox"
               [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
             <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
@@ -134,7 +134,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
             <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
   			      <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
   			    </span>
-            <span [ngClass]="settings.itemClasses">
+            <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
               {{ option.name }}
             </span>
           </a>
@@ -169,6 +169,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   model: number[];
+  parents: number[];
   title: string;
   differ: any;
   numSelected: number = 0;
@@ -205,7 +206,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
   getItemStyle(option: IMultiSelectOption): any {
     if (!option.isLabel) {
-      return {'cursor': 'pointer'};
+      return {'cursor':'pointer'};
     }
   }
 
@@ -213,6 +214,12 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.settings = Object.assign(this.defaultSettings, this.settings);
     this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle || '';
+    this.parents = [];
+    this.options.forEach(option => {
+      if(typeof(option.parentId)!=='undefined'&&this.parents.indexOf(option.parentId)<0) {
+        this.parents.push(option.parentId);
+      }
+    });
   }
 
   onModelChange: Function = (_: any) => {};
@@ -280,10 +287,33 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     if (index > -1) {
       this.model.splice(index, 1);
       this.onRemoved.emit(option.id);
+      const parentIndex = option.parentId && this.model.indexOf(option.parentId);
+      if (parentIndex >= 0) {
+        this.model.splice(parentIndex, 1);
+        this.onRemoved.emit(option.parentId);
+      } else if (this.parents.indexOf(option.id) > -1) {
+        let childIds = this.options.filter(child => this.model.indexOf(child.id)>-1 && child.parentId == option.id).map(child => child.id);
+        this.model = this.model.filter(id => childIds.indexOf(id)<0);
+        childIds.forEach(childId => this.onRemoved.emit(childId));
+      }
     } else {
       if (this.settings.selectionLimit === 0 || (this.settings.selectionLimit && this.model.length < this.settings.selectionLimit)) {
         this.model.push(option.id);
         this.onAdded.emit(option.id);
+        if (option.parentId) {
+          let children = this.options.filter(child => child.id !== option.id && child.parentId == option.parentId);
+          if (children.every(child => this.model.indexOf(child.id) > -1))
+          {
+              this.model.push(option.parentId);
+              this.onAdded.emit(option.parentId);
+          }
+        } else if (this.parents.indexOf(option.id)>-1) {
+          let children = this.options.filter(child => this.model.indexOf(child.id)<0 && child.parentId == option.id);
+          children.forEach(child => {
+              this.model.push(child.id);
+              this.onAdded.emit(child.id);
+          })
+        }
       } else {
         if (this.settings.autoUnselect) {
           this.model.push(option.id);
@@ -304,7 +334,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   updateNumSelected() {
-    this.numSelected = this.model && this.model.length || 0;
+    this.numSelected = this.model && this.model.filter(id => this.parents.indexOf(id) < 0).length || 0;
   }
 
   updateTitle() {
