@@ -48,6 +48,7 @@ export interface IMultiSelectSettings {
   autoUnselect?: boolean;
   showCheckAll?: boolean;
   showUncheckAll?: boolean;
+  dynamicTitle?: boolean;
   dynamicTitleMaxItems?: number;
   maxHeight?: string;
   displayAllSelectedText?: boolean;
@@ -185,6 +186,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
+    dynamicTitle: true,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
   };
@@ -308,7 +310,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   updateTitle() {
-    if (this.numSelected === 0) {
+    if (this.numSelected === 0 || !this.settings.dynamicTitle) {
       this.title = this.texts.defaultTitle || '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options

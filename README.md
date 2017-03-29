@@ -68,11 +68,13 @@ mySettings: IMultiSelectSettings = {
     pullRight: false,
     enableSearch: false,
     checkedStyle: 'checkboxes',
-    buttonClasses: 'btn btn-default',
+    buttonClasses: 'btn btn-default btn-secondary',
     selectionLimit: 0,
     closeOnSelect: false,
+    autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
+    dynamicTitle: true,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
 };
@@ -84,6 +86,7 @@ myTexts: IMultiSelectTexts = {
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
+    allSelected: 'All selected',
 };
 
 /* Labels */
