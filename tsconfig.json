@@ -9,5 +9,8 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
+  },
+  "angularCompilerOptions": {
+    "genDir": "compiled"
   }
 }

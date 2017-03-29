@@ -1,3 +1,6 @@
 node_modules
 src/*.js
 src/*.js.map
+/compiled
+*.metadata.json
+*.map.js
