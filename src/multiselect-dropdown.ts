@@ -48,7 +48,7 @@ export interface IMultiSelectSettings {
   autoUnselect?: boolean;
   showCheckAll?: boolean;
   showUncheckAll?: boolean;
-  dynamicTitle?: boolean;
+  fixedTitle?: boolean;
   dynamicTitleMaxItems?: number;
   maxHeight?: string;
   displayAllSelectedText?: boolean;
@@ -124,9 +124,9 @@ export class MultiSelectSearchFilter implements PipeTransform {
         <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
         <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of options | searchFilter:searchFilterText"
             (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
-          <ng-template [ngIf]="option.isLabel">
+          <template [ngIf]="option.isLabel">
             {{ option.name }}
-          </ng-template>
+          </template>
           <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1">
             <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox"
               [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
@@ -186,7 +186,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
-    dynamicTitle: true,
+    fixedTitle: false,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
   };
@@ -310,7 +310,9 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   updateTitle() {
-    if (this.numSelected === 0 || !this.settings.dynamicTitle) {
+    if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+      this.title = this.texts.allSelected || '';
+    } else if (this.numSelected === 0 || this.settings.fixedTitle) {
       this.title = this.texts.defaultTitle || '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
@@ -319,8 +321,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         )
         .map((option: IMultiSelectOption) => option.name)
         .join(', ');
-    } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
-      this.title = this.texts.allSelected || '';
     } else {
       this.title = this.numSelected
         + ' '

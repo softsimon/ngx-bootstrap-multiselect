@@ -74,7 +74,7 @@ mySettings: IMultiSelectSettings = {
     autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
-    dynamicTitle: true,
+    fixedTitle: false,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
 };
