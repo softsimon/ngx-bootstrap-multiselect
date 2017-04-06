@@ -48,6 +48,7 @@ export interface IMultiSelectSettings {
   autoUnselect?: boolean;
   showCheckAll?: boolean;
   showUncheckAll?: boolean;
+  fixedTitle?: boolean;
   dynamicTitleMaxItems?: number;
   maxHeight?: string;
   displayAllSelectedText?: boolean;
@@ -186,6 +187,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
+    fixedTitle: false,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
   };
@@ -226,8 +228,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   onModelTouched: Function = () => {};
 
   writeValue(value: any): void {
-    if (value !== undefined) {
+    if (value !== undefined && value !== null) {
       this.model = value;
+    } else {
+      this.model = [];
     }
   }
 
@@ -338,7 +342,9 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   updateTitle() {
-    if (this.numSelected === 0) {
+    if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+      this.title = this.texts.allSelected || '';
+    } else if (this.numSelected === 0 || this.settings.fixedTitle) {
       this.title = this.texts.defaultTitle || '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
@@ -347,8 +353,6 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         )
         .map((option: IMultiSelectOption) => option.name)
         .join(', ');
-    } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
-      this.title = this.texts.allSelected || '';
     } else {
       this.title = this.numSelected
         + ' '

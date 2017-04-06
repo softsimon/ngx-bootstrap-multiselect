@@ -1,8 +1,8 @@
-# Angular 2 Dropdown Multiselect for Bootstrap CSS
+# AngularX Dropdown Multiselect for Bootstrap CSS
 
 Works with Angular Final and AOT compilation
 
-Customizable dropdown multiselect in Angular 2, TypeScript with bootstrap css.
+Customizable dropdown multiselect in AngularX, TypeScript with bootstrap css.
 
 See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 
@@ -68,11 +68,13 @@ mySettings: IMultiSelectSettings = {
     pullRight: false,
     enableSearch: false,
     checkedStyle: 'checkboxes',
-    buttonClasses: 'btn btn-default',
+    buttonClasses: 'btn btn-default btn-secondary',
     selectionLimit: 0,
     closeOnSelect: false,
+    autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
+    fixedTitle: false,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
 };
@@ -84,6 +86,7 @@ myTexts: IMultiSelectTexts = {
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
+    allSelected: 'All selected',
 };
 
 /* Labels */
