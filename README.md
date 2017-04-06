@@ -1,8 +1,8 @@
-# Angular 2 Dropdown Multiselect for Bootstrap CSS
+# AngularX Dropdown Multiselect for Bootstrap CSS
 
 Works with Angular Final and AOT compilation
 
-Customizable dropdown multiselect in Angular 2, TypeScript with bootstrap css.
+Customizable dropdown multiselect in AngularX, TypeScript with bootstrap css.
 
 See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 

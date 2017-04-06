@@ -4,3 +4,5 @@ src/*.js.map
 /compiled
 *.metadata.json
 *.map.js
+index.js
+index.js.map
