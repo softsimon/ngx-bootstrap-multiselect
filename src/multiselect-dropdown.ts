@@ -221,8 +221,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   onModelTouched: Function = () => {};
 
   writeValue(value: any): void {
-    if (value !== undefined) {
+    if (value !== undefined && value !== null) {
       this.model = value;
+    } else {
+      this.model = [];
     }
   }
 
