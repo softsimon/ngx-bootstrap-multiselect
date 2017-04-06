@@ -151,6 +151,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   @Input() disabled: boolean = false;
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
+  @Output() dropdownOpened = new EventEmitter();
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
 
@@ -267,9 +268,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
   toggleDropdown() {
     this.isVisible = !this.isVisible;
-    if (!this.isVisible) {
-      this.dropdownClosed.emit();
-    }
+    this.isVisible ? this.dropdownOpened.emit() : this.dropdownClosed.emit();
   }
 
   isSelected(option: IMultiSelectOption): boolean {
