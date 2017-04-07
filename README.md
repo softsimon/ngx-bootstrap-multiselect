@@ -60,41 +60,42 @@ In your template, use the component directive:
 
 ## Customize
 
-Import the IMultiSelectOption and IMultiSelectTexts interfaces to enable/override settings and text strings:
+Import the `IMultiSelectOption` and `IMultiSelectTexts` interfaces to enable/override settings and text strings:
 ```js
-optionsModel: number[] = [1, 2]; // Default selection
 
+// Default selection
+optionsModel: number[] = [1, 2];
+
+// Settings configuration
 mySettings: IMultiSelectSettings = {
-    pullRight: false,
-    enableSearch: false,
-    checkedStyle: 'checkboxes',
-    buttonClasses: 'btn btn-default btn-secondary',
-    selectionLimit: 0,
-    closeOnSelect: false,
-    autoUnselect: false,
-    showCheckAll: false,
-    showUncheckAll: false,
-    fixedTitle: false,
+    enableSearch: true,
+    checkedStyle: 'fontawesome',
+    buttonClasses: 'btn btn-default btn-block',
     dynamicTitleMaxItems: 3,
-    maxHeight: '300px',
+    displayAllSelectedText: true
 };
 
+// Text configuration
 myTexts: IMultiSelectTexts = {
-    checkAll: 'Check all',
-    uncheckAll: 'Uncheck all',
-    checked: 'checked',
-    checkedPlural: 'checked',
-    searchPlaceholder: 'Search...',
+    checkAll: 'Select all',
+    uncheckAll: 'Unselect all',
+    checked: 'item selected',
+    checkedPlural: 'items selected',
+    searchPlaceholder: 'Find',
     defaultTitle: 'Select',
     allSelected: 'All selected',
 };
 
-/* Labels */
+// Labels / Parents
 myOptions: IMultiSelectOption[] = [
     { id: 1, name: 'Car brands', isLabel: true },
     { id: 2, name: 'Volvo', parentId: 1 },
-    { id: 3, name: 'Colors', isLabel: true },
-    { id: 4, name: 'Blue', parentId: 3 }
+    { id: 3, name: 'Honda', parentId: 1 },
+    { id: 4, name: 'BMW', parentId: 1 },
+    { id: 5, name: 'Colors', isLabel: true },
+    { id: 6, name: 'Blue', parentId: 5 },
+    { id: 7, name: 'Red', parentId: 5 },
+    { id: 8, name: 'White', parentId: 5 }
 ];
 
 ```
@@ -102,22 +103,38 @@ myOptions: IMultiSelectOption[] = [
 ```html
 <ss-multiselect-dropdown [options]="myOptions" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="optionsModel"></ss-multiselect-dropdown>
 ```
-### Settings ####
+### Settings
 | Setting              | Description                                                        | Default Value     |
 | -------------------- | ------------------------------------------------------------------ | ----------------  |
-| pullRight            | Float the dropdown to the right                    | false             |
+| pullRight            | Float the dropdown to the right                                    | false             |
 | enableSearch         | Enable searching the dropdown items                                | false             |
-| checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon' or 'none'  | 'checkboxes'      |
-| buttonClasses        | CSS classes to apply to buttons                                    | 'btn btn-default' |
+| checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon' or 'fontawesome'  | 'checkboxes'      |
+| buttonClasses        | CSS classes to apply to the trigger button                         | 'btn btn-default' |
+| itemClasses          | CSS classes to apply to items                                      | ''                |
 | selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
 | autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
 | closeOnSelect        | If enabled, dropdown will be closed after selection                | false             |
-| showCheckAll         | Display the check all item to select all options                   | false             |
-| showUncheckAll       | Display the uncheck all item to unselect all options               | false             |
+| showCheckAll         | Display the `checkAll` item to select all options                   | false             |
+| showUncheckAll       | Display the `uncheckAll` item to unselect all options               | false             |
+| fixedTitle           | Use the default title (do not apply the dynamic title)             | false             |
 | dynamicTitleMaxItems | The maximum number of options to display in the dynamic title      | 3                 |
-| maxHeight            | The maximum height for the dropdown                                | '300px'           |
+| maxHeight            | The maximum height for the dropdown (including unit)               | '300px'           |
+| displayAllSelectedText | Display the `allSelected` text when all options are selected    | false             |
 
-### Single select ###
+### Texts
+| Text Item             | Description                                | Default Value     |
+| --------------------- | ------------------------------------------ | ----------------  |
+| checkAll              | The text for the "check all" option        | 'Check all'       |
+| uncheckAll            | The text for the "uncheck all" option      | 'Uncheck all'     |
+| checked               | Text for "checked" with single item selected (used in dynamic title)    | 'checked' |
+| checkedPlural         | Text for "checked" with multiple items selected (used in dynamic title) | 'checked' |
+| searchPlaceholder     | Text initially displayed in search input   | 'Search...'       |
+| defaultTitle          | Title displayed in button before selection | 'Select'          |
+| allSelected           | Text displayed when all items are selected (must be enabled in options) | 'All selected' |
+
+## Other examples
+
+### Single select
 Although this dropdown is designed for multiple selections, a common request is to only allow a single selection without requiring the user to unselect their previous selection each time. This can be accomplished by setting selectionLimit to 1 and autoUnselect to true.
 ```
 {
@@ -128,8 +145,7 @@ Although this dropdown is designed for multiple selections, a common request is 
 }
 ```
 
-
-## Use model driven forms with ReactiveFormsModule:
+### Use model driven forms with ReactiveFormsModule:
 
 ```js
 import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
