@@ -359,22 +359,38 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
     }
   }
+  
+  searchFilterApplied() {
+    return this.settings.enableSearch && this.searchFilterText && this.searchFilterText.length > 0;
+  }
 
   checkAll() {
-    this.model = this.options
-      .map((option: IMultiSelectOption) => {
+    let checkedOptions = (!this.searchFilterApplied() ? this.options :
+      (new MultiSelectSearchFilter()).transform(this.options, this.searchFilterText))
+      .filter((option: IMultiSelectOption) => {
         if (this.model.indexOf(option.id) === -1) {
           this.onAdded.emit(option.id);
+          return true;
         }
-        return option.id;
-      });
+        return false;
+      }).map((option: IMultiSelectOption) => option.id);
+    this.model = this.model.concat(checkedOptions);
     this.onModelChange(this.model);
     this.onModelTouched();
   }
 
   uncheckAll() {
-    this.model.forEach((id: number) => this.onRemoved.emit(id));
-    this.model = [];
+    let unCheckedOptions = (!this.searchFilterApplied() ? this.model
+      : (new MultiSelectSearchFilter()).transform(this.options, this.searchFilterText).map((option: IMultiSelectOption) => option.id)
+    );
+    this.model = this.model.filter((id: number) => {
+      if (unCheckedOptions.indexOf(id) < 0) {
+        return true;
+      } else {
+        this.onRemoved.emit(id);
+        return false;
+      }
+    });
     this.onModelChange(this.model);
     this.onModelTouched();
   }
