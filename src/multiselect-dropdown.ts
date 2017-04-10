@@ -249,7 +249,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
   }
 
-  validate(c: AbstractControl): { [key: string]: any; } {
+  validate(_c: AbstractControl): { [key: string]: any; } {
     return (this.model && this.model.length) ? null : {
       required: {
         valid: false,
@@ -257,7 +257,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     };
   }
 
-  registerOnValidatorChange(fn: () => void): void {
+  registerOnValidatorChange(_fn: () => void): void {
     throw new Error('Method not implemented.');
   }
 
@@ -275,7 +275,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     return this.model && this.model.indexOf(option.id) > -1;
   }
 
-  setSelected(event: Event, option: IMultiSelectOption) {
+  setSelected(_event: Event, option: IMultiSelectOption) {
     if (!this.model) {
       this.model = [];
     }
