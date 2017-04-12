@@ -151,6 +151,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   @Input() disabled: boolean = false;
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
+  @Output() dropdownOpened = new EventEmitter();
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
 
@@ -255,7 +256,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
   }
 
-  validate(c: AbstractControl): { [key: string]: any; } {
+  validate(_c: AbstractControl): { [key: string]: any; } {
     return (this.model && this.model.length) ? null : {
       required: {
         valid: false,
@@ -263,7 +264,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     };
   }
 
-  registerOnValidatorChange(fn: () => void): void {
+  registerOnValidatorChange(_fn: () => void): void {
     throw new Error('Method not implemented.');
   }
 
@@ -274,16 +275,14 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
   toggleDropdown() {
     this.isVisible = !this.isVisible;
-    if (!this.isVisible) {
-      this.dropdownClosed.emit();
-    }
+    this.isVisible ? this.dropdownOpened.emit() : this.dropdownClosed.emit();
   }
 
   isSelected(option: IMultiSelectOption): boolean {
     return this.model && this.model.indexOf(option.id) > -1;
   }
 
-  setSelected(event: Event, option: IMultiSelectOption) {
+  setSelected(_event: Event, option: IMultiSelectOption) {
     if (!this.model) {
       this.model = [];
     }
