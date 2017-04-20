@@ -157,6 +157,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
 
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
+    if (!this.isVisible) return;
     let parentFound = false;
     while (target != null && !parentFound) {
       if (target === this.element.nativeElement) {
@@ -358,7 +359,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
     }
   }
-  
+
   searchFilterApplied() {
     return this.settings.enableSearch && this.searchFilterText && this.searchFilterText.length > 0;
   }
