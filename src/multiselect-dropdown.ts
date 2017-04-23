@@ -98,7 +98,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
           <div class="input-group input-group-sm">
             <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
             <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
-                   aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText" [ngModelOptions]="{standalone: true}">
+                   aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText" [ngModelOptions]="{standalone: true}" autofocus>
             <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
   			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
 	          </span>
