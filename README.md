@@ -111,6 +111,7 @@ myOptions: IMultiSelectOption[] = [
 | checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon' or 'fontawesome'  | 'checkboxes'      |
 | buttonClasses        | CSS classes to apply to the trigger button                         | 'btn btn-default' |
 | itemClasses          | CSS classes to apply to items                                      | ''                |
+| containerClasses     | CSS classes to apply to container div                              | 'dropdown-inline' |
 | selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
 | autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
 | closeOnSelect        | If enabled, dropdown will be closed after selection                | false             |
