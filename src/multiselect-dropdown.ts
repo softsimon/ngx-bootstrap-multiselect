@@ -43,6 +43,7 @@ export interface IMultiSelectSettings {
   checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
   buttonClasses?: string;
   itemClasses?: string;
+  wrapperClasses?: string;
   selectionLimit?: number;
   closeOnSelect?: boolean;
   autoUnselect?: boolean;
@@ -87,9 +88,12 @@ export class MultiSelectSearchFilter implements PipeTransform {
     a {
       outline: none !important;
     }
+    .dropdown-inline {
+      display: inline-block;
+    }
   `],
   template: `
-    <div class="dropdown">
+    <div class="dropdown" [ngClass]="settings.wrapperClasses">
       <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
               (click)="toggleDropdown()" [disabled]="disabled">{{ title }}&nbsp;<span class="caret"></span></button>
       <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
@@ -183,6 +187,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     enableSearch: false,
     checkedStyle: 'checkboxes',
     buttonClasses: 'btn btn-default btn-secondary',
+    wrapperClasses: 'dropdown-inline',
     selectionLimit: 0,
     closeOnSelect: false,
     autoUnselect: false,
@@ -358,7 +363,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
     }
   }
-  
+
   searchFilterApplied() {
     return this.settings.enableSearch && this.searchFilterText && this.searchFilterText.length > 0;
   }
