@@ -5,23 +5,21 @@
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
 
+import { MultiSelectSearchFilter } from './search-filter.pipe';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
 import {
-  NgModule,
   Component,
-  Pipe,
-  OnInit,
   DoCheck,
-  HostListener,
-  Input,
   ElementRef,
-  Output,
   EventEmitter,
   forwardRef,
+  HostListener,
+  Input,
   IterableDiffers,
-  PipeTransform
+  OnInit,
+  Output
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor, Validator, AbstractControl } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -29,124 +27,11 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   multi: true
 };
 
-export interface IMultiSelectOption {
-  id: any;
-  name: string;
-  isLabel?: boolean;
-  parentId?: any;
-  params?: any;
-}
-
-export interface IMultiSelectSettings {
-  pullRight?: boolean;
-  enableSearch?: boolean;
-  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
-  buttonClasses?: string;
-  itemClasses?: string;
-  containerClasses?: string;
-  selectionLimit?: number;
-  closeOnSelect?: boolean;
-  autoUnselect?: boolean;
-  showCheckAll?: boolean;
-  showUncheckAll?: boolean;
-  fixedTitle?: boolean;
-  dynamicTitleMaxItems?: number;
-  maxHeight?: string;
-  displayAllSelectedText?: boolean;
-}
-
-export interface IMultiSelectTexts {
-  checkAll?: string;
-  uncheckAll?: string;
-  checked?: string;
-  checkedPlural?: string;
-  searchPlaceholder?: string;
-  defaultTitle?: string;
-  allSelected?: string;
-}
-
-@Pipe({
-  name: 'searchFilter'
-})
-export class MultiSelectSearchFilter implements PipeTransform {
-  transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
-    const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
-      getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
-      getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
-    return options.filter((option: IMultiSelectOption) => {
-      return matchPredicate(option) ||
-        (typeof (option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
-        (typeof (option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
-    });
-  }
-}
-
 @Component({
   selector: 'ss-multiselect-dropdown',
-  providers: [MULTISELECT_VALUE_ACCESSOR],
-  styles: [`
-    a {
-      outline: none !important;
-    }
-    .dropdown-inline {
-      display: inline-block;
-    }
-  `],
-  template: `
-    <div class="dropdown" [ngClass]="settings.containerClasses">
-      <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
-              (click)="toggleDropdown()" [disabled]="disabled">{{ title }}&nbsp;<span class="caret"></span></button>
-      <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
-          [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-        <li class="dropdown-item search" *ngIf="settings.enableSearch">
-          <div class="input-group input-group-sm">
-            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
-                   aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText" [ngModelOptions]="{standalone: true}" autofocus>
-            <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
-  			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
-	          </span>
-          </div>
-        </li>
-        <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
-        <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll">
-          <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
-            <span style="width: 16px;"
-              [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome',
-              'fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
-            {{ texts.checkAll }}
-          </a>
-        </li>
-        <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll">
-          <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
-            <span style="width: 16px;"
-              [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome',
-              'fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
-            {{ texts.uncheckAll }}
-          </a>
-        </li>
-        <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
-        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of options | searchFilter:searchFilterText"
-            (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
-          <ng-template [ngIf]="option.isLabel">
-            {{ option.name }}
-          </ng-template>
-          <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'">
-            <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox"
-              [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
-            <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
-                  class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
-            <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
-  			      <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
-  			    </span>
-            <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
-              {{ option.name }}
-            </span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  `
+  templateUrl: './dropdown.component.html',
+  styleUrls: ['./dropdown.component.css'],
+  providers: [MULTISELECT_VALUE_ACCESSOR]
 })
 export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor, Validator {
   @Input() options: Array<IMultiSelectOption>;
@@ -209,13 +94,13 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   };
 
   constructor(private element: ElementRef,
-              differs: IterableDiffers) {
+    differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
   }
 
   getItemStyle(option: IMultiSelectOption): any {
     if (!option.isLabel) {
-      return {'cursor':'pointer'};
+      return { 'cursor': 'pointer' };
     }
   }
 
@@ -225,14 +110,14 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.title = this.texts.defaultTitle || '';
     this.parents = [];
     this.options.forEach(option => {
-      if(typeof(option.parentId)!=='undefined'&&this.parents.indexOf(option.parentId)<0) {
+      if (typeof (option.parentId) !== 'undefined' && this.parents.indexOf(option.parentId) < 0) {
         this.parents.push(option.parentId);
       }
     });
   }
 
-  onModelChange: Function = (_: any) => {};
-  onModelTouched: Function = () => {};
+  onModelChange: Function = (_: any) => { };
+  onModelTouched: Function = () => { };
 
   writeValue(value: any): void {
     if (value !== undefined && value !== null) {
@@ -301,8 +186,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         this.model.splice(parentIndex, 1);
         this.onRemoved.emit(option.parentId);
       } else if (this.parents.indexOf(option.id) > -1) {
-        let childIds = this.options.filter(child => this.model.indexOf(child.id)>-1 && child.parentId == option.id).map(child => child.id);
-        this.model = this.model.filter(id => childIds.indexOf(id)<0);
+        let childIds = this.options.filter(child => this.model.indexOf(child.id) > -1 && child.parentId == option.id).map(child => child.id);
+        this.model = this.model.filter(id => childIds.indexOf(id) < 0);
         childIds.forEach(childId => this.onRemoved.emit(childId));
       }
     } else {
@@ -311,16 +196,15 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         this.onAdded.emit(option.id);
         if (option.parentId) {
           let children = this.options.filter(child => child.id !== option.id && child.parentId == option.parentId);
-          if (children.every(child => this.model.indexOf(child.id) > -1))
-          {
-              this.model.push(option.parentId);
-              this.onAdded.emit(option.parentId);
+          if (children.every(child => this.model.indexOf(child.id) > -1)) {
+            this.model.push(option.parentId);
+            this.onAdded.emit(option.parentId);
           }
-        } else if (this.parents.indexOf(option.id)>-1) {
-          let children = this.options.filter(child => this.model.indexOf(child.id)<0 && child.parentId == option.id);
+        } else if (this.parents.indexOf(option.id) > -1) {
+          let children = this.options.filter(child => this.model.indexOf(child.id) < 0 && child.parentId == option.id);
           children.forEach(child => {
-              this.model.push(child.id);
-              this.onAdded.emit(child.id);
+            this.model.push(child.id);
+            this.onAdded.emit(child.id);
           })
         }
       } else {
@@ -408,12 +292,4 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
       event.preventDefault();
     }
   }
-}
-
-@NgModule({
-  imports: [CommonModule, FormsModule],
-  exports: [MultiselectDropdown, MultiSelectSearchFilter],
-  declarations: [MultiselectDropdown, MultiSelectSearchFilter],
-})
-export class MultiselectDropdownModule {
 }

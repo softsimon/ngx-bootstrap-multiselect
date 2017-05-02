@@ -1,8 +1,23 @@
 {
   "name": "angular-2-dropdown-multiselect",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Customizable dropdown multiselect in Angular 2 with bootstrap css.",
-  "main": "src/multiselect-dropdown.ts",
+  "main": "dist/bundles/dropdown.umd.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "npm-run-all -s build:*",
+    "postbuild": "npm run prepare-package",
+    "build:main": "npm run ng-copy && npm run ng-inline && npm run ngc",
+    "postbuild:main": "rimraf dist/tmp",
+    "build:umd": "rollup -c rollup.config.js",
+    "postbuild:umd": "uglifyjs -c --screw-ie8 --comments -o dist/bundles/dropdown.umd.min.js dist/bundles/dropdown.umd.js",
+    "ng-copy": "copyup src/index.ts dist/tmp && ncp src dist/tmp",
+    "ng-inline": "ng2-inline -u 1 -o dist/tmp -r src/**/*.component.ts",
+    "prepare-package": "node scripts/release.js",
+    "ngc": "ngc -p tsconfig.release.json"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/softsimon/angular-2-dropdown-multiselect.git"
@@ -13,12 +28,20 @@
     "multi select"
   ],
   "author": "Simon Lindh",
+  "contributors": [
+    "Alex Malkevich <malkevich.alex@gmail.com>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/softsimon/angular-2-dropdown-multiselect/issues"
   },
   "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
+    "tslib": "^1.6.1",
+    "@angular/common": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "@angular/forms": "^4.0.0"
   },
   "devDependencies": {
     "@angular/common": "^4.0.0",
@@ -27,9 +50,23 @@
     "@angular/core": "^4.0.0",
     "@angular/forms": "^4.0.0",
     "@angular/platform-server": "^4.0.0",
+    "@types/core-js": "^0.9.41",
+    "@types/jasmine": "^2.5.47",
+    "@types/node": "^7.0.15",
+    "angular2-inline-template-style": "^1.1.0",
+    "chokidar": "^1.6.1",
     "codelyzer": "^2.0.0",
+    "copyfiles": "^1.2.0",
+    "ncp": "^2.0.0",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.41.6",
+    "rollup-globals-regex": "^0.0.3",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "rxjs": "^5.1.0",
+    "tslib": "^1.6.1",
     "typescript": "^2.2.2",
+    "uglifyjs": "^2.4.10",
     "zone.js": "^0.7.6"
   }
 }
