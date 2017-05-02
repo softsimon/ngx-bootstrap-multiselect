@@ -29,7 +29,7 @@
   ],
   "author": "Simon Lindh",
   "contributors": [
-    "Alex Malkevich <malkevich.alex@gmail.com"
+    "Alex Malkevich <malkevich.alex@gmail.com>"
   ],
   "license": "MIT",
   "bugs": {
@@ -37,6 +37,12 @@
   },
   "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
   "dependencies": {},
+  "peerDependencies": {
+    "tslib": "^1.6.1",
+    "@angular/common": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "@angular/forms": "^4.0.0"
+  },
   "devDependencies": {
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
