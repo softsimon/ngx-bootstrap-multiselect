@@ -60,8 +60,8 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
   }
 
-  model: number[];
-  parents: number[];
+  model: any[];
+  parents: any[];
   title: string;
   differ: any;
   numSelected: number = 0;
