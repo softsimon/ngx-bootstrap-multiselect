@@ -38,10 +38,10 @@
   "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
   "dependencies": {},
   "peerDependencies": {
-    "tslib": "^1.6.1",
     "@angular/common": "^4.0.0",
     "@angular/core": "^4.0.0",
-    "@angular/forms": "^4.0.0"
+    "@angular/forms": "^4.0.0",
+    "tslib": "^1.6.1"
   },
   "devDependencies": {
     "@angular/common": "^4.0.0",
@@ -49,6 +49,7 @@
     "@angular/compiler-cli": "^4.0.0",
     "@angular/core": "^4.0.0",
     "@angular/forms": "^4.0.0",
+    "@angular/platform-browser": "^4.0.0",
     "@angular/platform-server": "^4.0.0",
     "@types/core-js": "^0.9.41",
     "@types/jasmine": "^2.5.47",

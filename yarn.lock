@@ -26,6 +26,10 @@
   version "4.1.0"
   resolved "http://eap-dev:8484/@angular%2fforms/-/forms-4.1.0.tgz#8eae2a45c4ba064b377f9280e59c012b5dac6b80"
 
+"@angular/platform-browser@^4.0.0":
+  version "4.1.0"
+  resolved "http://eap-dev:8484/@angular%2fplatform-browser/-/platform-browser-4.1.0.tgz#b981386be1a36f2af7f0679447fd97b7267b25de"
+
 "@angular/platform-server@^4.0.0":
   version "4.1.0"
   resolved "http://eap-dev:8484/@angular%2fplatform-server/-/platform-server-4.1.0.tgz#6100a12fe3e8568c9bf5fc27af79e52aaa71fedb"
