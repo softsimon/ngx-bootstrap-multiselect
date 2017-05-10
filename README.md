@@ -82,10 +82,20 @@ private myTexts: IMultiSelectTexts = {
     searchPlaceholder: 'Search...',
     defaultTitle: 'Select',
 };
+
+private myOptions: IMultiSelectOption [] = [
+    {id: 1, name: 'One'},
+    {id: 2, name: 'Two'},
+    {id: 3, name: 'Three'},
+    {id: 4, name: 'Four'}
+];
+
+private keyToSelect: string = 'name'; // Override default property selection of ids with any property on options
+
 ```
 
 ```html
-<ss-multiselect-dropdown [options]="mySettings" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="selectedOptions"></ss-multiselect-dropdown>
+<ss-multiselect-dropdown [options]="myOptions" [texts]="myTexts" [keyId]="keyToSelect" [settings]="mySettings" [(ngModel)]="selectedOptions"></ss-multiselect-dropdown>
 ```
 
 ## Developing
