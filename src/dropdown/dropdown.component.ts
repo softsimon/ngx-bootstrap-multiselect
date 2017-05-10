@@ -4,7 +4,6 @@
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
-
 import { MultiSelectSearchFilter } from './search-filter.pipe';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
 import {
@@ -16,8 +15,10 @@ import {
   HostListener,
   Input,
   IterableDiffers,
+  OnChanges,
   OnInit,
-  Output
+  Output,
+  SimpleChanges
 } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
 
@@ -33,7 +34,7 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   styleUrls: ['./dropdown.component.css'],
   providers: [MULTISELECT_VALUE_ACCESSOR]
 })
-export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor, Validator {
+export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlValueAccessor, Validator {
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
@@ -108,12 +109,19 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     this.settings = Object.assign(this.defaultSettings, this.settings);
     this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle || '';
-    this.parents = [];
-    this.options.forEach(option => {
-      if (typeof (option.parentId) !== 'undefined' && this.parents.indexOf(option.parentId) < 0) {
-        this.parents.push(option.parentId);
-      }
-    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['options']) {
+      this.options = this.options || [];
+      this.parents = this.options
+        .filter(option => typeof option.parentId === 'number')
+        .map(option => option.parentId);
+    }
+
+    if (changes['texts'] && !changes['texts'].isFirstChange()) {
+      this.updateTitle();
+    }
   }
 
   onModelChange: Function = (_: any) => { };
@@ -231,10 +239,10 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
   }
 
   updateTitle() {
-    if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
-      this.title = this.texts.allSelected || '';
-    } else if (this.numSelected === 0 || this.settings.fixedTitle) {
+    if (this.numSelected === 0 || this.settings.fixedTitle) {
       this.title = this.texts.defaultTitle || '';
+    } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+      this.title = this.texts.allSelected || '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
         .filter((option: IMultiSelectOption) =>
