@@ -7,18 +7,20 @@
  */
 
 import {
-    NgModule,
-    Component,
-    Pipe,
-    OnInit,
-    DoCheck,
-    HostListener,
-    Input,
-    ElementRef,
-    Output,
-    EventEmitter,
-    forwardRef,
-    IterableDiffers
+  NgModule,
+  Component,
+  Pipe,
+  OnInit,
+  DoCheck,
+  HostListener,
+  Input,
+  ElementRef,
+  Output,
+  EventEmitter,
+  forwardRef,
+  IterableDiffers,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
@@ -114,11 +116,12 @@ export class MultiSelectSearchFilter {
         </div>
     `
 })
-export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor {
+export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlValueAccessor {
 
     @Input() options: Array<IMultiSelectOption>;
     @Input() settings: IMultiSelectSettings;
     @Input() texts: IMultiSelectTexts;
+    @Input() keyId: string;
     @Output() selectionLimitReached = new EventEmitter();
     @Output() dropdownClosed = new EventEmitter();
 
@@ -142,6 +145,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     };
     model: number[];
     title: string;
+    _keyId: string = 'id';
     differ: any;
     numSelected: number = 0;
     isVisible: boolean = false;
@@ -179,6 +183,13 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
         this.title = this.texts.defaultTitle;
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+      const change = changes['keyId'];
+      if (change) {
+        this._keyId = change.currentValue;
+      }
+    }
+
     writeValue(value: any): void {
         if (value !== undefined) {
             this.model = value;
@@ -213,22 +224,22 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
 
     isSelected(option: IMultiSelectOption): boolean {
-        return this.model && this.model.indexOf(option.id) > -1;
+        return this.model && this.model.indexOf(option[this._keyId]) > -1;
     }
 
     setSelected(event: Event, option: IMultiSelectOption) {
         if (!this.model) {
             this.model = [];
         }
-        var index = this.model.indexOf(option.id);
+        var index = this.model.indexOf(option[this._keyId]);
         if (index > -1) {
             this.model.splice(index, 1);
         } else {
             if (this.settings.selectionLimit === 0 || this.model.length < this.settings.selectionLimit) {
-                this.model.push(option.id);
+                this.model.push(option[this._keyId]);
             } else {
                 if (this.settings.autoUnselect) {
-                    this.model.push(option.id);
+                    this.model.push(option[this._keyId]);
                     this.model.shift();
                 } else {
                     this.selectionLimitReached.emit(this.model.length);
@@ -251,7 +262,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
             this.title = this.texts.defaultTitle;
         } else if (this.settings.dynamicTitleMaxItems >= this.numSelected) {
             this.title = this.options
-                .filter((option: IMultiSelectOption) => this.model && this.model.indexOf(option.id) > -1)
+                .filter((option: IMultiSelectOption) => this.model && this.model.indexOf(option[this._keyId]) > -1)
                 .map((option: IMultiSelectOption) => option.name)
                 .join(', ');
         } else {
@@ -260,7 +271,7 @@ export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccesso
     }
 
     checkAll() {
-        this.model = this.options.map(option => option.id);
+        this.model = this.options.map(option => option[this._keyId]);
         this.onModelChange(this.model);
     }
 
