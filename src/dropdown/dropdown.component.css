@@ -5,3 +5,9 @@ a {
 .dropdown-inline {
   display: inline-block;
 }
+
+.dropdown-toggle .caret {
+  margin-left: 4px;
+  white-space: nowrap;
+  display: inline-block;
+}
