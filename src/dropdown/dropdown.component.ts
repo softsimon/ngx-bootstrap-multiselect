@@ -230,6 +230,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
     if (this.settings.closeOnSelect) {
       this.toggleDropdown();
     }
+    this.model = this.model.slice();
     this.onModelChange(this.model);
     this.onModelTouched();
   }
