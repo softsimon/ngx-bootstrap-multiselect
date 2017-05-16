@@ -182,6 +182,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   setSelected(_event: Event, option: IMultiSelectOption) {
+    _event.stopPropagation();
     if (!this.model) {
       this.model = [];
     }
