@@ -39,6 +39,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
   @Input() disabled: boolean = false;
+  @Input() defaultModel: Array<number>
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
   @Output() dropdownOpened = new EventEmitter();
@@ -106,6 +107,15 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   ngOnInit() {
+    this.setConfigurations()
+  }
+
+  ngOnChanges() {
+    this.setConfigurations()
+  }
+
+  setConfigurations() {
+    this.model = this.defaultModel
     this.settings = Object.assign(this.defaultSettings, this.settings);
     this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle || '';
