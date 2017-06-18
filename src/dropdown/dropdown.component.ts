@@ -117,6 +117,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
       this.parents = this.options
         .filter(option => typeof option.parentId === 'number')
         .map(option => option.parentId);
+      this.updateTitle();
     }
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
