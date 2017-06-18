@@ -16,11 +16,13 @@ import {
   Input,
   IterableDiffers,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validator, FormControl } from '@angular/forms';
+import { Subject } from 'rxjs/Rx';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -34,7 +36,7 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   styleUrls: ['./dropdown.component.css'],
   providers: [MULTISELECT_VALUE_ACCESSOR]
 })
-export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlValueAccessor, Validator {
+export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestroy, ControlValueAccessor, Validator {
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
@@ -61,17 +63,21 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
     }
   }
 
+  destroyed$ = new Subject<void>();
+
   model: any[];
   parents: any[];
   title: string;
   differ: any;
   numSelected: number = 0;
   isVisible: boolean = false;
-  searchFilterText: string = '';
+  renderItems = true;
 
   defaultSettings: IMultiSelectSettings = {
     pullRight: false,
     enableSearch: false,
+    searchRenderLimit: 0,
+    searchRenderAfter: 3,
     checkedStyle: 'checkboxes',
     buttonClasses: 'btn btn-default btn-secondary',
     containerClasses: 'dropdown-inline',
@@ -90,11 +96,28 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
     checked: 'checked',
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
+    saerchEmptyResult: 'Nothing found...',
+    searchNoRenderText: 'Type in search box to see results...',
     defaultTitle: 'Select',
     allSelected: 'All selected',
   };
 
+  filterControl: FormControl = this.fb.control('');
+
+  get searchLimit() {
+    return this.settings.searchRenderLimit;
+  }
+
+  get searchRenderAfter() {
+    return this.settings.searchRenderAfter;
+  }
+
+  get searchLimitApplied() {
+    return this.searchLimit > 0 && this.options.length > this.searchLimit;
+  }
+
   constructor(private element: ElementRef,
+    private fb: FormBuilder,
     differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
   }
@@ -109,6 +132,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
     this.settings = Object.assign(this.defaultSettings, this.settings);
     this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle || '';
+
+    this.filterControl.valueChanges
+      .takeUntil(this.destroyed$)
+      .subscribe(() => this.updateRenderItems());
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -117,11 +144,20 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
       this.parents = this.options
         .filter(option => typeof option.parentId === 'number')
         .map(option => option.parentId);
+      this.updateRenderItems();
     }
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
       this.updateTitle();
     }
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next();
+  }
+
+  updateRenderItems() {
+    this.renderItems = !this.searchLimitApplied || this.filterControl.value.length >= this.searchRenderAfter;
   }
 
   onModelChange: Function = (_: any) => { };
@@ -169,7 +205,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
 
   clearSearch(event: Event) {
     event.stopPropagation();
-    this.searchFilterText = '';
+    this.filterControl.setValue('');
   }
 
   toggleDropdown() {
@@ -260,12 +296,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   searchFilterApplied() {
-    return this.settings.enableSearch && this.searchFilterText && this.searchFilterText.length > 0;
+    return this.settings.enableSearch && this.filterControl.value && this.filterControl.value.length > 0;
   }
 
   checkAll() {
     let checkedOptions = (!this.searchFilterApplied() ? this.options :
-      (new MultiSelectSearchFilter()).transform(this.options, this.searchFilterText))
+      (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value))
       .filter((option: IMultiSelectOption) => {
         if (this.model.indexOf(option.id) === -1) {
           this.onAdded.emit(option.id);
@@ -280,7 +316,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
 
   uncheckAll() {
     let unCheckedOptions = (!this.searchFilterApplied() ? this.model
-      : (new MultiSelectSearchFilter()).transform(this.options, this.searchFilterText).map((option: IMultiSelectOption) => option.id)
+      : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
     );
     this.model = this.model.filter((id: number) => {
       if (unCheckedOptions.indexOf(id) < 0) {
