@@ -123,6 +123,8 @@ myOptions: IMultiSelectOption[] = [
 | dynamicTitleMaxItems | The maximum number of options to display in the dynamic title      | 3                 |
 | maxHeight            | The maximum height for the dropdown (including unit)               | '300px'           |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected    | false             |
+| searchRenderLimit    | If `enableSearch=true` and total amount of items more then `searchRenderLimit` (0 - No limit) then render items only when user typed more then or equal `searchRenderAfter` charachters    | 0             |
+| searchRenderAfter    | Amount of characters to trigger rendering of items                 | 3                 |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |
@@ -134,6 +136,8 @@ myOptions: IMultiSelectOption[] = [
 | searchPlaceholder     | Text initially displayed in search input   | 'Search...'       |
 | defaultTitle          | Title displayed in button before selection | 'Select'          |
 | allSelected           | Text displayed when all items are selected (must be enabled in options) | 'All selected' |
+| saerchEmptyResult     | Text displayed when no items are rendered  | 'Nothing found...' |
+| searchNoRenderText    | Text displayed when items rendering disabled by the `searchRenderLimit` option | 'Type in search box to see results...' |
 
 ## Other examples
 
