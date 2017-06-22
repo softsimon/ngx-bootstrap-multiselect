@@ -22,6 +22,7 @@ export interface IMultiSelectSettings {
   dynamicTitleMaxItems?: number;
   maxHeight?: string;
   displayAllSelectedText?: boolean;
+  disableSelection?: boolean;
 }
 
 export interface IMultiSelectTexts {
