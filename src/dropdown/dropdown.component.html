@@ -13,19 +13,19 @@
       </div>
     </li>
     <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
-    <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !settings.disableSelection">
+    <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection">
       <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome','fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
         {{ texts.checkAll }}
       </a>
     </li>
-    <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !settings.disableSelection">
+    <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !disabledSelection">
       <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome','fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
         {{ texts.uncheckAll }}
       </a>
     </li>
-    <li *ngIf="(settings.showCheckAll || settings.showUncheckAll) && !settings.disableSelection" class="dropdown-divider divider"></li>
+    <li *ngIf="(settings.showCheckAll || settings.showUncheckAll) && !disabledSelection" class="dropdown-divider divider"></li>
     <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of options | searchFilter:searchFilterText"
         (click)="!option.isLabel && setSelected($event, option)" [class.dropdown-header]="option.isLabel">
       <ng-template [ngIf]="option.isLabel">{{ option.name }}</ng-template>

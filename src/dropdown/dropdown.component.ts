@@ -39,6 +39,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
   @Input() disabled: boolean = false;
+  @Input() disabledSelection: false;
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
   @Output() dropdownOpened = new EventEmitter();
@@ -82,8 +83,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
     showUncheckAll: false,
     fixedTitle: false,
     dynamicTitleMaxItems: 3,
-    maxHeight: '300px',
-    disableSelection: false
+    maxHeight: '300px'
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -107,7 +107,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   getItemStyleSelectionDisabled(): any {
-    if (this.settings.disableSelection) {
+    if (this.disabledSelection) {
       return {'cursor': 'default'};
     }
   }
@@ -193,7 +193,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   setSelected(_event: Event, option: IMultiSelectOption) {
-    if (!this.settings.disableSelection) {
+    if (!this.disabledSelection) {
       _event.stopPropagation();
       if (!this.model) {
         this.model = [];
@@ -277,7 +277,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   checkAll() {
-    if (!this.settings.disableSelection) {
+    if (!this.disabledSelection) {
       let checkedOptions = (!this.searchFilterApplied() ? this.options :
         (new MultiSelectSearchFilter()).transform(this.options, this.searchFilterText))
         .filter((option: IMultiSelectOption) => {
@@ -294,7 +294,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   uncheckAll() {
-    if (!this.settings.disableSelection) {
+    if (!this.disabledSelection) {
       let unCheckedOptions = (!this.searchFilterApplied() ? this.model
           : (new MultiSelectSearchFilter()).transform(this.options, this.searchFilterText).map((option: IMultiSelectOption) => option.id)
       );
@@ -321,7 +321,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, ControlV
   }
 
   isCheckboxDisabled(): boolean {
-    return this.settings.disableSelection;
+    return this.disabledSelection;
   }
 
 }

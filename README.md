@@ -123,7 +123,6 @@ myOptions: IMultiSelectOption[] = [
 | dynamicTitleMaxItems | The maximum number of options to display in the dynamic title      | 3                 |
 | maxHeight            | The maximum height for the dropdown (including unit)               | '300px'           |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected     | false             |
-| disableSelection       | Allow to disable selection of items                              | false             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |
