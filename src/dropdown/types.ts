@@ -21,7 +21,7 @@ export interface IMultiSelectSettings {
   fixedTitle?: boolean;
   dynamicTitleMaxItems?: number;
   maxHeight?: string;
-  displayAllSelectedText?: boolean;
+  displayAllSelectedText?: boolean
 }
 
 export interface IMultiSelectTexts {
