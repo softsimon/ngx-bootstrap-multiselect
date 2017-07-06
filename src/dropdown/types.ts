@@ -9,6 +9,16 @@ export interface IMultiSelectOption {
 export interface IMultiSelectSettings {
   pullRight?: boolean;
   enableSearch?: boolean;
+  /**
+   * 0 - By default
+   * If `enableSearch=true` and total amount of items more then `searchRenderLimit` (0 - No limit)
+   * then render items only when user typed more then or equal `searchRenderAfter` charachters
+   */
+  searchRenderLimit?: number;
+  /**
+   * 3 - By default
+   */
+  searchRenderAfter?: number;
   checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
   buttonClasses?: string;
   itemClasses?: string;
@@ -30,6 +40,8 @@ export interface IMultiSelectTexts {
   checked?: string;
   checkedPlural?: string;
   searchPlaceholder?: string;
+  saerchEmptyResult?: string;
+  searchNoRenderText?: string;
   defaultTitle?: string;
   allSelected?: string;
 }
