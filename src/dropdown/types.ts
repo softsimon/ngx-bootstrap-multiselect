@@ -19,6 +19,11 @@ export interface IMultiSelectSettings {
    * 3 - By default
    */
   searchRenderAfter?: number;
+  /**
+   * 0 - By default
+   * If >0 will render only N first items
+   */
+  searchMaxRenderedItems?: number;
   checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
   buttonClasses?: string;
   itemClasses?: string;

@@ -125,6 +125,7 @@ myOptions: IMultiSelectOption[] = [
 | displayAllSelectedText | Display the `allSelected` text when all options are selected    | false             |
 | searchRenderLimit    | If `enableSearch=true` and total amount of items more then `searchRenderLimit` (0 - No limit) then render items only when user typed more then or equal `searchRenderAfter` charachters    | 0             |
 | searchRenderAfter    | Amount of characters to trigger rendering of items                 | 3                 |
+| searchMaxRenderedItems | If more than zero will render only first N options in search results | 0             |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected     | false             |
 
 ### Texts
