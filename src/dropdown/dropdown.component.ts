@@ -153,7 +153,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         .filter(option => typeof option.parentId === 'number')
         .map(option => option.parentId);
       this.updateRenderItems();
-      this.updateTitle();
+
+      if (this.texts) {
+        this.updateTitle();
+      }
     }
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
