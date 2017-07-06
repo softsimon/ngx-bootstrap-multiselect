@@ -117,14 +117,15 @@ myOptions: IMultiSelectOption[] = [
 | selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
 | autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
 | closeOnSelect        | If enabled, dropdown will be closed after selection                | false             |
-| showCheckAll         | Display the `checkAll` item to select all options                   | false             |
-| showUncheckAll       | Display the `uncheckAll` item to unselect all options               | false             |
+| showCheckAll         | Display the `checkAll` item to select all options                  | false             |
+| showUncheckAll       | Display the `uncheckAll` item to unselect all options              | false             |
 | fixedTitle           | Use the default title (do not apply the dynamic title)             | false             |
 | dynamicTitleMaxItems | The maximum number of options to display in the dynamic title      | 3                 |
 | maxHeight            | The maximum height for the dropdown (including unit)               | '300px'           |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected    | false             |
 | searchRenderLimit    | If `enableSearch=true` and total amount of items more then `searchRenderLimit` (0 - No limit) then render items only when user typed more then or equal `searchRenderAfter` charachters    | 0             |
 | searchRenderAfter    | Amount of characters to trigger rendering of items                 | 3                 |
+| displayAllSelectedText | Display the `allSelected` text when all options are selected     | false             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |
