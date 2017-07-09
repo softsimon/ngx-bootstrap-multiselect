@@ -5,28 +5,60 @@ import { IMultiSelectOption } from './types';
   name: 'searchFilter'
 })
 export class MultiSelectSearchFilter implements PipeTransform {
-  transform(options: Array<IMultiSelectOption>, args: string, limit = 0): Array<IMultiSelectOption> {
-    const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
+
+  private _lastOptions: IMultiSelectOption[];
+  private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
+
+  transform(options: Array<IMultiSelectOption>, str: string, limit = 0): Array<IMultiSelectOption> {
+    str = (str || '').toLowerCase();
+
+    if (options !== this._lastOptions) {
+      this._searchCache = {}; // Drop cache because options were updated
+    }
+
+    if (this._searchCache[str]) {
+      return this._searchCache[str];
+    }
+
+    const optsLength = options.length;
+    const maxFound = limit > 0 ? Math.min(limit, optsLength) : optsLength;
+    const filteredOpts = [];
+
+    const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().includes(str),
       getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
       getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
 
-    let founded = 0, stopped = false;
-    const opts = options.filter((option: IMultiSelectOption) => {
-      if (stopped) {
-        return false;
+    for (let i = 0, founded = 0; i < optsLength && founded < maxFound; ++i) {
+      const option = options[i];
+      const directMatch = option.name.toLowerCase().includes(str);
+
+      if (directMatch) {
+        filteredOpts.push(option);
+        founded++;
+        continue;
       }
 
-      const found = matchPredicate(option) ||
-        (typeof (option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
-        (typeof (option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
+      if (typeof (option.parentId) === 'undefined') {
+        const childrenMatch = getChildren(option).some(matchPredicate);
 
-      if (found && ++founded === limit) {
-        stopped = true;
+        if (childrenMatch) {
+          filteredOpts.push(option);
+          founded++;
+          continue;
+        }
       }
 
-      return found;
-    });
+      if (typeof (option.parentId) !== 'undefined') {
+        const parentMatch = matchPredicate(getParent(option));
 
-    return opts;
+        if (parentMatch) {
+          filteredOpts.push(option);
+          founded++;
+          continue;
+        }
+      }
+    }
+
+    return this._searchCache[str] = filteredOpts;
   }
 }
