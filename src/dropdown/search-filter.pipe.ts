@@ -75,6 +75,6 @@ export class MultiSelectSearchFilter implements PipeTransform {
     this._searchCache[str] = filteredOpts;
     this._searchCacheInclusive[str] = i === optsLength;
 
-    return renderLimit > maxFound ? filteredOpts.slice(0, renderLimit) : filteredOpts;
+    return founded > renderLimit ? filteredOpts.slice(0, renderLimit) : filteredOpts;
   }
 }
