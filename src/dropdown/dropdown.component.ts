@@ -79,6 +79,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     enableSearch: false,
     searchRenderLimit: 0,
     searchRenderAfter: 3,
+    searchMaxLimit: 0,
     searchMaxRenderedItems: 0,
     checkedStyle: 'checkboxes',
     buttonClasses: 'btn btn-default btn-secondary',

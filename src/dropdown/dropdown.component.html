@@ -26,7 +26,7 @@
     </li>
     <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
     <ng-template [ngIf]="renderItems" [ngIfElse]="noRenderBlock">
-      <ng-template [ngIf]="options | searchFilter:filterControl.value:settings.searchMaxRenderedItems" let-filteredOptions>
+      <ng-template [ngIf]="options | searchFilter:filterControl.value:settings.searchMaxLimit:settings.searchMaxRenderedItems" let-filteredOptions>
         <li *ngIf="!filteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
         <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" (click)="!option.isLabel && setSelected($event, option)"
           [class.dropdown-header]="option.isLabel">

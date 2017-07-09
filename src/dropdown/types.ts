@@ -23,6 +23,12 @@ export interface IMultiSelectSettings {
    * 0 - By default
    * If >0 will render only N first items
    */
+  searchMaxLimit?: number;
+  /**
+   * 0 - By default
+   * Used with searchMaxLimit to further limit rendering for optimization
+   * Should be less than searchMaxLimit to take effect
+   */
   searchMaxRenderedItems?: number;
   checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
   buttonClasses?: string;

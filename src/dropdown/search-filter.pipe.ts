@@ -10,7 +10,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
   private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
   private _searchCacheInclusive: { [k: string]: boolean } = {};
 
-  transform(options: Array<IMultiSelectOption>, str: string, limit = 0): Array<IMultiSelectOption> {
+  transform(options: Array<IMultiSelectOption>, str: string, limit = 0, renderLimit = 0): Array<IMultiSelectOption> {
     str = (str || '').toLowerCase();
 
     // Drop cache because options were updated
@@ -72,7 +72,9 @@ export class MultiSelectSearchFilter implements PipeTransform {
       }
     }
 
+    this._searchCache[str] = filteredOpts;
     this._searchCacheInclusive[str] = i === optsLength;
-    return this._searchCache[str] = filteredOpts;
+
+    return renderLimit > maxFound ? filteredOpts.slice(0, renderLimit) : filteredOpts;
   }
 }
