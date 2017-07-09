@@ -8,7 +8,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
   private _lastOptions: IMultiSelectOption[];
   private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
-  private _searchCacheInclusive: { [k: string]: boolean } = {};
+  private _searchCacheInclusive: { [k: string]: boolean | number } = {};
 
   transform(options: Array<IMultiSelectOption>, str: string, limit = 0, renderLimit = 0): Array<IMultiSelectOption> {
     str = (str || '').toLowerCase();
@@ -27,9 +27,16 @@ export class MultiSelectSearchFilter implements PipeTransform {
     const prevStr = str.slice(0, -1);
     const prevResults = this._searchCache[prevStr];
 
-    // If have previous results and it was inclusive, do only subsearch
-    if (prevResults && this._searchCacheInclusive[prevStr]) {
-      options = prevResults;
+    if (prevResults) {
+      const prevInclusiveOrIdx = this._searchCacheInclusive[prevStr];
+
+      if (prevInclusiveOrIdx === true) {
+        // If have previous results and it was inclusive, do only subsearch
+        options = prevResults;
+      } else if (typeof prevInclusiveOrIdx === 'number') {
+        // Or reuse prev results with unchecked ones
+        options = [...prevResults, ...options.slice(prevInclusiveOrIdx)];
+      }
     }
 
     const optsLength = options.length;
@@ -75,7 +82,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
     }
 
     this._searchCache[str] = filteredOpts;
-    this._searchCacheInclusive[str] = i === optsLength;
+    this._searchCacheInclusive[str] = i === optsLength || i + 1;
 
     return this._limitRenderedItems(filteredOpts, renderLimit);
   }
