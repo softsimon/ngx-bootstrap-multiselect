@@ -6,6 +6,9 @@ import { IMultiSelectOption } from './types';
 })
 export class MultiSelectSearchFilter implements PipeTransform {
 
+  private static FULL_SEARCH = String.prototype.includes;
+  private static FAST_SEARCH = String.prototype.startsWith;
+
   private _lastOptions: IMultiSelectOption[];
   private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
   private _searchCacheInclusive: { [k: string]: boolean } = {};
@@ -36,14 +39,19 @@ export class MultiSelectSearchFilter implements PipeTransform {
     const maxFound = limit > 0 ? Math.min(limit, optsLength) : optsLength;
     const filteredOpts = [];
 
-    const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().includes(str),
+    // Use fast search when too much options and is more then one character
+    // Otherwise full search
+    const searchFn = optsLength > limit && str.length > 1
+      ? MultiSelectSearchFilter.FAST_SEARCH : MultiSelectSearchFilter.FULL_SEARCH;
+
+    const matchPredicate = (option: IMultiSelectOption) => searchFn.call(option.name.toLowerCase(), str),
       getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
       getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
 
     let i = 0, founded = 0;
     for (; i < optsLength && founded < maxFound; ++i) {
       const option = options[i];
-      const directMatch = option.name.toLowerCase().includes(str);
+      const directMatch = searchFn.call(option.name.toLowerCase(), str);
 
       if (directMatch) {
         filteredOpts.push(option);
