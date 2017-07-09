@@ -24,10 +24,11 @@ export class MultiSelectSearchFilter implements PipeTransform {
       return this._searchCache[str];
     }
 
-    const prevResults = this._searchCache[str.slice(0, -1)];
+    const prevStr = str.slice(0, -1);
+    const prevResults = this._searchCache[prevStr];
 
     // If have previous results and it was inclusive, do only subsearch
-    if (prevResults && this._searchCacheInclusive[str]) {
+    if (prevResults && this._searchCacheInclusive[prevStr]) {
       options = prevResults;
     }
 
