@@ -10,12 +10,23 @@ export class MultiSelectSearchFilter implements PipeTransform {
       getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
       getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
 
+    let founded = 0, stopped = false;
     const opts = options.filter((option: IMultiSelectOption) => {
-      return matchPredicate(option) ||
+      if (stopped) {
+        return false;
+      }
+
+      const found = matchPredicate(option) ||
         (typeof (option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
         (typeof (option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
+
+      if (found && ++founded === limit) {
+        stopped = true;
+      }
+
+      return found;
     });
 
-    return limit > 0 && args ? opts.slice(0, limit) : opts;
+    return opts;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "angular-2-dropdown-multiselect",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Customizable dropdown multiselect in Angular 2 with bootstrap css.",
   "main": "dist/bundles/dropdown.umd.js",
   "module": "dist/index.js",
