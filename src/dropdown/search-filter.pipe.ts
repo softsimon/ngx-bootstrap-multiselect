@@ -8,13 +8,16 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
   private _lastOptions: IMultiSelectOption[];
   private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
+  private _searchCacheInclusive: { [k: string]: boolean } = {};
 
   transform(options: Array<IMultiSelectOption>, str: string, limit = 0): Array<IMultiSelectOption> {
     str = (str || '').toLowerCase();
 
     // Drop cache because options were updated
     if (options !== this._lastOptions) {
+      this._lastOptions = options;
       this._searchCache = {};
+      this._searchCacheInclusive = {};
     }
 
     if (this._searchCache[str]) {
@@ -23,8 +26,8 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
     const prevResults = this._searchCache[str.slice(0, -1)];
 
-    // If have previous results, do only subsearch
-    if (prevResults) {
+    // If have previous results and it was inclusive, do only subsearch
+    if (prevResults && this._searchCacheInclusive[str]) {
       options = prevResults;
     }
 
@@ -36,7 +39,8 @@ export class MultiSelectSearchFilter implements PipeTransform {
       getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
       getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
 
-    for (let i = 0, founded = 0; i < optsLength && founded < maxFound; ++i) {
+    let i = 0, founded = 0;
+    for (; i < optsLength && founded < maxFound; ++i) {
       const option = options[i];
       const directMatch = option.name.toLowerCase().includes(str);
 
@@ -67,6 +71,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
       }
     }
 
+    this._searchCacheInclusive[str] = i === optsLength;
     return this._searchCache[str] = filteredOpts;
   }
 }
