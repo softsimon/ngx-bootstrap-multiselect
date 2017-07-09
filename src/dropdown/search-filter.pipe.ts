@@ -21,7 +21,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
     }
 
     if (this._searchCache[str]) {
-      return this._searchCache[str];
+      return this._limitRenderedItems(this._searchCache[str], renderLimit);
     }
 
     const prevStr = str.slice(0, -1);
@@ -75,6 +75,10 @@ export class MultiSelectSearchFilter implements PipeTransform {
     this._searchCache[str] = filteredOpts;
     this._searchCacheInclusive[str] = i === optsLength;
 
-    return founded > renderLimit ? filteredOpts.slice(0, renderLimit) : filteredOpts;
+    return this._limitRenderedItems(filteredOpts, renderLimit);
+  }
+
+  private _limitRenderedItems<T>(items: T[], limit: number): T[] {
+    return items.length > limit ? items.slice(0, limit) : items;
   }
 }
