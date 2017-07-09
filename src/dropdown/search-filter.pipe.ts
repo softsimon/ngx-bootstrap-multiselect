@@ -12,12 +12,20 @@ export class MultiSelectSearchFilter implements PipeTransform {
   transform(options: Array<IMultiSelectOption>, str: string, limit = 0): Array<IMultiSelectOption> {
     str = (str || '').toLowerCase();
 
+    // Drop cache because options were updated
     if (options !== this._lastOptions) {
-      this._searchCache = {}; // Drop cache because options were updated
+      this._searchCache = {};
     }
 
     if (this._searchCache[str]) {
       return this._searchCache[str];
+    }
+
+    const prevResults = this._searchCache[str.slice(0, -1)];
+
+    // If have previous results, do only subsearch
+    if (prevResults) {
+      options = prevResults;
     }
 
     const optsLength = options.length;
