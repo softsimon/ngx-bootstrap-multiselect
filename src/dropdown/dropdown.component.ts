@@ -121,6 +121,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     private fb: FormBuilder,
     differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
+    this.settings = this.defaultSettings;
+    this.texts = this.defaultTexts;
   }
 
   getItemStyle(option: IMultiSelectOption): any {
