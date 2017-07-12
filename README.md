@@ -15,7 +15,7 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 * [Download the latest release](https://github.com/softsimon/angular-2-dropdown-multiselect/releases).
 * Clone the repo: `git clone https://github.com/softsimon/angular-2-dropdown-multiselect.git`.
 * Install with [Bower](http://bower.io): `bower install angular-2-dropdown-multiselect --save`.
-* Install with [npm](https://www.npmjs.com): `npm install angular-2-dropdown-multiselect --save-dev`.
+* Install with [npm](https://www.npmjs.com): `npm install angular-2-dropdown-multiselect --save`.
 
 ## Usage
 
