@@ -123,6 +123,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     private fb: FormBuilder,
     differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
+    this.settings = this.defaultSettings;
+    this.texts = this.defaultTexts;
   }
 
   getItemStyle(option: IMultiSelectOption): any {
@@ -155,7 +157,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         .filter(option => typeof option.parentId === 'number')
         .map(option => option.parentId);
       this.updateRenderItems();
-      this.updateTitle();
+
+      if (this.texts) {
+        this.updateTitle();
+      }
     }
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
@@ -291,9 +296,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   updateTitle() {
     if (this.numSelected === 0 || this.settings.fixedTitle) {
-      this.title = this.texts.defaultTitle || '';
+      this.title = (this.texts) ? this.texts.defaultTitle : '';
     } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
-      this.title = this.texts.allSelected || '';
+      this.title = (this.texts) ? this.texts.allSelected : '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
         .filter((option: IMultiSelectOption) =>
