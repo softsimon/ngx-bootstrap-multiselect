@@ -24,6 +24,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
       return this._limitRenderedItems(this._searchCache[str], renderLimit);
     }
 
+    const isUnderLimit = options.length <= limit;
     const prevStr = str.slice(0, -1);
     const prevResults = this._searchCache[prevStr];
 
@@ -84,7 +85,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
     this._searchCache[str] = filteredOpts;
     this._searchCacheInclusive[str] = i === optsLength || i + 1;
 
-    return this._limitRenderedItems(filteredOpts, renderLimit);
+    return isUnderLimit ? filteredOpts : this._limitRenderedItems(filteredOpts, renderLimit);
   }
 
   private _limitRenderedItems<T>(items: T[], limit: number): T[] {
