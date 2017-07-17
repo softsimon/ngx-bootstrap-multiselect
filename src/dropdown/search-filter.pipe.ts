@@ -20,11 +20,12 @@ export class MultiSelectSearchFilter implements PipeTransform {
       this._searchCacheInclusive = {};
     }
 
+    const isUnderLimit = options.length <= limit;
+
     if (this._searchCache[str]) {
-      return this._limitRenderedItems(this._searchCache[str], renderLimit);
+      return isUnderLimit ? this._searchCache[str] : this._limitRenderedItems(this._searchCache[str], renderLimit);
     }
 
-    const isUnderLimit = options.length <= limit;
     const prevStr = str.slice(0, -1);
     const prevResults = this._searchCache[prevStr];
 
