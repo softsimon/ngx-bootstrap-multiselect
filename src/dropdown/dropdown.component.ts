@@ -4,8 +4,7 @@
  * Simon Lindh
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
-import { MultiSelectSearchFilter } from './search-filter.pipe';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
+
 import {
   Component,
   DoCheck,
@@ -21,8 +20,19 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validator, FormControl } from '@angular/forms';
-import { Subject } from 'rxjs/Rx';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormBuilder,
+  FormControl,
+  NG_VALUE_ACCESSOR,
+  Validator,
+} from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
+import { MultiSelectSearchFilter } from './search-filter.pipe';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -37,6 +47,9 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   providers: [MULTISELECT_VALUE_ACCESSOR]
 })
 export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestroy, ControlValueAccessor, Validator {
+
+  filterControl: FormControl = this.fb.control('');
+
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
@@ -47,6 +60,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @Output() dropdownOpened = new EventEmitter();
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
+  @Output() onFilter: Observable<string> = this.filterControl.valueChanges;
 
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
@@ -64,7 +78,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     }
   }
 
-  destroyed$ = new Subject<void>();
+  destroyed$ = new Subject<any>();
 
   model: any[];
   parents: any[];
@@ -105,8 +119,6 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     allSelected: 'All selected',
   };
 
-  filterControl: FormControl = this.fb.control('');
-
   get searchLimit() {
     return this.settings.searchRenderLimit;
   }
@@ -129,13 +141,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   getItemStyle(option: IMultiSelectOption): any {
     if (!option.isLabel) {
-      return {'cursor': 'pointer'};
+      return { 'cursor': 'pointer' };
     }
   }
 
   getItemStyleSelectionDisabled(): any {
     if (this.disabledSelection) {
-      return {'cursor': 'default'};
+      return { 'cursor': 'default' };
     }
   }
 
@@ -337,7 +349,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   uncheckAll() {
     if (!this.disabledSelection) {
       let unCheckedOptions = (!this.searchFilterApplied() ? this.model
-          : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
+        : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
         if (unCheckedOptions.indexOf(id) < 0) {
