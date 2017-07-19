@@ -5,28 +5,30 @@
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
 
+ import 'rxjs/add/operator/takeUntil';
+
 import {
-  Component,
-  DoCheck,
-  ElementRef,
-  EventEmitter,
-  forwardRef,
-  HostListener,
-  Input,
-  IterableDiffers,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
+    Component,
+    DoCheck,
+    ElementRef,
+    EventEmitter,
+    forwardRef,
+    HostListener,
+    Input,
+    IterableDiffers,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
 } from '@angular/core';
 import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormBuilder,
-  FormControl,
-  NG_VALUE_ACCESSOR,
-  Validator,
+    AbstractControl,
+    ControlValueAccessor,
+    FormBuilder,
+    FormControl,
+    NG_VALUE_ACCESSOR,
+    Validator,
 } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
