@@ -1,6 +1,9 @@
 <div class="dropdown" [ngClass]="settings.containerClasses" [class.open]="isVisible">
   <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" (click)="toggleDropdown()" [disabled]="disabled">{{ title }}<span class="caret"></span></button>
-  <ul *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
+  <ul #scroller *ngIf="isVisible" class="dropdown-menu"
+      (scroll)="settings.isLazyLoad ? checkScrollPosition($event) : null"
+      (wheel)="settings.stopScrollPropagation ? checkScrollPropagation($event, scroller) : null"
+      [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
       [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
     <li class="dropdown-item search" *ngIf="settings.enableSearch">
       <div class="input-group input-group-sm">
@@ -26,7 +29,7 @@
     </li>
     <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
     <ng-template [ngIf]="renderItems" [ngIfElse]="noRenderBlock">
-      <ng-template [ngIf]="options | searchFilter:filterControl.value" let-filteredOptions>
+      <ng-template [ngIf]="options | searchFilter:(!settings.isLazyLoad ? filterControl.value : '')" let-filteredOptions>
         <li *ngIf="!filteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
         <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" (click)="!option.isLabel && setSelected($event, option)"
           [class.dropdown-header]="option.isLabel">

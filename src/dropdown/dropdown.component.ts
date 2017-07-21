@@ -47,6 +47,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @Output() dropdownOpened = new EventEmitter();
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
+  @Output() onLazyLoad = new EventEmitter();
 
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
@@ -89,7 +90,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     showUncheckAll: false,
     fixedTitle: false,
     dynamicTitleMaxItems: 3,
-    maxHeight: '300px'
+    maxHeight: '300px',
+    isLazyLoad: true,
+    stopScrollPropagation: true,
+    loadViewDistance: 1
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -136,14 +140,19 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
 
-  ngOnInit() {console.log("in copy")
+  ngOnInit() {
     this.settings = Object.assign(this.defaultSettings, this.settings);
     this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle || '';
 
     this.filterControl.valueChanges
       .takeUntil(this.destroyed$)
-      .subscribe(() => this.updateRenderItems());
+      .subscribe(function() {
+        this.updateRenderItems();
+        if (this.settings.isLazyLoad) {
+          this.load();
+        }
+      }.bind(this));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -359,6 +368,35 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   isCheckboxDisabled(): boolean {
     return this.disabledSelection;
+  }
+
+  checkScrollPosition(ev) {
+    let scrollTop = ev.target.scrollTop;
+    let scrollHeight = ev.target.scrollHeight;
+    let scrollElementHeight = ev.target.clientHeight;
+
+    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance)*scrollElementHeight - 2) {
+      this.load();
+    }
+  }
+
+  checkScrollPropagation(ev, element) {
+    let scrollTop = element.scrollTop;
+    let scrollHeight = element.scrollHeight;
+    let scrollElementHeight = element.clientHeight;
+
+    if ((ev.deltaY > 0 && scrollTop + scrollElementHeight >= scrollHeight) || (ev.deltaY < 0 && scrollTop <= 0)) {
+      ev = ev || window.event;
+      ev.preventDefault && ev.preventDefault();
+      ev.returnValue = false;
+    }
+  }
+
+  load() {
+    this.onLazyLoad.emit({
+      length: this.options.length,
+      filter: this.filterControl.value
+    });
   }
 
 }
