@@ -36,6 +36,7 @@ export interface IMultiSelectSettings {
   itemClasses?: string;
   containerClasses?: string;
   selectionLimit?: number;
+  minSelectionLimit?: number;
   closeOnSelect?: boolean;
   autoUnselect?: boolean;
   showCheckAll?: boolean;
