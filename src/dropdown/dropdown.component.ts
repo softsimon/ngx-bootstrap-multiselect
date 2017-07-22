@@ -374,8 +374,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     let scrollTop = ev.target.scrollTop;
     let scrollHeight = ev.target.scrollHeight;
     let scrollElementHeight = ev.target.clientHeight;
+    let roundingPixel = 1;
+    let gutterPixel = 1;
 
-    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance)*scrollElementHeight - 2) {
+    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance)*scrollElementHeight - roundingPixel - gutterPixel) {
       this.load();
     }
   }
