@@ -4,6 +4,7 @@ export interface IMultiSelectOption {
   isLabel?: boolean;
   parentId?: any;
   params?: any;
+  classes?: string;
 }
 
 export interface IMultiSelectSettings {
