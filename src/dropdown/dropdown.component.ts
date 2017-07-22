@@ -86,6 +86,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     buttonClasses: 'btn btn-default btn-secondary',
     containerClasses: 'dropdown-inline',
     selectionLimit: 0,
+    minSelectionLimit: 0,
     closeOnSelect: false,
     autoUnselect: false,
     showCheckAll: false,
@@ -242,8 +243,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       }
       const index = this.model.indexOf(option.id);
       if (index > -1) {
-        this.model.splice(index, 1);
-        this.onRemoved.emit(option.id);
+        if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
+          this.model.splice(index, 1);
+          this.onRemoved.emit(option.id);
+        }
         const parentIndex = option.parentId && this.model.indexOf(option.parentId);
         if (parentIndex >= 0) {
           this.model.splice(parentIndex, 1);
@@ -341,7 +344,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
-        if (unCheckedOptions.indexOf(id) < 0) {
+        if (((unCheckedOptions_1.indexOf(id) < 0) && (_this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions_1.indexOf(id) < _this.settings.minSelectionLimit))) {
           return true;
         } else {
           this.onRemoved.emit(id);
