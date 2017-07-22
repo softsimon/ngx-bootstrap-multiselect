@@ -91,8 +91,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     fixedTitle: false,
     dynamicTitleMaxItems: 3,
     maxHeight: '300px',
-    isLazyLoad: true,
-    stopScrollPropagation: true,
+    isLazyLoad: false,
+    stopScrollPropagation: false,
     loadViewDistance: 1
   };
   defaultTexts: IMultiSelectTexts = {
