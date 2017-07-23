@@ -67,6 +67,11 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
     if (!this.isVisible) return;
+    if (!target && !this._workerDocClicked) {
+      this._workerDocClicked = true;
+      // We are in webworker and document click should be ignored
+      return;
+    }
     let parentFound = false;
     while (target != null && !parentFound) {
       if (target === this.element.nativeElement) {
@@ -87,7 +92,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   title: string;
   differ: any;
   numSelected: number = 0;
-  isVisible: boolean = false;
+  set isVisible(val: boolean) {
+    this._isVisible = val;
+    this._workerDocClicked = val ? false : this._workerDocClicked;
+  }
+  get isVisible() {
+    return this._isVisible;
+  }
   renderItems = true;
 
   defaultSettings: IMultiSelectSettings = {
@@ -132,6 +143,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   get searchLimitApplied() {
     return this.searchLimit > 0 && this.options.length > this.searchLimit;
   }
+
+  private _isVisible = false;
+  private _workerDocClicked = false;
 
   constructor(private element: ElementRef,
     private fb: FormBuilder,
