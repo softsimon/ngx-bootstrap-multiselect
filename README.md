@@ -15,7 +15,7 @@ See demo: http://softsimon.github.io/angular-2-dropdown-multiselect
 * [Download the latest release](https://github.com/softsimon/angular-2-dropdown-multiselect/releases).
 * Clone the repo: `git clone https://github.com/softsimon/angular-2-dropdown-multiselect.git`.
 * Install with [Bower](http://bower.io): `bower install angular-2-dropdown-multiselect --save`.
-* Install with [npm](https://www.npmjs.com): `npm install angular-2-dropdown-multiselect --save-dev`.
+* Install with [npm](https://www.npmjs.com): `npm install angular-2-dropdown-multiselect --save`.
 
 ## Usage
 
@@ -124,7 +124,9 @@ myOptions: IMultiSelectOption[] = [
 | maxHeight            | The maximum height for the dropdown (including unit)               | '300px'           |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected    | false             |
 | searchRenderLimit    | If `enableSearch=true` and total amount of items more then `searchRenderLimit` (0 - No limit) then render items only when user typed more then or equal `searchRenderAfter` charachters    | 0             |
-| searchRenderAfter    | Amount of characters to trigger rendering of items                 | 3                 |
+| searchRenderAfter    | Amount of characters to trigger rendering of items                 | 1                 |
+| searchMaxLimit       | If more than zero will render only first N options in search results | 0             |
+| searchMaxRenderedItems | Used with searchMaxLimit to further limit rendering for optimization. Should be less than searchMaxLimit to take effect | 0             |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected     | false             |
 
 ### Texts

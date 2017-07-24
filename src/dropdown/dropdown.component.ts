@@ -22,7 +22,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validator, FormControl } from '@angular/forms';
-import { Subject } from 'rxjs/Rx';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/takeUntil';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -79,11 +80,14 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     pullRight: false,
     enableSearch: false,
     searchRenderLimit: 0,
-    searchRenderAfter: 3,
+    searchRenderAfter: 1,
+    searchMaxLimit: 0,
+    searchMaxRenderedItems: 0,
     checkedStyle: 'checkboxes',
     buttonClasses: 'btn btn-default btn-secondary',
     containerClasses: 'dropdown-inline',
     selectionLimit: 0,
+    minSelectionLimit: 0,
     closeOnSelect: false,
     autoUnselect: false,
     showCheckAll: false,
@@ -125,6 +129,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     private fb: FormBuilder,
     differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
+    this.settings = this.defaultSettings;
+    this.texts = this.defaultTexts;
   }
 
   getItemStyle(option: IMultiSelectOption): any {
@@ -246,8 +252,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       }
       const index = this.model.indexOf(option.id);
       if (index > -1) {
-        this.model.splice(index, 1);
-        this.onRemoved.emit(option.id);
+        if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
+          this.model.splice(index, 1);
+          this.onRemoved.emit(option.id);
+        }
         const parentIndex = option.parentId && this.model.indexOf(option.parentId);
         if (parentIndex >= 0) {
           this.model.splice(parentIndex, 1);
@@ -301,9 +309,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   updateTitle() {
     if (this.numSelected === 0 || this.settings.fixedTitle) {
-      this.title = this.texts.defaultTitle || '';
+      this.title = (this.texts) ? this.texts.defaultTitle : '';
     } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
-      this.title = this.texts.allSelected || '';
+      this.title = (this.texts) ? this.texts.allSelected : '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
         .filter((option: IMultiSelectOption) =>
@@ -345,7 +353,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
-        if (unCheckedOptions.indexOf(id) < 0) {
+        if (((unCheckedOptions.indexOf(id) < 0) && (this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions.indexOf(id) < this.settings.minSelectionLimit))) {
           return true;
         } else {
           this.onRemoved.emit(id);
