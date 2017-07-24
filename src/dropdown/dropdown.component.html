@@ -28,7 +28,7 @@
     <ng-template [ngIf]="renderItems" [ngIfElse]="noRenderBlock">
       <ng-template [ngIf]="options | searchFilter:filterControl.value:settings.searchMaxLimit:settings.searchMaxRenderedItems" let-filteredOptions>
         <li *ngIf="!filteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
-        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" (click)="!option.isLabel && setSelected($event, option)"
+        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" (click)="setSelected($event, option)"
           [class.dropdown-header]="option.isLabel">
           <ng-template [ngIf]="option.isLabel">{{ option.name }}</ng-template>
           <a *ngIf="!option.isLabel" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'" [ngStyle]="getItemStyleSelectionDisabled()">
