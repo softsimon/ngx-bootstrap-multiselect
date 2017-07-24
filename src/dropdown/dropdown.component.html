@@ -31,7 +31,7 @@
         let-filteredOptions>
         <li *ngIf="!filteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
         <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" [class.dropdown-header]="option.isLabel">
-          <a *ngIf="!option.isLabel; else label" (click)="setSelected($event, option)" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
+          <span *ngIf="!option.isLabel; else label" (click)="setSelected($event, option)" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
             [ngStyle]="getItemStyleSelectionDisabled()">
             <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)" [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()"/>
             <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
@@ -41,7 +41,7 @@
             <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
               {{ option.name }}
             </span>
-          </a>
+          </span>
           <ng-template #label>{{ option.name }}</ng-template>
         </li>
       </ng-template>
