@@ -48,6 +48,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @Output() dropdownOpened = new EventEmitter();
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
+  @Output() onLazyLoad = new EventEmitter();
 
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
@@ -93,7 +94,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     showUncheckAll: false,
     fixedTitle: false,
     dynamicTitleMaxItems: 3,
-    maxHeight: '300px'
+    maxHeight: '300px',
+    isLazyLoad: false,
+    stopScrollPropagation: false,
+    loadViewDistance: 1
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -149,7 +153,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     this.filterControl.valueChanges
       .takeUntil(this.destroyed$)
-      .subscribe(() => this.updateRenderItems());
+      .subscribe(function() {
+        this.updateRenderItems();
+        if (this.settings.isLazyLoad) {
+          this.load();
+        }
+      }.bind(this));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -344,7 +353,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
-        if (((unCheckedOptions_1.indexOf(id) < 0) && (_this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions_1.indexOf(id) < _this.settings.minSelectionLimit))) {
+        if (((unCheckedOptions.indexOf(id) < 0) && (this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions.indexOf(id) < this.settings.minSelectionLimit))) {
           return true;
         } else {
           this.onRemoved.emit(id);
@@ -367,6 +376,37 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   isCheckboxDisabled(): boolean {
     return this.disabledSelection;
+  }
+
+  checkScrollPosition(ev) {
+    let scrollTop = ev.target.scrollTop;
+    let scrollHeight = ev.target.scrollHeight;
+    let scrollElementHeight = ev.target.clientHeight;
+    let roundingPixel = 1;
+    let gutterPixel = 1;
+
+    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance)*scrollElementHeight - roundingPixel - gutterPixel) {
+      this.load();
+    }
+  }
+
+  checkScrollPropagation(ev, element) {
+    let scrollTop = element.scrollTop;
+    let scrollHeight = element.scrollHeight;
+    let scrollElementHeight = element.clientHeight;
+
+    if ((ev.deltaY > 0 && scrollTop + scrollElementHeight >= scrollHeight) || (ev.deltaY < 0 && scrollTop <= 0)) {
+      ev = ev || window.event;
+      ev.preventDefault && ev.preventDefault();
+      ev.returnValue = false;
+    }
+  }
+
+  load() {
+    this.onLazyLoad.emit({
+      length: this.options.length,
+      filter: this.filterControl.value
+    });
   }
 
 }
