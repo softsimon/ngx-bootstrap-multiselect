@@ -5,30 +5,30 @@
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
 
- import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/takeUntil';
 
 import {
-    Component,
-    DoCheck,
-    ElementRef,
-    EventEmitter,
-    forwardRef,
-    HostListener,
-    Input,
-    IterableDiffers,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    SimpleChanges,
+  Component,
+  DoCheck,
+  ElementRef,
+  EventEmitter,
+  forwardRef,
+  HostListener,
+  Input,
+  IterableDiffers,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
-    AbstractControl,
-    ControlValueAccessor,
-    FormBuilder,
-    FormControl,
-    NG_VALUE_ACCESSOR,
-    Validator,
+  AbstractControl,
+  ControlValueAccessor,
+  FormBuilder,
+  FormControl,
+  NG_VALUE_ACCESSOR,
+  Validator,
 } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -82,6 +82,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   destroyed$ = new Subject<any>();
 
+  filteredOptions: IMultiSelectOption[] = [];
   model: any[];
   parents: any[];
   title: string;
@@ -145,6 +146,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   constructor(private element: ElementRef,
     private fb: FormBuilder,
+    private searchFilter: MultiSelectSearchFilter,
     differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
     this.settings = this.defaultSettings;
@@ -198,6 +200,11 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   updateRenderItems() {
     this.renderItems = !this.searchLimitApplied || this.filterControl.value.length >= this.searchRenderAfter;
+    this.filteredOptions = this.searchFilter.transform(
+      this.options,
+      this.filterControl.value,
+      this.settings.searchMaxLimit,
+      this.settings.searchMaxRenderedItems);
   }
 
   onModelChange: Function = (_: any) => { };
@@ -346,8 +353,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   checkAll() {
     if (!this.disabledSelection) {
-      let checkedOptions = (!this.searchFilterApplied() ? this.options :
-        (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value))
+      let checkedOptions = (!this.searchFilterApplied() ? this.options : this.filteredOptions)
         .filter((option: IMultiSelectOption) => {
           if (this.model.indexOf(option.id) === -1) {
             this.onAdded.emit(option.id);
@@ -364,7 +370,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   uncheckAll() {
     if (!this.disabledSelection) {
       let unCheckedOptions = (!this.searchFilterApplied() ? this.model
-        : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
+        : this.filteredOptions.map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
         if (unCheckedOptions.indexOf(id) < 0) {
