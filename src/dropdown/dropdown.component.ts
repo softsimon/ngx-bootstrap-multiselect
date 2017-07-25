@@ -46,7 +46,7 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   selector: 'ss-multiselect-dropdown',
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.css'],
-  providers: [MULTISELECT_VALUE_ACCESSOR]
+  providers: [MULTISELECT_VALUE_ACCESSOR, MultiSelectSearchFilter]
 })
 export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestroy, ControlValueAccessor, Validator {
 
