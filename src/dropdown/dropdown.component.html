@@ -30,15 +30,16 @@
       <ng-template [ngIf]="options | searchFilter:filterControl.value:settings.searchMaxLimit:settings.searchMaxRenderedItems"
         let-filteredOptions>
         <li *ngIf="!filteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
-        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" [class.dropdown-header]="option.isLabel">
-          <span *ngIf="!option.isLabel; else label" (click)="setSelected($event, option)" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
+        <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of filteredOptions" (click)="setSelected($event, option)"
+          [class.dropdown-header]="option.isLabel">
+          <span *ngIf="!option.isLabel; else label" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
             [ngStyle]="getItemStyleSelectionDisabled()">
             <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)" [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()"/>
             <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
-            <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
+          <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
               <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
             </span>
-            <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+          <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
               {{ option.name }}
             </span>
           </span>

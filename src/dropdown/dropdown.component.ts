@@ -258,6 +258,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   setSelected(_event: Event, option: IMultiSelectOption) {
+    if (option.isLabel) {
+      return;
+    }
     if (!this.disabledSelection) {
       _event.stopPropagation();
       if (!this.model) {
