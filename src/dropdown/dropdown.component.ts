@@ -1,10 +1,4 @@
-/*
- * Angular 2 Dropdown Multiselect for Bootstrap
- *
- * Simon Lindh
- * https://github.com/softsimon/angular-2-dropdown-multiselect
- */
-
+import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/takeUntil';
 
 import {
@@ -36,6 +30,13 @@ import { Subject } from 'rxjs/Subject';
 import { MultiSelectSearchFilter } from './search-filter.pipe';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
 
+/*
+ * Angular 2 Dropdown Multiselect for Bootstrap
+ *
+ * Simon Lindh
+ * https://github.com/softsimon/angular-2-dropdown-multiselect
+ */
+
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MultiselectDropdown),
@@ -62,6 +63,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @Output() dropdownOpened = new EventEmitter();
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
+  @Output() onLazyLoad = new EventEmitter();
   @Output() onFilter: Observable<string> = this.filterControl.valueChanges;
 
   @HostListener('document: click', ['$event.target'])
@@ -110,13 +112,17 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     buttonClasses: 'btn btn-default btn-secondary',
     containerClasses: 'dropdown-inline',
     selectionLimit: 0,
+    minSelectionLimit: 0,
     closeOnSelect: false,
     autoUnselect: false,
     showCheckAll: false,
     showUncheckAll: false,
     fixedTitle: false,
     dynamicTitleMaxItems: 3,
-    maxHeight: '300px'
+    maxHeight: '300px',
+    isLazyLoad: false,
+    stopScrollPropagation: false,
+    loadViewDistance: 1
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -174,7 +180,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     this.filterControl.valueChanges
       .takeUntil(this.destroyed$)
-      .subscribe(() => this.updateRenderItems());
+      .subscribe(function () {
+        this.updateRenderItems();
+        if (this.settings.isLazyLoad) {
+          this.load();
+        }
+      }.bind(this));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -203,7 +214,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     this.renderItems = !this.searchLimitApplied || this.filterControl.value.length >= this.searchRenderAfter;
     this.filteredOptions = this.searchFilter.transform(
       this.options,
-      this.filterControl.value,
+      this.settings.isLazyLoad ? '' : this.filterControl.value,
       this.settings.searchMaxLimit,
       this.settings.searchMaxRenderedItems);
     this.renderFilteredOptions = this.renderItems ? this.filteredOptions : [];
@@ -281,8 +292,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       }
       const index = this.model.indexOf(option.id);
       if (index > -1) {
-        this.model.splice(index, 1);
-        this.onRemoved.emit(option.id);
+        if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
+          this.model.splice(index, 1);
+          this.onRemoved.emit(option.id);
+        }
         const parentIndex = option.parentId && this.model.indexOf(option.parentId);
         if (parentIndex >= 0) {
           this.model.splice(parentIndex, 1);
@@ -379,7 +392,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         : this.filteredOptions.map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
-        if (unCheckedOptions.indexOf(id) < 0) {
+        if (((unCheckedOptions.indexOf(id) < 0) && (this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions.indexOf(id) < this.settings.minSelectionLimit))) {
           return true;
         } else {
           this.onRemoved.emit(id);
@@ -403,6 +416,37 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   isCheckboxDisabled(): boolean {
     return this.disabledSelection;
+  }
+
+  checkScrollPosition(ev) {
+    let scrollTop = ev.target.scrollTop;
+    let scrollHeight = ev.target.scrollHeight;
+    let scrollElementHeight = ev.target.clientHeight;
+    let roundingPixel = 1;
+    let gutterPixel = 1;
+
+    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance) * scrollElementHeight - roundingPixel - gutterPixel) {
+      this.load();
+    }
+  }
+
+  checkScrollPropagation(ev, element) {
+    let scrollTop = element.scrollTop;
+    let scrollHeight = element.scrollHeight;
+    let scrollElementHeight = element.clientHeight;
+
+    if ((ev.deltaY > 0 && scrollTop + scrollElementHeight >= scrollHeight) || (ev.deltaY < 0 && scrollTop <= 0)) {
+      ev = ev || window.event;
+      ev.preventDefault && ev.preventDefault();
+      ev.returnValue = false;
+    }
+  }
+
+  load() {
+    this.onLazyLoad.emit({
+      length: this.options.length,
+      filter: this.filterControl.value
+    });
   }
 
 }
