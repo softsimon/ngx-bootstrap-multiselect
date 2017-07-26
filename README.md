@@ -128,6 +128,7 @@ myOptions: IMultiSelectOption[] = [
 | searchMaxLimit       | If more than zero will render only first N options in search results | 0             |
 | searchMaxRenderedItems | Used with searchMaxLimit to further limit rendering for optimization. Should be less than searchMaxLimit to take effect | 0             |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected     | false             |
+| closeOnClickOutside  | Close dropdown when clicked outside                                | true              |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |

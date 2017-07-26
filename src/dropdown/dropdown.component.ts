@@ -1,11 +1,6 @@
-/*
- * Angular 2 Dropdown Multiselect for Bootstrap
- *
- * Simon Lindh
- * https://github.com/softsimon/angular-2-dropdown-multiselect
- */
-import { MultiSelectSearchFilter } from './search-filter.pipe';
-import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
+import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/takeUntil';
+
 import {
   Component,
   DoCheck,
@@ -21,9 +16,26 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR, Validator, FormControl } from '@angular/forms';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormBuilder,
+  FormControl,
+  NG_VALUE_ACCESSOR,
+  Validator,
+} from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
+
+import { MultiSelectSearchFilter } from './search-filter.pipe';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from './types';
+
+/*
+ * Angular 2 Dropdown Multiselect for Bootstrap
+ *
+ * Simon Lindh
+ * https://github.com/softsimon/angular-2-dropdown-multiselect
+ */
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -35,9 +47,12 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   selector: 'ss-multiselect-dropdown',
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.css'],
-  providers: [MULTISELECT_VALUE_ACCESSOR]
+  providers: [MULTISELECT_VALUE_ACCESSOR, MultiSelectSearchFilter]
 })
 export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestroy, ControlValueAccessor, Validator {
+
+  filterControl: FormControl = this.fb.control('');
+
   @Input() options: Array<IMultiSelectOption>;
   @Input() settings: IMultiSelectSettings;
   @Input() texts: IMultiSelectTexts;
@@ -49,10 +64,11 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @Output() onAdded = new EventEmitter();
   @Output() onRemoved = new EventEmitter();
   @Output() onLazyLoad = new EventEmitter();
+  @Output() onFilter: Observable<string> = this.filterControl.valueChanges;
 
   @HostListener('document: click', ['$event.target'])
   onClick(target: HTMLElement) {
-    if (!this.isVisible) return;
+    if (!this.isVisible || !this.settings.closeOnClickOutside) return;
     let parentFound = false;
     while (target != null && !parentFound) {
       if (target === this.element.nativeElement) {
@@ -66,17 +82,26 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     }
   }
 
-  destroyed$ = new Subject<void>();
+  destroyed$ = new Subject<any>();
 
+  filteredOptions: IMultiSelectOption[] = [];
+  renderFilteredOptions: IMultiSelectOption[] = [];
   model: any[];
   parents: any[];
   title: string;
   differ: any;
   numSelected: number = 0;
-  isVisible: boolean = false;
+  set isVisible(val: boolean) {
+    this._isVisible = val;
+    this._workerDocClicked = val ? false : this._workerDocClicked;
+  }
+  get isVisible() {
+    return this._isVisible;
+  }
   renderItems = true;
 
   defaultSettings: IMultiSelectSettings = {
+    closeOnClickOutside: true,
     pullRight: false,
     enableSearch: false,
     searchRenderLimit: 0,
@@ -111,8 +136,6 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     allSelected: 'All selected',
   };
 
-  filterControl: FormControl = this.fb.control('');
-
   get searchLimit() {
     return this.settings.searchRenderLimit;
   }
@@ -125,8 +148,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     return this.searchLimit > 0 && this.options.length > this.searchLimit;
   }
 
+  private _isVisible = false;
+  private _workerDocClicked = false;
+
   constructor(private element: ElementRef,
     private fb: FormBuilder,
+    private searchFilter: MultiSelectSearchFilter,
     differs: IterableDiffers) {
     this.differ = differs.find([]).create(null);
     this.settings = this.defaultSettings;
@@ -135,13 +162,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   getItemStyle(option: IMultiSelectOption): any {
     if (!option.isLabel) {
-      return {'cursor': 'pointer'};
+      return { 'cursor': 'pointer' };
     }
   }
 
   getItemStyleSelectionDisabled(): any {
     if (this.disabledSelection) {
-      return {'cursor': 'default'};
+      return { 'cursor': 'default' };
     }
   }
 
@@ -153,7 +180,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     this.filterControl.valueChanges
       .takeUntil(this.destroyed$)
-      .subscribe(function() {
+      .subscribe(function () {
         this.updateRenderItems();
         if (this.settings.isLazyLoad) {
           this.load();
@@ -185,6 +212,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   updateRenderItems() {
     this.renderItems = !this.searchLimitApplied || this.filterControl.value.length >= this.searchRenderAfter;
+    this.filteredOptions = this.searchFilter.transform(
+      this.options,
+      this.settings.isLazyLoad ? '' : this.filterControl.value,
+      this.settings.searchMaxLimit,
+      this.settings.searchMaxRenderedItems);
+    this.renderFilteredOptions = this.renderItems ? this.filteredOptions : [];
   }
 
   onModelChange: Function = (_: any) => { };
@@ -231,7 +264,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   clearSearch(event: Event) {
-    event.stopPropagation();
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
     this.filterControl.setValue('');
   }
 
@@ -245,8 +280,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   setSelected(_event: Event, option: IMultiSelectOption) {
+    if (option.isLabel) {
+      return;
+    }
     if (!this.disabledSelection) {
-      _event.stopPropagation();
+      if (_event.stopPropagation) {
+        _event.stopPropagation();
+      }
       if (!this.model) {
         this.model = [];
       }
@@ -332,8 +372,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   checkAll() {
     if (!this.disabledSelection) {
-      let checkedOptions = (!this.searchFilterApplied() ? this.options :
-        (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value))
+      let checkedOptions = (!this.searchFilterApplied() ? this.options : this.filteredOptions)
         .filter((option: IMultiSelectOption) => {
           if (this.model.indexOf(option.id) === -1) {
             this.onAdded.emit(option.id);
@@ -350,7 +389,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   uncheckAll() {
     if (!this.disabledSelection) {
       let unCheckedOptions = (!this.searchFilterApplied() ? this.model
-          : (new MultiSelectSearchFilter()).transform(this.options, this.filterControl.value).map((option: IMultiSelectOption) => option.id)
+        : this.filteredOptions.map((option: IMultiSelectOption) => option.id)
       );
       this.model = this.model.filter((id: number) => {
         if (((unCheckedOptions.indexOf(id) < 0) && (this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions.indexOf(id) < this.settings.minSelectionLimit))) {
@@ -368,7 +407,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
     if (this.settings.selectionLimit && !this.settings.autoUnselect &&
       this.model.length >= this.settings.selectionLimit &&
-      this.model.indexOf(option.id) === -1
+      this.model.indexOf(option.id) === -1 &&
+      event.preventDefault
     ) {
       event.preventDefault();
     }
@@ -385,7 +425,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     let roundingPixel = 1;
     let gutterPixel = 1;
 
-    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance)*scrollElementHeight - roundingPixel - gutterPixel) {
+    if (scrollTop >= scrollHeight - (1 + this.settings.loadViewDistance) * scrollElementHeight - roundingPixel - gutterPixel) {
       this.load();
     }
   }
