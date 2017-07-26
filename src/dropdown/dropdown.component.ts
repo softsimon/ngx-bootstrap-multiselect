@@ -253,7 +253,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   clearSearch(event: Event) {
-    event.stopPropagation();
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
     this.filterControl.setValue('');
   }
 
@@ -392,7 +394,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
     if (this.settings.selectionLimit && !this.settings.autoUnselect &&
       this.model.length >= this.settings.selectionLimit &&
-      this.model.indexOf(option.id) === -1
+      this.model.indexOf(option.id) === -1 &&
+      event.preventDefault
     ) {
       event.preventDefault();
     }
