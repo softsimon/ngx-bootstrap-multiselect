@@ -86,7 +86,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   filteredOptions: IMultiSelectOption[] = [];
   renderFilteredOptions: IMultiSelectOption[] = [];
-  model: any[];
+  model: any[] = [];
   parents: any[];
   title: string;
   differ: any;
@@ -225,7 +225,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   writeValue(value: any): void {
     if (value !== undefined && value !== null) {
-      this.model = value;
+      this.model = Array.isArray(value) ? value : [value];
     } else {
       this.model = [];
     }
@@ -287,9 +287,6 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       if (_event.stopPropagation) {
         _event.stopPropagation();
       }
-      if (!this.model) {
-        this.model = [];
-      }
       const index = this.model.indexOf(option.id);
       if (index > -1) {
         if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
@@ -344,7 +341,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   updateNumSelected() {
-    this.numSelected = this.model && this.model.filter(id => this.parents.indexOf(id) < 0).length || 0;
+    this.numSelected = this.model.filter(id => this.parents.indexOf(id) < 0).length || 0;
   }
 
   updateTitle() {
@@ -355,7 +352,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       this.title = this.options
         .filter((option: IMultiSelectOption) =>
-          this.model && this.model.indexOf(option.id) > -1
+          this.model.indexOf(option.id) > -1
         )
         .map((option: IMultiSelectOption) => option.name)
         .join(', ');
