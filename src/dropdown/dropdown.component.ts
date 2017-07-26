@@ -83,6 +83,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   destroyed$ = new Subject<any>();
 
   filteredOptions: IMultiSelectOption[] = [];
+  renderFilteredOptions: IMultiSelectOption[] = [];
   model: any[];
   parents: any[];
   title: string;
@@ -205,6 +206,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       this.filterControl.value,
       this.settings.searchMaxLimit,
       this.settings.searchMaxRenderedItems);
+    this.renderFilteredOptions = this.renderItems ? this.filteredOptions : [];
   }
 
   onModelChange: Function = (_: any) => { };
@@ -269,7 +271,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       return;
     }
     if (!this.disabledSelection) {
-      _event.stopPropagation();
+      if (_event.stopPropagation) {
+        _event.stopPropagation();
+      }
       if (!this.model) {
         this.model = [];
       }
