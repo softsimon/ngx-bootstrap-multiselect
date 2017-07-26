@@ -90,7 +90,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
   }
 
   private _limitRenderedItems<T>(items: T[], limit: number): T[] {
-    return items.length > limit ? items.slice(0, limit) : items;
+    return items.length > limit && limit > 0 ? items.slice(0, limit) : items;
   }
 
   private _escapeRegExp(str: string): string {
