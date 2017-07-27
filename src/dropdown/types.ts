@@ -57,7 +57,7 @@ export interface IMultiSelectTexts {
   checked?: string;
   checkedPlural?: string;
   searchPlaceholder?: string;
-  saerchEmptyResult?: string;
+  searchEmptyResult?: string;
   searchNoRenderText?: string;
   defaultTitle?: string;
   allSelected?: string;
