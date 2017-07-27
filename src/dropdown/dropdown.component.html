@@ -31,22 +31,25 @@
     <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
     <li *ngIf="!renderItems" class="dropdown-item empty">{{ texts.searchNoRenderText }}</li>
     <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
-    <li class="dropdown-item" [ngStyle]="getItemStyle(option)" *ngFor="let option of renderFilteredOptions" [class.dropdown-header]="option.isLabel" [ngClass]="option.classes">
-      <a *ngIf="!option.isLabel; else label" href="javascript:;" (click)="setSelected($event, option)" role="menuitem" tabindex="-1"
-        [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'" [ngStyle]="getItemStyleSelectionDisabled()">
-        <ng-container [ngSwitch]="settings.checkedStyle">
-          <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
-            [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
-          <span *ngSwitchCase="'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
-          <span *ngSwitchCase="'fontawesome'" style="width: 16px;display: inline-block;">
-            <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
+    <li class="dropdown-item" *ngFor="let option of renderFilteredOptions" (click)="setSelected($event, option)" [ngStyle]="getItemStyle(option)"
+      [ngClass]="option.classes" [class.dropdown-header]="option.isLabel">
+      <div>
+        <a *ngIf="!option.isLabel; else label" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
+          [ngStyle]="getItemStyleSelectionDisabled()">
+          <ng-container [ngSwitch]="settings.checkedStyle">
+            <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
+              [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
+            <span *ngSwitchCase="'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
+            <span *ngSwitchCase="'fontawesome'" style="width: 16px;display: inline-block;">
+              <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
+            </span>
+          </ng-container>
+          <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+            {{ option.name }}
           </span>
-        </ng-container>
-        <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
-          {{ option.name }}
-        </span>
-      </a>
-      <ng-template #label>{{ option.name }}</ng-template>
+        </a>
+        <ng-template #label>{{ option.name }}</ng-template>
+      </div>
     </li>
   </ul>
 </div>
