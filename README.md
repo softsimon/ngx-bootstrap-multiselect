@@ -140,7 +140,7 @@ myOptions: IMultiSelectOption[] = [
 | searchPlaceholder     | Text initially displayed in search input   | 'Search...'       |
 | defaultTitle          | Title displayed in button before selection | 'Select'          |
 | allSelected           | Text displayed when all items are selected (must be enabled in options) | 'All selected' |
-| saerchEmptyResult     | Text displayed when no items are rendered  | 'Nothing found...' |
+| searchEmptyResult     | Text displayed when no items are rendered  | 'Nothing found...' |
 | searchNoRenderText    | Text displayed when items rendering disabled by the `searchRenderLimit` option | 'Type in search box to see results...' |
 
 ## Other examples

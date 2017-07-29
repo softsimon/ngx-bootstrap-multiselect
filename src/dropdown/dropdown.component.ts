@@ -130,7 +130,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     checked: 'checked',
     checkedPlural: 'checked',
     searchPlaceholder: 'Search...',
-    saerchEmptyResult: 'Nothing found...',
+    searchEmptyResult: 'Nothing found...',
     searchNoRenderText: 'Type in search box to see results...',
     defaultTitle: 'Select',
     allSelected: 'All selected',

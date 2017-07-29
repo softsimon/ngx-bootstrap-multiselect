@@ -30,7 +30,7 @@
     </li>
     <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
     <li *ngIf="!renderItems" class="dropdown-item empty">{{ texts.searchNoRenderText }}</li>
-    <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.saerchEmptyResult }}</li>
+    <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.searchEmptyResult }}</li>
     <li class="dropdown-item" *ngFor="let option of renderFilteredOptions" (click)="setSelected($event, option)" [ngStyle]="getItemStyle(option)"
       [ngClass]="option.classes" [class.dropdown-header]="option.isLabel">
       <div>
