@@ -5,12 +5,16 @@ import { IMultiSelectOption } from './types';
   name: 'searchFilter'
 })
 export class MultiSelectSearchFilter implements PipeTransform {
-
   private _lastOptions: IMultiSelectOption[];
   private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
   private _searchCacheInclusive: { [k: string]: boolean | number } = {};
 
-  transform(options: Array<IMultiSelectOption>, str: string, limit = 0, renderLimit = 0): Array<IMultiSelectOption> {
+  transform(
+    options: Array<IMultiSelectOption>,
+    str: string,
+    limit = 0,
+    renderLimit = 0
+  ): Array<IMultiSelectOption> {
     str = (str || '').toLowerCase();
 
     // Drop cache because options were updated
@@ -23,7 +27,9 @@ export class MultiSelectSearchFilter implements PipeTransform {
     const isUnderLimit = options.length <= limit;
 
     if (this._searchCache[str]) {
-      return isUnderLimit ? this._searchCache[str] : this._limitRenderedItems(this._searchCache[str], renderLimit);
+      return isUnderLimit
+        ? this._searchCache[str]
+        : this._limitRenderedItems(this._searchCache[str], renderLimit);
     }
 
     const prevStr = str.slice(0, -1);
@@ -47,11 +53,15 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
     const regexp = new RegExp(this._escapeRegExp(str), 'i');
 
-    const matchPredicate = (option: IMultiSelectOption) => regexp.test(option.name),
-      getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
-      getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
+    const matchPredicate = (option: IMultiSelectOption) =>
+        regexp.test(option.name),
+      getChildren = (option: IMultiSelectOption) =>
+        options.filter(child => child.parentId === option.id),
+      getParent = (option: IMultiSelectOption) =>
+        options.find(parent => option.parentId === parent.id);
 
-    let i = 0, founded = 0;
+    let i = 0,
+      founded = 0;
     for (; i < optsLength && founded < maxFound; ++i) {
       const option = options[i];
       const directMatch = regexp.test(option.name);
@@ -62,7 +72,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
         continue;
       }
 
-      if (typeof (option.parentId) === 'undefined') {
+      if (typeof option.parentId === 'undefined') {
         const childrenMatch = getChildren(option).some(matchPredicate);
 
         if (childrenMatch) {
@@ -72,7 +82,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
         }
       }
 
-      if (typeof (option.parentId) !== 'undefined') {
+      if (typeof option.parentId !== 'undefined') {
         const parentMatch = matchPredicate(getParent(option));
 
         if (parentMatch) {
@@ -86,7 +96,9 @@ export class MultiSelectSearchFilter implements PipeTransform {
     this._searchCache[str] = filteredOpts;
     this._searchCacheInclusive[str] = i === optsLength || i + 1;
 
-    return isUnderLimit ? filteredOpts : this._limitRenderedItems(filteredOpts, renderLimit);
+    return isUnderLimit
+      ? filteredOpts
+      : this._limitRenderedItems(filteredOpts, renderLimit);
   }
 
   private _limitRenderedItems<T>(items: T[], limit: number): T[] {
@@ -94,6 +106,6 @@ export class MultiSelectSearchFilter implements PipeTransform {
   }
 
   private _escapeRegExp(str: string): string {
-    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
   }
 }

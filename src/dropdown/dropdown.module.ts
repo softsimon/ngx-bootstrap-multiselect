@@ -7,6 +7,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule],
   exports: [MultiselectDropdown, MultiSelectSearchFilter],
-  declarations: [MultiselectDropdown, MultiSelectSearchFilter],
+  declarations: [MultiselectDropdown, MultiSelectSearchFilter]
 })
-export class MultiselectDropdownModule { }
+export class MultiselectDropdownModule {}

@@ -31,11 +31,16 @@
     <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
     <li *ngIf="!renderItems" class="dropdown-item empty">{{ texts.searchNoRenderText }}</li>
     <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.searchEmptyResult }}</li>
-    <li class="dropdown-item" *ngFor="let option of renderFilteredOptions" (click)="setSelected($event, option)" [ngStyle]="getItemStyle(option)"
+    <li class="dropdown-item" *ngFor="let option of renderFilteredOptions; let i=index" (click)="setSelected($event, option)" [ngStyle]="getItemStyle(option)"
       [ngClass]="option.classes" [class.dropdown-header]="option.isLabel">
         <a *ngIf="!option.isLabel; else label" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
           [ngStyle]="getItemStyleSelectionDisabled()">
           <ng-container [ngSwitch]="settings.checkedStyle">
+            <div *ngSwitchCase="'clarity'" class="checkbox">
+                  <input type="checkbox" id="test" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
+                      [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
+                  <label for="test">Checkbox 2</label>
+                </div>
             <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
               [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
             <span *ngSwitchCase="'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
@@ -47,7 +52,7 @@
             {{ option.name }}
           </span>
         </a>
-        <ng-template #label>{{ option.name }}</ng-template>
+        <ng-template *ngIf="settings.checkedStyle !== 'clarity'" #label>{{ option.name }}</ng-template>
     </li>
   </ul>
 </div>

@@ -32,7 +32,7 @@ export interface IMultiSelectSettings {
    * Should be less than searchMaxLimit to take effect
    */
   searchMaxRenderedItems?: number;
-  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
+  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome' | 'clarity';
   buttonClasses?: string;
   itemClasses?: string;
   containerClasses?: string;
