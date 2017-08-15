@@ -321,7 +321,7 @@ export class MultiselectDropdown
           const childIds = this.options
             .filter(
               child =>
-                this.model.indexOf(child.id) > -1 && child.parentId == option.id
+                this.model.indexOf(child.id) > -1 && child.parentId === option.id
             )
             .map(child => child.id);
           this.model = this.model.filter(id => childIds.indexOf(id) < 0);
@@ -338,7 +338,7 @@ export class MultiselectDropdown
           if (option.parentId) {
             const children = this.options.filter(
               child =>
-                child.id !== option.id && child.parentId == option.parentId
+                child.id !== option.id && child.parentId === option.parentId
             );
             if (children.every(child => this.model.indexOf(child.id) > -1)) {
               this.model.push(option.parentId);
@@ -347,7 +347,7 @@ export class MultiselectDropdown
           } else if (this.parents.indexOf(option.id) > -1) {
             const children = this.options.filter(
               child =>
-                this.model.indexOf(child.id) < 0 && child.parentId == option.id
+                this.model.indexOf(child.id) < 0 && child.parentId === option.id
             );
             children.forEach(child => {
               this.model.push(child.id);
