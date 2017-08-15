@@ -41,12 +41,6 @@ import {
  * https://github.com/softsimon/angular-2-dropdown-multiselect
  */
 
-const MULTISELECT_VALUE_ACCESSOR: any = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => MultiselectDropdown),
-  multi: true
-};
-
 @Component({
   selector: 'ss-multiselect-dropdown',
   templateUrl: './dropdown.component.html',
@@ -513,3 +507,9 @@ export class MultiselectDropdown
     });
   }
 }
+
+const MULTISELECT_VALUE_ACCESSOR: any = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => MultiselectDropdown),
+  multi: true
+};
