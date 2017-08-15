@@ -80,7 +80,7 @@ export class MultiselectDropdown
   differ: any;
   numSelected = 0;
   renderItems = true;
-    defaultSettings: IMultiSelectSettings = {
+  defaultSettings: IMultiSelectSettings = {
     closeOnClickOutside: true,
     pullRight: false,
     enableSearch: false,
@@ -315,7 +315,8 @@ export class MultiselectDropdown
           const childIds = this.options
             .filter(
               child =>
-                this.model.indexOf(child.id) > -1 && child.parentId === option.id
+                this.model.indexOf(child.id) > -1 &&
+                child.parentId === option.id
             )
             .map(child => child.id);
           this.model = this.model.filter(id => childIds.indexOf(id) < 0);
