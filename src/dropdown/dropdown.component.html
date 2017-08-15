@@ -43,8 +43,6 @@
                 </div>
             <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
               [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
-            <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
-              [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
             <span *ngSwitchCase="'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
             <span *ngSwitchCase="'fontawesome'" style="width: 16px;display: inline-block;">
               <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
