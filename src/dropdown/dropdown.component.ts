@@ -318,7 +318,7 @@ export class MultiselectDropdown
           this.model.splice(parentIndex, 1);
           this.onRemoved.emit(option.parentId);
         } else if (this.parents.indexOf(option.id) > -1) {
-          let childIds = this.options
+          const childIds = this.options
             .filter(
               child =>
                 this.model.indexOf(child.id) > -1 && child.parentId == option.id
@@ -336,7 +336,7 @@ export class MultiselectDropdown
           this.model.push(option.id);
           this.onAdded.emit(option.id);
           if (option.parentId) {
-            let children = this.options.filter(
+            const children = this.options.filter(
               child =>
                 child.id !== option.id && child.parentId == option.parentId
             );
@@ -345,7 +345,7 @@ export class MultiselectDropdown
               this.onAdded.emit(option.parentId);
             }
           } else if (this.parents.indexOf(option.id) > -1) {
-            let children = this.options.filter(
+            const children = this.options.filter(
               child =>
                 this.model.indexOf(child.id) < 0 && child.parentId == option.id
             );
@@ -418,7 +418,7 @@ export class MultiselectDropdown
 
   checkAll() {
     if (!this.disabledSelection) {
-      let checkedOptions = (!this.searchFilterApplied()
+      const checkedOptions = (!this.searchFilterApplied()
         ? this.options
         : this.filteredOptions)
         .filter((option: IMultiSelectOption) => {
@@ -437,7 +437,7 @@ export class MultiselectDropdown
 
   uncheckAll() {
     if (!this.disabledSelection) {
-      let unCheckedOptions = !this.searchFilterApplied()
+      const unCheckedOptions = !this.searchFilterApplied()
         ? this.model
         : this.filteredOptions.map((option: IMultiSelectOption) => option.id);
       this.model = this.model.filter((id: number) => {
@@ -474,11 +474,11 @@ export class MultiselectDropdown
   }
 
   checkScrollPosition(ev) {
-    let scrollTop = ev.target.scrollTop;
-    let scrollHeight = ev.target.scrollHeight;
-    let scrollElementHeight = ev.target.clientHeight;
-    let roundingPixel = 1;
-    let gutterPixel = 1;
+    const scrollTop = ev.target.scrollTop;
+    const scrollHeight = ev.target.scrollHeight;
+    const scrollElementHeight = ev.target.clientHeight;
+    const roundingPixel = 1;
+    const gutterPixel = 1;
 
     if (
       scrollTop >=
@@ -492,9 +492,9 @@ export class MultiselectDropdown
   }
 
   checkScrollPropagation(ev, element) {
-    let scrollTop = element.scrollTop;
-    let scrollHeight = element.scrollHeight;
-    let scrollElementHeight = element.clientHeight;
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const scrollElementHeight = element.clientHeight;
 
     if (
       (ev.deltaY > 0 && scrollTop + scrollElementHeight >= scrollHeight) ||
