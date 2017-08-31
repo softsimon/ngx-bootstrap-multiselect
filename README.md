@@ -84,6 +84,8 @@ myTexts: IMultiSelectTexts = {
     checked: 'item selected',
     checkedPlural: 'items selected',
     searchPlaceholder: 'Find',
+    searchEmptyResult: 'Nothing found...',
+    searchNoRenderText: 'Type in search box to see results...',
     defaultTitle: 'Select',
     allSelected: 'All selected',
 };
