@@ -220,14 +220,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       if (this.texts) {
         this.updateTitle();
       }
+
+      this.onModelChange(this.model);
+      this.onModelTouched();
     }
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
       this.updateTitle();
-    }
-    if (this.settings.selectAddedValues && changes.options.previousValue) {
-      this.onModelChange(this.model);
-      this.onModelTouched();
     }
   }
 
