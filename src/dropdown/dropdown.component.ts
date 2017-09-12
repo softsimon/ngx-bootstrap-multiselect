@@ -14,7 +14,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  SimpleChanges
 } from '@angular/core';
 import {
   AbstractControl,
@@ -99,6 +99,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     return this._isVisible;
   }
   renderItems = true;
+  checkAllSearchRegister = new Set();
+  checkAllStatus = false;
+  loadedValueIds = [];
 
   defaultSettings: IMultiSelectSettings = {
     closeOnClickOutside: true,
@@ -122,7 +125,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     maxHeight: '300px',
     isLazyLoad: false,
     stopScrollPropagation: false,
-    loadViewDistance: 1
+    loadViewDistance: 1,
+    selectAddedValues: false
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -196,6 +200,23 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         .map(option => option.parentId);
       this.updateRenderItems();
 
+      if (this.settings.selectAddedValues && this.loadedValueIds.length === 0) {
+        this.loadedValueIds = this.loadedValueIds.concat(changes.options.currentValue.map(value => value.id));
+      }
+      if (this.settings.selectAddedValues && changes.options.previousValue) {
+        let addedValues = changes.options.currentValue.filter(
+          value => this.loadedValueIds.indexOf(value.id) === -1
+        );
+        this.loadedValueIds.concat(addedValues.map(value => value.id));
+        if (this.checkAllStatus) {
+          this.addChecks(addedValues);
+        } else if (this.checkAllSearchRegister.size > 0) {
+          this.checkAllSearchRegister.forEach(
+            searchValue => this.addChecks(this.applyFilters(addedValues, searchValue))
+          );
+        }
+      }
+
       if (this.texts) {
         this.updateTitle();
       }
@@ -203,6 +224,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
       this.updateTitle();
+    }
+    if (this.settings.selectAddedValues && changes.options.previousValue) {
+      this.onModelChange(this.model);
+      this.onModelTouched();
     }
   }
 
@@ -212,12 +237,17 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   updateRenderItems() {
     this.renderItems = !this.searchLimitApplied || this.filterControl.value.length >= this.searchRenderAfter;
-    this.filteredOptions = this.searchFilter.transform(
-      this.options,
-      this.settings.isLazyLoad ? '' : this.filterControl.value,
-      this.settings.searchMaxLimit,
-      this.settings.searchMaxRenderedItems);
+    this.filteredOptions = this.applyFilters(this.options, this.settings.isLazyLoad ? '' : this.filterControl.value);
     this.renderFilteredOptions = this.renderItems ? this.filteredOptions : [];
+  }
+
+  applyFilters(options, value) {
+    return (this.searchFilter.transform(
+      options,
+      value,
+      this.settings.searchMaxLimit,
+      this.settings.searchMaxRenderedItems
+    ));
   }
 
   onModelChange: Function = (_: any) => { };
@@ -283,52 +313,52 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     if (option.isLabel) {
       return;
     }
+
     if (!this.disabledSelection) {
       if (_event.stopPropagation) {
         _event.stopPropagation();
       }
       const index = this.model.indexOf(option.id);
+      const isAtSelectionLimit = this.settings.selectionLimit > 0 && this.model.length >= this.settings.selectionLimit;
       if (index > -1) {
+        const removeItem = (idx, id): void => {
+          this.model.splice(idx, 1);
+          this.onRemoved.emit(id);
+        };
+
         if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
-          this.model.splice(index, 1);
-          this.onRemoved.emit(option.id);
+          removeItem(index, option.id);
         }
         const parentIndex = option.parentId && this.model.indexOf(option.parentId);
-        if (parentIndex >= 0) {
-          this.model.splice(parentIndex, 1);
-          this.onRemoved.emit(option.parentId);
+        if (parentIndex > -1) {
+          removeItem(parentIndex, option.parentId);
         } else if (this.parents.indexOf(option.id) > -1) {
-          let childIds = this.options.filter(child => this.model.indexOf(child.id) > -1 && child.parentId == option.id).map(child => child.id);
-          this.model = this.model.filter(id => childIds.indexOf(id) < 0);
-          childIds.forEach(childId => this.onRemoved.emit(childId));
+          this.options.filter(child => this.model.indexOf(child.id) > -1 && child.parentId === option.id)
+            .forEach(child => removeItem(this.model.indexOf(child.id), child.id));
         }
+      } else if (isAtSelectionLimit && !this.settings.autoUnselect) {
+        this.selectionLimitReached.emit(this.model.length);
+        return;
       } else {
-        if (this.settings.selectionLimit === 0 || (this.settings.selectionLimit && this.model.length < this.settings.selectionLimit)) {
-          this.model.push(option.id);
-          this.onAdded.emit(option.id);
+        const addItem = (id): void => {
+          this.model.push(id);
+          this.onAdded.emit(id);
+        };
+
+        addItem(option.id);
+        if (!isAtSelectionLimit) {
           if (option.parentId) {
-            let children = this.options.filter(child => child.id !== option.id && child.parentId == option.parentId);
+            let children = this.options.filter(child => child.id !== option.id && child.parentId === option.parentId);
             if (children.every(child => this.model.indexOf(child.id) > -1)) {
-              this.model.push(option.parentId);
-              this.onAdded.emit(option.parentId);
+              addItem(option.parentId);
             }
           } else if (this.parents.indexOf(option.id) > -1) {
-            let children = this.options.filter(child => this.model.indexOf(child.id) < 0 && child.parentId == option.id);
-            children.forEach(child => {
-              this.model.push(child.id);
-              this.onAdded.emit(child.id);
-            })
+            let children = this.options.filter(child => this.model.indexOf(child.id) < 0 && child.parentId === option.id);
+            children.forEach(child => addItem(child.id));
           }
         } else {
-          if (this.settings.autoUnselect) {
-            this.model.push(option.id);
-            this.onAdded.emit(option.id);
-            const removedOption = this.model.shift();
-            this.onRemoved.emit(removedOption);
-          } else {
-            this.selectionLimitReached.emit(this.model.length);
-            return;
-          }
+          const removedOption = this.model.shift();
+          this.onRemoved.emit(removedOption);
         }
       }
       if (this.settings.closeOnSelect) {
@@ -367,17 +397,30 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     return this.settings.enableSearch && this.filterControl.value && this.filterControl.value.length > 0;
   }
 
+  addChecks(options) {
+    let checkedOptions = options
+    .filter(function(option: IMultiSelectOption) {
+      if (this.model.indexOf(option.id) === -1) {
+        this.onAdded.emit(option.id);
+        return true;
+      }
+      return false;
+    }.bind(this)).map((option: IMultiSelectOption) => option.id);
+    this.model = this.model.concat(checkedOptions);
+  }
+
   checkAll() {
     if (!this.disabledSelection) {
-      let checkedOptions = (!this.searchFilterApplied() ? this.options : this.filteredOptions)
-        .filter((option: IMultiSelectOption) => {
-          if (this.model.indexOf(option.id) === -1) {
-            this.onAdded.emit(option.id);
-            return true;
-          }
-          return false;
-        }).map((option: IMultiSelectOption) => option.id);
-      this.model = this.model.concat(checkedOptions);
+      this.addChecks(!this.searchFilterApplied() ? this.options : this.filteredOptions);
+      if (this.settings.selectAddedValues) {
+        if (this.searchFilterApplied() && !this.checkAllStatus) {
+          this.checkAllSearchRegister.add(this.filterControl.value);
+        } else {
+          this.checkAllSearchRegister.clear();
+          this.checkAllStatus = true;
+        }
+        this.load();
+      }
       this.onModelChange(this.model);
       this.onModelTouched();
     }
@@ -385,9 +428,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   uncheckAll() {
     if (!this.disabledSelection) {
+      let checkedOptions = this.model;
       let unCheckedOptions = (!this.searchFilterApplied() ? this.model
         : this.filteredOptions.map((option: IMultiSelectOption) => option.id)
       );
+      // set unchecked options only to the ones that were checked
+      unCheckedOptions = checkedOptions.filter(item => unCheckedOptions.includes(item));
       this.model = this.model.filter((id: number) => {
         if (((unCheckedOptions.indexOf(id) < 0) && (this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions.indexOf(id) < this.settings.minSelectionLimit))) {
           return true;
@@ -396,6 +442,22 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           return false;
         }
       });
+      if (this.settings.selectAddedValues) {
+        if (this.searchFilterApplied()) {
+          if (this.checkAllSearchRegister.has(this.filterControl.value)) {
+            this.checkAllSearchRegister.delete(this.filterControl.value);
+            this.checkAllSearchRegister.forEach(function(searchTerm) {
+              let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.includes(option.name)), searchTerm);
+              this.addChecks(filterOptions);
+            }.bind(this));
+          }
+        } else {
+          this.checkAllSearchRegister.clear();
+          this.checkAllStatus = false;
+        }
+        this.load();
+
+      }
       this.onModelChange(this.model);
       this.onModelTouched();
     }
@@ -442,7 +504,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   load() {
     this.onLazyLoad.emit({
       length: this.options.length,
-      filter: this.filterControl.value
+      filter: this.filterControl.value,
+      checkAllSearches: this.checkAllSearchRegister,
+      checkAllStatus: this.checkAllStatus
     });
   }
 
