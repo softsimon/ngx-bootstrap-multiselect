@@ -165,6 +165,8 @@ Although this dropdown is designed for multiple selections, a common request is 
 
 This Plunker link demonstrates an implementation of lazy loading: [Lazy loading Plunker](https://plnkr.co/edit/fsZHbth4kzLI79hohcMG?p=preview)
 
+If using search during lazy load, the search term must be supplied to the back end to return the appropriate number of results. Standard inline search will not work, since the front end does not know how many items to load to retrieve the desired number of matches.
+
 ### Use model driven forms with ReactiveFormsModule:
 
 ```js
