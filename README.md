@@ -131,6 +131,9 @@ myOptions: IMultiSelectOption[] = [
 | searchMaxRenderedItems | Used with searchMaxLimit to further limit rendering for optimization. Should be less than searchMaxLimit to take effect | 0             |
 | displayAllSelectedText | Display the `allSelected` text when all options are selected     | false             |
 | closeOnClickOutside  | Close dropdown when clicked outside                                | true              |
+| isLazyLoad           | An event, ```onLazyLoad```, triggers on scrolling to a specified distance from the bottom of the dropdown, allowing additional data to load | false             |
+| loadViewDistance     | Distance from bottom of dropdown to trigger lazy load, in units of dropdown viewport height | 1             |
+| stopScrollPropagation | Scrolling the dropdown will not overflow to document              | false             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |
@@ -157,6 +160,12 @@ Although this dropdown is designed for multiple selections, a common request is 
   ...
 }
 ```
+
+### Lazy Loading
+
+This Plunker link demonstrates an implementation of lazy loading: [Lazy loading Plunker](https://plnkr.co/edit/fsZHbth4kzLI79hohcMG?p=preview)
+
+If using search during lazy load, the search term must be supplied to the back end to return the appropriate number of results. Standard inline search will not work, since the front end does not know how many items to load to retrieve the desired number of matches.
 
 ### Use model driven forms with ReactiveFormsModule:
 
