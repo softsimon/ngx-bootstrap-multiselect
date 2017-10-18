@@ -16,14 +16,14 @@
       </div>
     </li>
     <li class="dropdown-divider divider" *ngIf="settings.enableSearch"></li>
-    <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection">
-      <a href="javascript:;" role="menuitem" tabindex="-1" (click)="checkAll()">
+    <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection" (click)="checkAll()">
+      <a href="javascript:;" role="menuitem" tabindex="-1">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome','fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
         {{ texts.checkAll }}
       </a>
     </li>
-    <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !disabledSelection">
-      <a href="javascript:;" role="menuitem" tabindex="-1" (click)="uncheckAll()">
+    <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !disabledSelection" (click)="uncheckAll()">
+      <a href="javascript:;" role="menuitem" tabindex="-1">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome','fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
         {{ texts.uncheckAll }}
       </a>
