@@ -85,6 +85,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   destroyed$ = new Subject<any>();
 
   filteredOptions: IMultiSelectOption[] = [];
+  modelOptions: IMultiSelectOption[] = [];
   renderFilteredOptions: IMultiSelectOption[] = [];
   model: any[] = [];
   parents: any[];
@@ -323,6 +324,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         const removeItem = (idx, id): void => {
           this.model.splice(idx, 1);
           this.onRemoved.emit(id);
+          if (this.lazyload && this.modelOptions.some(val => val.id === id)) {
+            this.modelOptions.splice(this.modelOptions.indexOf(this.modelOptions.find(val => val.id === id)), 1);
+          }
         };
 
         if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
@@ -342,6 +346,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         const addItem = (id): void => {
           this.model.push(id);
           this.onAdded.emit(id);
+          if (this.lazyload && !this.modelOptions.some(val => val.id === id)) {
+            this.modelOptions.push(option);
+          }
         };
 
         addItem(option.id);
@@ -358,6 +365,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         } else {
           const removedOption = this.model.shift();
           this.onRemoved.emit(removedOption);
+          if (this.lazyload && this.modelOptions.some(val => val.id === removedOption)) {
+            this.modelOptions.splice(this.modelOptions.indexOf(this.modelOptions.find(val => val.id === removedOption)), 1);
+          }
         }
       }
       if (this.settings.closeOnSelect) {
