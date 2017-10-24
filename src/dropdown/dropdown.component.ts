@@ -85,6 +85,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   destroyed$ = new Subject<any>();
 
   filteredOptions: IMultiSelectOption[] = [];
+  lazyLoadOptions: IMultiSelectOption[] = [];
   renderFilteredOptions: IMultiSelectOption[] = [];
   model: any[] = [];
   parents: any[];
@@ -319,12 +320,15 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       }
       const index = this.model.indexOf(option.id);
       const isAtSelectionLimit = this.settings.selectionLimit > 0 && this.model.length >= this.settings.selectionLimit;
-      if (index > -1) {
-        const removeItem = (idx, id): void => {
-          this.model.splice(idx, 1);
-          this.onRemoved.emit(id);
-        };
+      const removeItem = (idx, id): void => {
+        this.model.splice(idx, 1);
+        this.onRemoved.emit(id);
+        if (this.settings.isLazyLoad && this.lazyLoadOptions.some(val => val.id === id)) {
+          this.lazyLoadOptions.splice(this.lazyLoadOptions.indexOf(this.lazyLoadOptions.find(val => val.id === id)), 1);
+        }
+      };
 
+      if (index > -1) {
         if ((this.settings.minSelectionLimit === undefined) || (this.numSelected > this.settings.minSelectionLimit)) {
           removeItem(index, option.id);
         }
@@ -342,6 +346,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         const addItem = (id): void => {
           this.model.push(id);
           this.onAdded.emit(id);
+          if (this.settings.isLazyLoad && !this.lazyLoadOptions.some(val => val.id === id)) {
+            this.lazyLoadOptions.push(option);
+          }
         };
 
         addItem(option.id);
@@ -356,8 +363,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
             children.forEach(child => addItem(child.id));
           }
         } else {
-          const removedOption = this.model.shift();
-          this.onRemoved.emit(removedOption);
+          removeItem(0, this.model[0]);
         }
       }
       if (this.settings.closeOnSelect) {
@@ -379,7 +385,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
       this.title = (this.texts) ? this.texts.allSelected : '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
-      this.title = this.options
+      let useOptions = this.settings.isLazyLoad ? this.lazyLoadOptions : this.options;
+      this.title = useOptions
         .filter((option: IMultiSelectOption) =>
           this.model.indexOf(option.id) > -1
         )
