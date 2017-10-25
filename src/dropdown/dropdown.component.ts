@@ -88,6 +88,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   lazyLoadOptions: IMultiSelectOption[] = [];
   renderFilteredOptions: IMultiSelectOption[] = [];
   model: any[] = [];
+  prevModel: any[] = [];
   parents: any[];
   title: string;
   differ: any;
@@ -222,8 +223,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         this.updateTitle();
       }
 
-      this.onModelChange(this.model);
-      this.onModelTouched();
+      this.fireModelChange();
     }
 
     if (changes['texts'] && !changes['texts'].isFirstChange()) {
@@ -248,6 +248,14 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       this.settings.searchMaxLimit,
       this.settings.searchMaxRenderedItems
     ));
+  }
+
+  fireModelChange() {
+    if (this.model != this.prevModel) {
+      this.prevModel = this.model;
+      this.onModelChange(this.model);
+      this.onModelTouched();
+    }
   }
 
   onModelChange: Function = (_: any) => { };
@@ -370,8 +378,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         this.toggleDropdown();
       }
       this.model = this.model.slice();
-      this.onModelChange(this.model);
-      this.onModelTouched();
+      this.fireModelChange();
     }
   }
 
@@ -427,8 +434,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         }
         this.load();
       }
-      this.onModelChange(this.model);
-      this.onModelTouched();
+      this.fireModelChange();
     }
   }
 
@@ -464,8 +470,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         this.load();
 
       }
-      this.onModelChange(this.model);
-      this.onModelTouched();
+      this.fireModelChange();
     }
   }
 
