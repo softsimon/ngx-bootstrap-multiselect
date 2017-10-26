@@ -176,6 +176,8 @@ If the user then searches ```an``` and clicks ```Select All```, all matches to `
 
 Clicking ```Select All``` or ```Unselect All``` with no search criteria present will clear all previously stored searches. Any search match that is manually unchecked will remain unchecked unless matched by a new search ```Select All```.
 
+The implementor will be responsible for completing checks when the form is submitted. This could possibly either consist of completing the load of all lazy load checklists before submitting or sending checked items and search criteria to a back-end api to complete.
+
 ### Use model driven forms with ReactiveFormsModule:
 
 ```js
