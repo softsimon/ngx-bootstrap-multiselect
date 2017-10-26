@@ -202,10 +202,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         .map(option => option.parentId);
       this.updateRenderItems();
 
-      if (this.isLazyLoad && this.settings.selectAddedValues && this.loadedValueIds.length === 0) {
+      if (this.settings.isLazyLoad && this.settings.selectAddedValues && this.loadedValueIds.length === 0) {
         this.loadedValueIds = this.loadedValueIds.concat(changes.options.currentValue.map(value => value.id));
       }
-      if (this.isLazyLoad && this.settings.selectAddedValues && changes.options.previousValue) {
+      if (this.settings.isLazyLoad && this.settings.selectAddedValues && changes.options.previousValue) {
         let addedValues = changes.options.currentValue.filter(
           value => this.loadedValueIds.indexOf(value.id) === -1
         );
@@ -425,7 +425,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   checkAll() {
     if (!this.disabledSelection) {
       this.addChecks(!this.searchFilterApplied() ? this.options : this.filteredOptions);
-      if (this.isLazyLoad && this.settings.selectAddedValues) {
+      if (this.settings.isLazyLoad && this.settings.selectAddedValues) {
         if (this.searchFilterApplied() && !this.checkAllStatus) {
           this.checkAllSearchRegister.add(this.filterControl.value);
         } else {
@@ -454,7 +454,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           return false;
         }
       });
-      if (this.isLazyLoad && this.settings.selectAddedValues) {
+      if (this.settings.isLazyLoad && this.settings.selectAddedValues) {
         if (this.searchFilterApplied()) {
           if (this.checkAllSearchRegister.has(this.filterControl.value)) {
             this.checkAllSearchRegister.delete(this.filterControl.value);
