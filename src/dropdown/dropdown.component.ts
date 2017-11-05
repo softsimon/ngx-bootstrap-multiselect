@@ -459,7 +459,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           if (this.checkAllSearchRegister.has(this.filterControl.value)) {
             this.checkAllSearchRegister.delete(this.filterControl.value);
             this.checkAllSearchRegister.forEach(function(searchTerm) {
-              let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.includes(option.name)), searchTerm);
+              let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.includes(option.id)), searchTerm);
               this.addChecks(filterOptions);
             }.bind(this));
           }
