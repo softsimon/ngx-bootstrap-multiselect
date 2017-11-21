@@ -67,6 +67,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   @Output() onFilter: Observable<string> = this.filterControl.valueChanges;
 
   @HostListener('document: click', ['$event.target'])
+  @HostListener('document: touchstart', ['$event.target'])
   onClick(target: HTMLElement) {
     if (!this.isVisible || !this.settings.closeOnClickOutside) return;
     let parentFound = false;
