@@ -22,7 +22,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
     const isUnderLimit = options.length <= limit;
 
-    if (this._searchCache[str]) {
+    if (this._searchCache.hasOwnProperty(str)) {
       return isUnderLimit ? this._searchCache[str] : this._limitRenderedItems(this._searchCache[str], renderLimit);
     }
 
