@@ -129,7 +129,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     isLazyLoad: false,
     stopScrollPropagation: false,
     loadViewDistance: 1,
-    selectAddedValues: false
+    selectAddedValues: false,
+    ignoreLabels: false
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -362,7 +363,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
         addItem(option.id);
         if (!isAtSelectionLimit) {
-          if (option.parentId) {
+          if (option.parentId && !this.settings.ignoreLabels) {
             let children = this.options.filter(child => child.id !== option.id && child.parentId === option.parentId);
             if (children.every(child => this.model.indexOf(child.id) > -1)) {
               addItem(option.parentId);
@@ -388,9 +389,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   updateTitle() {
+    let numSelectedOptions = this.options.length;
+    if (this.settings.ignoreLabels) {
+      numSelectedOptions = this.options.filter((option: IMultiSelectOption) => !option.isLabel).length;
+    }
     if (this.numSelected === 0 || this.settings.fixedTitle) {
       this.title = (this.texts) ? this.texts.defaultTitle : '';
-    } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+    } else if (this.settings.displayAllSelectedText && this.model.length === numSelectedOptions) {
       this.title = (this.texts) ? this.texts.allSelected : '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
       let useOptions = this.settings.isLazyLoad && this.lazyLoadOptions ? this.lazyLoadOptions : this.options;
@@ -414,7 +419,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   addChecks(options) {
     let checkedOptions = options
     .filter(function(option: IMultiSelectOption) {
-      if (this.model.indexOf(option.id) === -1) {
+      if (this.model.indexOf(option.id) === -1 && !(this.settings.ignoreLabels && option.isLabel)) {
         this.onAdded.emit(option.id);
         return true;
       }
