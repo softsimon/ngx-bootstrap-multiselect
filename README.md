@@ -134,7 +134,8 @@ myOptions: IMultiSelectOption[] = [
 | isLazyLoad           | An event, ```onLazyLoad```, triggers on scrolling to a specified distance from the bottom of the dropdown, allowing additional data to load | false             |
 | loadViewDistance     | Distance from bottom of dropdown to trigger lazy load, in units of dropdown viewport height | 1             |
 | stopScrollPropagation | Scrolling the dropdown will not overflow to document              | false             |
-| SelectAddedValues    | Additional lazy loaded ```Select All``` values are checked when added on scrolling | false             |
+| selectAddedValues    | Additional lazy loaded ```Select All``` values are checked when added on scrolling | false             |
+| ignoreLabels         | Ignore label options when counting selected options                | false             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |
