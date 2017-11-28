@@ -37,3 +37,8 @@ a {
 .slideron {
   margin-left: 1.35em;
 }
+
+.content_wrapper{
+  display: table-cell;
+  vertical-align: middle;
+}
