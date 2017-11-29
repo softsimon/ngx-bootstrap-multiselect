@@ -1,5 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import { IMultiSelectOption } from './types';
+
+interface StringHashMap<T> {
+  [k: string]: T;
+}
 
 @Pipe({
   name: 'searchFilter'
@@ -7,86 +12,116 @@ import { IMultiSelectOption } from './types';
 export class MultiSelectSearchFilter implements PipeTransform {
 
   private _lastOptions: IMultiSelectOption[];
-  private _searchCache: { [k: string]: IMultiSelectOption[] } = {};
-  private _searchCacheInclusive: { [k: string]: boolean | number } = {};
+  private _searchCache: StringHashMap<IMultiSelectOption[]> = {};
+  private _searchCacheInclusive: StringHashMap<boolean | number> = {};
+  private _prevSkippedItems: StringHashMap<number> = {};
 
-  transform(options: Array<IMultiSelectOption>, str: string, limit = 0, renderLimit = 0): Array<IMultiSelectOption> {
-    str = (str || '').toLowerCase();
+  transform(
+    options: IMultiSelectOption[],
+    str = '',
+    limit = 0,
+    renderLimit = 0
+  ): IMultiSelectOption[] {
+    str = str.toLowerCase();
 
     // Drop cache because options were updated
     if (options !== this._lastOptions) {
       this._lastOptions = options;
       this._searchCache = {};
       this._searchCacheInclusive = {};
+      this._prevSkippedItems = {};
     }
+
+    const filteredOpts = this._searchCache.hasOwnProperty(str)
+      ? this._searchCache[str]
+      : this._doSearch(options, str, limit);
 
     const isUnderLimit = options.length <= limit;
 
-    if (this._searchCache.hasOwnProperty(str)) {
-      return isUnderLimit ? this._searchCache[str] : this._limitRenderedItems(this._searchCache[str], renderLimit);
+    return isUnderLimit
+      ? filteredOpts
+      : this._limitRenderedItems(filteredOpts, renderLimit);
+  }
+
+  private _getSubsetOptions(
+    options: IMultiSelectOption[],
+    prevOptions: IMultiSelectOption[],
+    prevSearchStr: string
+  ) {
+    const prevInclusiveOrIdx = this._searchCacheInclusive[prevSearchStr];
+
+    if (prevInclusiveOrIdx === true) {
+      // If have previous results and it was inclusive, do only subsearch
+      return prevOptions;
+    } else if (typeof prevInclusiveOrIdx === 'number') {
+      // Or reuse prev results with unchecked ones
+      return [...prevOptions, ...options.slice(prevInclusiveOrIdx)];
     }
 
+    return options;
+  }
+
+  private _doSearch(options: IMultiSelectOption[], str: string, limit: number) {
     const prevStr = str.slice(0, -1);
     const prevResults = this._searchCache[prevStr];
+    const prevResultShift = this._prevSkippedItems[prevStr] || 0;
 
     if (prevResults) {
-      const prevInclusiveOrIdx = this._searchCacheInclusive[prevStr];
-
-      if (prevInclusiveOrIdx === true) {
-        // If have previous results and it was inclusive, do only subsearch
-        options = prevResults;
-      } else if (typeof prevInclusiveOrIdx === 'number') {
-        // Or reuse prev results with unchecked ones
-        options = [...prevResults, ...options.slice(prevInclusiveOrIdx)];
-      }
+      options = this._getSubsetOptions(options, prevResults, prevStr);
     }
 
     const optsLength = options.length;
     const maxFound = limit > 0 ? Math.min(limit, optsLength) : optsLength;
-    const filteredOpts = [];
-
     const regexp = new RegExp(this._escapeRegExp(str), 'i');
+    const filteredOpts: IMultiSelectOption[] = [];
 
-    const matchPredicate = (option: IMultiSelectOption) => regexp.test(option.name),
-      getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
-      getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
+    let i = 0, founded = 0, removedFromPrevResult = 0;
 
-    let i = 0, founded = 0;
+    const doesOptionMatch = (option: IMultiSelectOption) => regexp.test(option.name);
+    const getChildren = (option: IMultiSelectOption) =>
+      options.filter(child => child.parentId === option.id);
+    const getParent = (option: IMultiSelectOption) =>
+      options.find(parent => option.parentId === parent.id);
+    const foundFn = (item: any) => { filteredOpts.push(item); founded++; };
+    const notFoundFn = prevResults ? () => removedFromPrevResult++ : () => { };
+
     for (; i < optsLength && founded < maxFound; ++i) {
       const option = options[i];
-      const directMatch = regexp.test(option.name);
+      const directMatch = doesOptionMatch(option);
 
       if (directMatch) {
-        filteredOpts.push(option);
-        founded++;
+        foundFn(option);
         continue;
       }
 
-      if (typeof (option.parentId) === 'undefined') {
-        const childrenMatch = getChildren(option).some(matchPredicate);
+      if (typeof option.parentId === 'undefined') {
+        const childrenMatch = getChildren(option).some(doesOptionMatch);
 
         if (childrenMatch) {
-          filteredOpts.push(option);
-          founded++;
+          foundFn(option);
           continue;
         }
       }
 
-      if (typeof (option.parentId) !== 'undefined') {
-        const parentMatch = matchPredicate(getParent(option));
+      if (typeof option.parentId !== 'undefined') {
+        const parentMatch = doesOptionMatch(getParent(option));
 
         if (parentMatch) {
-          filteredOpts.push(option);
-          founded++;
+          foundFn(option);
           continue;
         }
       }
+
+      notFoundFn();
     }
 
-    this._searchCache[str] = filteredOpts;
-    this._searchCacheInclusive[str] = i === optsLength || i + 1;
+    const totalIterations = i + prevResultShift;
 
-    return isUnderLimit ? filteredOpts : this._limitRenderedItems(filteredOpts, renderLimit);
+    this._searchCache[str] = filteredOpts;
+    this._searchCacheInclusive[str] = i === optsLength || totalIterations;
+    this._prevSkippedItems[str] = removedFromPrevResult + prevResultShift;
+
+    return filteredOpts;
   }
 
   private _limitRenderedItems<T>(items: T[], limit: number): T[] {
@@ -96,4 +131,5 @@ export class MultiSelectSearchFilter implements PipeTransform {
   private _escapeRegExp(str: string): string {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
   }
+
 }
