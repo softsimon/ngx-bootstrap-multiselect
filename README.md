@@ -112,7 +112,7 @@ myOptions: IMultiSelectOption[] = [
 | -------------------- | ------------------------------------------------------------------ | ----------------  |
 | pullRight            | Float the dropdown to the right                                    | false             |
 | enableSearch         | Enable searching the dropdown items                                | false             |
-| checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon' or 'fontawesome'  | 'checkboxes'      |
+| checkedStyle         | Style of checked items one of 'checkboxes', 'glyphicon', 'fontawesome' or 'visual'  | 'checkboxes'      |
 | buttonClasses        | CSS classes to apply to the trigger button                         | 'btn btn-default' |
 | itemClasses          | CSS classes to apply to items                                      | ''                |
 | containerClasses     | CSS classes to apply to container div                              | 'dropdown-inline' |
@@ -136,6 +136,7 @@ myOptions: IMultiSelectOption[] = [
 | stopScrollPropagation | Scrolling the dropdown will not overflow to document              | false             |
 | selectAddedValues    | Additional lazy loaded ```Select All``` values are checked when added on scrolling | false             |
 | ignoreLabels         | Ignore label options when counting selected options                | false             |
+| imageHeight         | Sets scale of images contained in the visual toggle style in EMs lower than 1.8 is overridden                 | 1.8             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |

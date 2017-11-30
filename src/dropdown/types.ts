@@ -33,7 +33,7 @@ export interface IMultiSelectSettings {
    * Should be less than searchMaxLimit to take effect
    */
   searchMaxRenderedItems?: number;
-  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome';
+  checkedStyle?: 'checkboxes' | 'glyphicon' | 'fontawesome' | 'visual';
   buttonClasses?: string;
   itemClasses?: string;
   containerClasses?: string;
@@ -56,6 +56,7 @@ export interface IMultiSelectSettings {
    * If activated label IDs don't count and won't be written to the model.
    */
   ignoreLabels?: boolean;
+  imageHeight?: number;
 }
 
 export interface IMultiSelectTexts {

@@ -104,6 +104,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   checkAllSearchRegister = new Set();
   checkAllStatus = false;
   loadedValueIds = [];
+  atLimit: boolean;
+  scaleSquare : number;
+  scaleWidth : number;
+  scaleFontSize : number;
+  scaleMissingImage : number;
+  
+
 
   defaultSettings: IMultiSelectSettings = {
     closeOnClickOutside: true,
@@ -129,7 +136,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     stopScrollPropagation: false,
     loadViewDistance: 1,
     selectAddedValues: false,
-    ignoreLabels: false
+    ignoreLabels: false,
+    imageHeight:1.8,
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -193,6 +201,11 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           this.load();
         }
       });
+
+      this.scaleSquare = 1 * Math.max(this.settings.imageHeight, 1.8);
+      this.scaleWidth =	1.447368421 * Math.max(this.settings.imageHeight, 1.8);
+      this.scaleFontSize = 0.526315789 * Math.max(this.settings.imageHeight, 1.8);
+      this.scaleMissingImage = 0.7 * Math.max(this.settings.imageHeight, 1.8);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -287,6 +300,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     if (changes) {
       this.updateNumSelected();
       this.updateTitle();
+      this.checkAtLimit();
     }
   }
 
@@ -409,6 +423,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         + ' '
         + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
     }
+  }
+
+  checkAtLimit(){
+    this.atLimit = this.settings.selectionLimit > 0 && this.model.length >= this.settings.selectionLimit;
   }
 
   searchFilterApplied() {
