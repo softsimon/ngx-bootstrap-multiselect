@@ -1,5 +1,4 @@
 import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/takeUntil';
 
 import {
   Component,
@@ -14,7 +13,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -188,12 +187,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     this.filterControl.valueChanges
       .takeUntil(this.destroyed$)
-      .subscribe(function () {
+      .subscribe(() => {
         this.updateRenderItems();
         if (this.settings.isLazyLoad) {
           this.load();
         }
-      }.bind(this));
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -418,13 +417,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   addChecks(options) {
     let checkedOptions = options
-    .filter(function(option: IMultiSelectOption) {
-      if (this.model.indexOf(option.id) === -1 && !(this.settings.ignoreLabels && option.isLabel)) {
-        this.onAdded.emit(option.id);
-        return true;
-      }
-      return false;
-    }.bind(this)).map((option: IMultiSelectOption) => option.id);
+      .filter((option: IMultiSelectOption) => {
+        if (this.model.indexOf(option.id) === -1 && !(this.settings.ignoreLabels && option.isLabel)) {
+          this.onAdded.emit(option.id);
+          return true;
+        }
+        return false;
+      }).map((option: IMultiSelectOption) => option.id);
     this.model = this.model.concat(checkedOptions);
   }
 
@@ -464,10 +463,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         if (this.searchFilterApplied()) {
           if (this.checkAllSearchRegister.has(this.filterControl.value)) {
             this.checkAllSearchRegister.delete(this.filterControl.value);
-            this.checkAllSearchRegister.forEach(function(searchTerm) {
+            this.checkAllSearchRegister.forEach((searchTerm) => {
               let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.includes(option.id)), searchTerm);
               this.addChecks(filterOptions);
-            }.bind(this));
+            });
           }
         } else {
           this.checkAllSearchRegister.clear();

@@ -5,6 +5,7 @@ export interface IMultiSelectOption {
   parentId?: any;
   params?: any;
   classes?: string;
+  image?: string;
 }
 
 export interface IMultiSelectSettings {
