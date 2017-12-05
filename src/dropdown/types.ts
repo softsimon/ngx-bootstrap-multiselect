@@ -56,6 +56,11 @@ export interface IMultiSelectSettings {
    * If activated label IDs don't count and won't be written to the model.
    */
   ignoreLabels?: boolean;
+  /**
+   * false - By default
+   * If activated, the title will show selections in the order they were selected.
+   */
+  maintainSelectionOrderInTitle?: boolean;
 }
 
 export interface IMultiSelectTexts {
