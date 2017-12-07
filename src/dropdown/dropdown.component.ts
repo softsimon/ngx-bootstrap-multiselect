@@ -76,10 +76,11 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       }
       target = target.parentElement;
     }
-    if (!parentFound) {
+    if (!parentFound && this.overrideAutoClose == false) {
       this.isVisible = false;
       this.dropdownClosed.emit();
     }
+    this.overrideAutoClose = false;
   }
 
   destroyed$ = new Subject<any>();
@@ -109,6 +110,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   scaleWidth : number;
   scaleFontSize : number;
   scaleMissingImage : number;
+  overrideAutoClose : boolean;
   
 
 
