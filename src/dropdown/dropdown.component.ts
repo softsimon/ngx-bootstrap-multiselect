@@ -445,7 +445,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         : this.filteredOptions.map((option: IMultiSelectOption) => option.id)
       );
       // set unchecked options only to the ones that were checked
-      unCheckedOptions = checkedOptions.filter(item => this.model.includes(item));
+      unCheckedOptions = checkedOptions.filter(item => this.model.indexOf(item) > -1);
       this.model = this.model.filter((id: number) => {
         if (((unCheckedOptions.indexOf(id) < 0) && (this.settings.minSelectionLimit === undefined)) || ((unCheckedOptions.indexOf(id) < this.settings.minSelectionLimit))) {
           return true;
@@ -459,7 +459,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
           if (this.checkAllSearchRegister.has(this.filterControl.value)) {
             this.checkAllSearchRegister.delete(this.filterControl.value);
             this.checkAllSearchRegister.forEach(function(searchTerm) {
-              let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.includes(option.id)), searchTerm);
+              let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.indexOf(option.id) > -1), searchTerm);
               this.addChecks(filterOptions);
             }.bind(this));
           }
