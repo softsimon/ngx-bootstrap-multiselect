@@ -513,6 +513,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     }
   }
 
+  trackById({}, selectOption: IMultiSelectOption) {
+    return selectOption.id;
+  }
+
   load() {
     this.onLazyLoad.emit({
       length: this.options.length,
