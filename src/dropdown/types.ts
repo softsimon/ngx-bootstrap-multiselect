@@ -5,6 +5,7 @@ export interface IMultiSelectOption {
   parentId?: any;
   params?: any;
   classes?: string;
+  image?: string;
 }
 
 export interface IMultiSelectSettings {
@@ -50,6 +51,11 @@ export interface IMultiSelectSettings {
   loadViewDistance?: number;
   stopScrollPropagation?: boolean;
   selectAddedValues?: boolean;
+  /**
+   * false - By default
+   * If activated label IDs don't count and won't be written to the model.
+   */
+  ignoreLabels?: boolean;
 }
 
 export interface IMultiSelectTexts {

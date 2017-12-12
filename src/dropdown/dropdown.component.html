@@ -1,6 +1,7 @@
 <div class="dropdown" [ngClass]="settings.containerClasses" [class.open]="isVisible">
   <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" (click)="toggleDropdown()" [disabled]="disabled">{{ title }}<span class="caret"></span></button>
   <ul #scroller *ngIf="isVisible" class="dropdown-menu"
+      [ngClass] = "{'chunkydropdown-menu': settings.checkedStyle == 'visual' }"
       (scroll)="settings.isLazyLoad ? checkScrollPosition($event) : null"
       (wheel)="settings.stopScrollPropagation ? checkScrollPropagation($event, scroller) : null"
       [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
@@ -30,8 +31,8 @@
     </li>
     <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
     <li *ngIf="!renderItems" class="dropdown-item empty">{{ texts.searchNoRenderText }}</li>
-    <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.searchEmptyResult }}</li>
-    <li class="dropdown-item" *ngFor="let option of renderFilteredOptions; trackBy: trackById" (click)="setSelected($event, option)" [ngStyle]="getItemStyle(option)"
+    <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.searchEmptyResult }}</li
+    <li class="dropdown-item" *ngFor="let option of renderFilteredOptions; trackBy: trackById" (click)="setSelected($event, option)" [ngClass] = "{'active': isSelected(option) }" [ngStyle]="getItemStyle(option)"
       [ngClass]="option.classes" [class.dropdown-header]="option.isLabel">
         <a *ngIf="!option.isLabel; else label" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
           [ngStyle]="getItemStyleSelectionDisabled()">
@@ -42,8 +43,17 @@
             <span *ngSwitchCase="'fontawesome'" style="width: 16px;display: inline-block;">
               <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
             </span>
+            <span *ngSwitchCase="'visual'" style="display:block;float:left; border-radius: 0.2em; border: 0.1em solid rgba(44, 44, 44, 0.63);background:rgba(0, 0, 0, 0.1);width: 5.5em;">
+              <div class="slider" [ngClass]="{'slideron': isSelected(option)}">
+                <img *ngIf="option.image != null" [src] = option.image style = "height: 100%; width: 100%; object-fit: contain"/>
+                <div *ngIf="option.image == null" style = "height: 100%; width: 100%;text-align: center; display: table; background-color:rgba(0, 0, 0, 0.74)">
+                  <div class="content_wrapper">
+                  <span style="font-size:3em;color:white" class="glyphicon glyphicon-eye-close"></span>
+                </div>
+                </div>
+            </span>
           </ng-container>
-          <span [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+          <span [ngClass] = "{'chunkyrow': settings.checkedStyle == 'visual' }" [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
             {{ option.name }}
           </span>
         </a>

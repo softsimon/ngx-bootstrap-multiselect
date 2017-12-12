@@ -1,5 +1,4 @@
 import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/takeUntil';
 
 import {
   Component,
@@ -14,7 +13,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -129,7 +128,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     isLazyLoad: false,
     stopScrollPropagation: false,
     loadViewDistance: 1,
-    selectAddedValues: false
+    selectAddedValues: false,
+    ignoreLabels: false
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -187,12 +187,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     this.filterControl.valueChanges
       .takeUntil(this.destroyed$)
-      .subscribe(function () {
+      .subscribe(() => {
         this.updateRenderItems();
         if (this.settings.isLazyLoad) {
           this.load();
         }
-      }.bind(this));
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -362,7 +362,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
         addItem(option.id);
         if (!isAtSelectionLimit) {
-          if (option.parentId) {
+          if (option.parentId && !this.settings.ignoreLabels) {
             let children = this.options.filter(child => child.id !== option.id && child.parentId === option.parentId);
             if (children.every(child => this.model.indexOf(child.id) > -1)) {
               addItem(option.parentId);
@@ -388,12 +388,16 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   updateTitle() {
+    let numSelectedOptions = this.options.length;
+    if (this.settings.ignoreLabels) {
+      numSelectedOptions = this.options.filter((option: IMultiSelectOption) => !option.isLabel).length;
+    }
     if (this.numSelected === 0 || this.settings.fixedTitle) {
       this.title = (this.texts) ? this.texts.defaultTitle : '';
-    } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+    } else if (this.settings.displayAllSelectedText && this.model.length === numSelectedOptions) {
       this.title = (this.texts) ? this.texts.allSelected : '';
     } else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
-      let useOptions = this.settings.isLazyLoad && this.lazyLoadOptions ? this.lazyLoadOptions : this.options;
+      let useOptions = this.settings.isLazyLoad && this.lazyLoadOptions.length ? this.lazyLoadOptions : this.options;
       this.title = useOptions
         .filter((option: IMultiSelectOption) =>
           this.model.indexOf(option.id) > -1
@@ -413,13 +417,13 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
   addChecks(options) {
     let checkedOptions = options
-    .filter(function(option: IMultiSelectOption) {
-      if (this.model.indexOf(option.id) === -1) {
-        this.onAdded.emit(option.id);
-        return true;
-      }
-      return false;
-    }.bind(this)).map((option: IMultiSelectOption) => option.id);
+      .filter((option: IMultiSelectOption) => {
+        if (this.model.indexOf(option.id) === -1 && !(this.settings.ignoreLabels && option.isLabel)) {
+          this.onAdded.emit(option.id);
+          return true;
+        }
+        return false;
+      }).map((option: IMultiSelectOption) => option.id);
     this.model = this.model.concat(checkedOptions);
   }
 
@@ -459,10 +463,10 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
         if (this.searchFilterApplied()) {
           if (this.checkAllSearchRegister.has(this.filterControl.value)) {
             this.checkAllSearchRegister.delete(this.filterControl.value);
-            this.checkAllSearchRegister.forEach(function(searchTerm) {
+            this.checkAllSearchRegister.forEach((searchTerm) => {
               let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.includes(option.id)), searchTerm);
               this.addChecks(filterOptions);
-            }.bind(this));
+            });
           }
         } else {
           this.checkAllSearchRegister.clear();
