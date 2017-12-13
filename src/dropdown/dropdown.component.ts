@@ -517,7 +517,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     }
   }
 
-  trackById({}, selectOption: IMultiSelectOption) {
+  trackById(idx: number, selectOption: IMultiSelectOption) {
     return selectOption.id;
   }
 
