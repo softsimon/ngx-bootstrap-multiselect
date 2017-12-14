@@ -534,6 +534,7 @@ export class MultiselectDropdown
 
   addChecks(options) {
     let checkedOptions = options
+<<<<<<< HEAD
     .filter(function(option: IMultiSelectOption) {
       if (!
         option.disabled ||
@@ -546,6 +547,15 @@ export class MultiselectDropdown
       return false;
     }.bind(this))
     .map((option: IMultiSelectOption) => option.id);
+=======
+      .filter((option: IMultiSelectOption) => {
+        if (!option.disabled || (this.model.indexOf(option.id) === -1 && !(this.settings.ignoreLabels && option.isLabel))) {
+          this.onAdded.emit(option.id);
+          return true;
+        }
+        return false;
+      }).map((option: IMultiSelectOption) => option.id);
+>>>>>>> added to latest master branch the changes i made to my 1.6.0 originally
     this.model = this.model.concat(checkedOptions);
   }
 

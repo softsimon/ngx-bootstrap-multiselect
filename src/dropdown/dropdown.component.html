@@ -96,11 +96,15 @@
             </span>
           </ng-container>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span [ngClass] = "{'chunkyrow': settings.checkedStyle == 'visual' }" [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
 =======
           <span [ngClass]="settings.itemClasses" [class.disabled]="isCheckboxDisabled(option)" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
 >>>>>>> added disabled classs and input handling
 >>>>>>> added disabled classs and input handling
+=======
+          <span [ngClass] = "{'chunkyrow': settings.checkedStyle == 'visual' }" [ngClass]="settings.itemClasses" [class.disabled]="isCheckboxDisabled(option)" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+>>>>>>> added to latest master branch the changes i made to my 1.6.0 originally
             {{ option.name }}
           </span>
         </a>
