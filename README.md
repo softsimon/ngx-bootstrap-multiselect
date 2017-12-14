@@ -1,4 +1,4 @@
-# AngularX Dropdown Multiselect for Bootstrap CSS
+# AngularX Dropdown Multiselect for Bootstrap CSS 
 
 Works with Angular Final and AOT compilation
 
