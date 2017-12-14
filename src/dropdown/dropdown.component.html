@@ -79,13 +79,35 @@
             <span *ngSwitchCase="'fontawesome'" style="width: 16px;display: inline-block;">
               <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
               <i *ngIf="isCheckboxDisabled(option)" class="fa fa-lock" aria-hidden="true"></i>
+<<<<<<< HEAD
             </span>
           </ng-container>
           <span [ngClass]="settings.itemClasses" [class.disabled]="isCheckboxDisabled(option)" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+=======
+            </span>
+            <span *ngSwitchCase="'visual'" style="display:block;float:left; border-radius: 0.2em; border: 0.1em solid rgba(44, 44, 44, 0.63);background:rgba(0, 0, 0, 0.1);width: 5.5em;">
+              <div class="slider" [ngClass]="{'slideron': isSelected(option)}">
+                <img *ngIf="option.image != null" [src] = option.image style = "height: 100%; width: 100%; object-fit: contain"/>
+                <div *ngIf="option.image == null" style = "height: 100%; width: 100%;text-align: center; display: table; background-color:rgba(0, 0, 0, 0.74)">
+                  <div class="content_wrapper">
+                  <span style="font-size:3em;color:white" class="glyphicon glyphicon-eye-close"></span>
+                </div>
+                </div>
+            </span>
+          </ng-container>
+<<<<<<< HEAD
+          <span [ngClass] = "{'chunkyrow': settings.checkedStyle == 'visual' }" [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+=======
+          <span [ngClass]="settings.itemClasses" [class.disabled]="isCheckboxDisabled(option)" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+>>>>>>> added disabled classs and input handling
+>>>>>>> added disabled classs and input handling
             {{ option.name }}
           </span>
         </a>
         <ng-template #label><span [class.disabled]="isCheckboxDisabled()">{{ option.name }}</span></ng-template>
+<<<<<<< HEAD
+>>>>>>> added disabled classs and input handling
+=======
 >>>>>>> added disabled classs and input handling
     </li>
   </ul>
