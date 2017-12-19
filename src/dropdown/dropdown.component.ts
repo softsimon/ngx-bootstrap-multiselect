@@ -78,6 +78,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     }
     if (!parentFound) {
       this.isVisible = false;
+      this.focusBack = true;
       this.dropdownClosed.emit();
     }
   }
@@ -104,6 +105,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   checkAllSearchRegister = new Set();
   checkAllStatus = false;
   loadedValueIds = [];
+  focusBack = false;
+  focusedItem: IMultiSelectOption | undefined;
 
   defaultSettings: IMultiSelectSettings = {
     closeOnClickOutside: true,
@@ -240,6 +243,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     this.renderItems = !this.searchLimitApplied || this.filterControl.value.length >= this.searchRenderAfter;
     this.filteredOptions = this.applyFilters(this.options, this.settings.isLazyLoad ? '' : this.filterControl.value);
     this.renderFilteredOptions = this.renderItems ? this.filteredOptions : [];
+    this.focusedItem = undefined;
   }
 
   applyFilters(options, value) {
@@ -309,9 +313,23 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     this.filterControl.setValue('');
   }
 
-  toggleDropdown() {
+  toggleDropdown(e?: Event) {
+    if (e && e.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    if (this.isVisible) {
+      this.focusBack = true;
+    }
+
     this.isVisible = !this.isVisible;
     this.isVisible ? this.dropdownOpened.emit() : this.dropdownClosed.emit();
+    this.focusedItem = undefined;
+  }
+
+  closeDropdown(e?: Event) {
+    this.isVisible = true;
+    this.toggleDropdown(e);
   }
 
   isSelected(option: IMultiSelectOption): boolean {
@@ -524,6 +542,26 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       checkAllSearches: this.checkAllSearchRegister,
       checkAllStatus: this.checkAllStatus
     });
+  }
+
+  focusItem(dir: number) {
+    if (!this.isVisible) {
+      return;
+    }
+
+    const idx = this.filteredOptions.indexOf(this.focusedItem);
+
+    if (idx === -1) {
+      this.focusedItem = this.filteredOptions[0];
+      return;
+    }
+
+    const nextIdx = idx + dir;
+    const newIdx = nextIdx < 0
+      ? this.filteredOptions.length - 1
+      : nextIdx % this.filteredOptions.length;
+
+    this.focusedItem = this.filteredOptions[newIdx];
   }
 
 }
