@@ -307,16 +307,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   clearSearch(event: Event) {
-    if (event.stopPropagation) {
-      event.stopPropagation();
-    }
+    this.maybeStopPropagation(event);
     this.filterControl.setValue('');
   }
 
   toggleDropdown(e?: Event) {
-    if (e && e.stopPropagation) {
-      e.stopPropagation();
-    }
+    this.maybeStopPropagation(e);
 
     if (this.isVisible) {
       this.focusBack = true;
@@ -342,9 +338,8 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     }
 
     if (!this.disabledSelection) {
-      if (_event.stopPropagation) {
-        _event.stopPropagation();
-      }
+      this.maybeStopPropagation(_event);
+      this.maybePreventDefault(_event);
       const index = this.model.indexOf(option.id);
       const isAtSelectionLimit = this.settings.selectionLimit > 0 && this.model.length >= this.settings.selectionLimit;
       const removeItem = (idx, id): void => {
@@ -501,9 +496,9 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     if (this.settings.selectionLimit && !this.settings.autoUnselect &&
       this.model.length >= this.settings.selectionLimit &&
       this.model.indexOf(option.id) === -1 &&
-      event.preventDefault
+      this.maybePreventDefault(event)
     ) {
-      event.preventDefault();
+      this.maybePreventDefault(event);
     }
   }
 
@@ -530,7 +525,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
 
     if ((ev.deltaY > 0 && scrollTop + scrollElementHeight >= scrollHeight) || (ev.deltaY < 0 && scrollTop <= 0)) {
       ev = ev || window.event;
-      ev.preventDefault && ev.preventDefault();
+      this.maybePreventDefault(ev);
       ev.returnValue = false;
     }
   }
@@ -544,10 +539,12 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
     });
   }
 
-  focusItem(dir: number) {
+  focusItem(dir: number, e?: Event) {
     if (!this.isVisible) {
       return;
     }
+
+    this.maybePreventDefault(e);
 
     const idx = this.filteredOptions.indexOf(this.focusedItem);
 
@@ -562,6 +559,18 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
       : nextIdx % this.filteredOptions.length;
 
     this.focusedItem = this.filteredOptions[newIdx];
+  }
+
+  private maybePreventDefault(e?: { preventDefault?: Function }) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+  }
+
+  private maybeStopPropagation(e?: { stopPropagation?: Function }) {
+    if (e && e.stopPropagation) {
+      e.stopPropagation();
+    }
   }
 
 }

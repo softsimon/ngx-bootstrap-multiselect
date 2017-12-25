@@ -1,0 +1,5 @@
+:host {
+  display: block;
+  /* To test on pages with scroll */
+  height: 200vh;
+}

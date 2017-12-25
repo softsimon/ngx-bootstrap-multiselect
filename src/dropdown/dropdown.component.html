@@ -1,5 +1,5 @@
 <div class="dropdown" [ngClass]="settings.containerClasses" [class.open]="isVisible" (keyup.esc)="closeDropdown($event)"
-  (keyup.arrowdown)="focusItem(1)" (keyup.arrowup)="focusItem(-1)">
+  (keydown.arrowdown)="focusItem(1, $event)" (keydown.arrowup)="focusItem(-1, $event)">
   <button *ngIf="!isVisible || !(isVisible && settings.enableSearch); else filter" type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
     (click)="toggleDropdown($event)" [disabled]="disabled" [ssAutofocus]="!focusBack">
     {{ title }}
@@ -22,7 +22,7 @@
   <ul #scroller *ngIf="isVisible" class="dropdown-menu" [ngClass]="{'chunkydropdown-menu': settings.checkedStyle == 'visual' }"
     (scroll)="settings.isLazyLoad ? checkScrollPosition($event) : null" (wheel)="settings.stopScrollPropagation ? checkScrollPropagation($event, scroller) : null"
     [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight" [style.max-height]="settings.maxHeight"
-    style="display: block; height: auto; overflow-y: auto;">
+    style="display: block; height: auto; overflow-y: auto;" (keydown.tab)="focusItem(1, $event)" (keydown.shift.tab)="focusItem(-1, $event)">
     <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection" (click)="checkAll()">
       <a href="javascript:;" role="menuitem" tabindex="-1">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome','fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
@@ -40,7 +40,7 @@
     <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.searchEmptyResult }}</li>
     <li class="dropdown-item" *ngFor="let option of renderFilteredOptions" [ngClass]="{'active': isSelected(option) }" [ngStyle]="getItemStyle(option)"
       [ngClass]="option.classes" [class.dropdown-header]="option.isLabel" [ssAutofocus]="option !== focusedItem" tabindex="-1"
-      (click)="setSelected($event, option)" (keyup.space)="setSelected($event, option)" (keyup.enter)="setSelected($event, option)">
+      (click)="setSelected($event, option)" (keydown.space)="setSelected($event, option)" (keydown.enter)="setSelected($event, option)">
       <a *ngIf="!option.isLabel; else label" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
         [ngStyle]="getItemStyleSelectionDisabled()">
         <ng-container [ngSwitch]="settings.checkedStyle">
