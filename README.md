@@ -117,6 +117,7 @@ myOptions: IMultiSelectOption[] = [
 | itemClasses          | CSS classes to apply to items                                      | ''                |
 | containerClasses     | CSS classes to apply to container div                              | 'dropdown-inline' |
 | selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
+| minSelectionLimit    | Minimum number of items that may be selected                       | 0                 |
 | autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
 | closeOnSelect        | If enabled, dropdown will be closed after selection                | false             |
 | showCheckAll         | Display the `checkAll` item to select all options                  | false             |
