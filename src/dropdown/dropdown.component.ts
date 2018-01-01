@@ -397,7 +397,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   updateNumSelected() {
-    this.numSelected = this.model.filter(id => this.parents.indexOf(id) < 0).length || 0;
+    this.numSelected = this.model.filter(id => id != '' && this.parents.indexOf(id) < 0).length || 0;
   }
 
   updateTitle() {
