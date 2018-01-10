@@ -256,7 +256,7 @@ export class MultiselectDropdown implements OnInit, OnChanges, DoCheck, OnDestro
   }
 
   fireModelChange() {
-    if (this.model != this.prevModel) {
+    if (this.model != this.prevModel && JSON.stringify(this.model) !== JSON.stringify(this.prevModel)) {
       this.prevModel = this.model;
       this.onModelChange(this.model);
       this.onModelTouched();
