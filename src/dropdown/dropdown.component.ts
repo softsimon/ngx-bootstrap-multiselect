@@ -194,8 +194,6 @@ export class MultiselectDropdown
   }
 
   ngOnInit() {
-    this.settings = Object.assign(this.defaultSettings, this.settings);
-    this.texts = Object.assign(this.defaultTexts, this.texts);
     this.title = this.texts.defaultTitle || '';
 
     this.filterControl.valueChanges.takeUntil(this.destroyed$).subscribe(() => {
@@ -248,8 +246,13 @@ export class MultiselectDropdown
       this.fireModelChange();
     }
 
-    if (changes['texts'] && !changes['texts'].isFirstChange()) {
-      this.updateTitle();
+    if (changes['settings']) {
+      this.settings = { ...this.defaultSettings, ...this.settings };
+    }
+
+    if (changes['texts']) {
+      this.texts = { ...this.defaultTexts, ...this.texts };
+      !changes['texts'].isFirstChange() && this.updateTitle();
     }
   }
 
