@@ -142,6 +142,7 @@ export class MultiselectDropdown
     loadViewDistance: 1,
     selectAddedValues: false,
     ignoreLabels: false,
+    maintainSelectionOrderInTitle: false,
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -477,16 +478,24 @@ export class MultiselectDropdown
       this.settings.dynamicTitleMaxItems &&
       this.settings.dynamicTitleMaxItems >= this.numSelected
     ) {
-      let useOptions =
+      let useOptions = 
         this.settings.isLazyLoad && this.lazyLoadOptions.length
-          ? this.lazyLoadOptions
-          : this.options;
-      this.title = useOptions
-        .filter(
-          (option: IMultiSelectOption) => this.model.indexOf(option.id) > -1
-        )
-        .map((option: IMultiSelectOption) => option.name)
-        .join(', ');
+        ? this.lazyLoadOptions
+        : this.options;
+
+      let titleSelections: Array<IMultiSelectOption>;
+
+      if (this.settings.maintainSelectionOrderInTitle) {
+          const optionIds = useOptions.map((selectOption: IMultiSelectOption, idx: number) => selectOption.id);
+          titleSelections = this.model
+            .map((selectedId) => optionIds.indexOf(selectedId))
+            .filter((optionIndex) => optionIndex > -1)
+            .map((optionIndex) => useOptions[optionIndex]);
+      } else {
+        titleSelections = useOptions.filter((option: IMultiSelectOption) => this.model.indexOf(option.id) > -1);
+      }
+
+      this.title = titleSelections.map((option: IMultiSelectOption) => option.name).join(', ');
     } else {
       this.title =
         this.numSelected +
