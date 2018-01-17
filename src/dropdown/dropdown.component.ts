@@ -325,7 +325,7 @@ export class MultiselectDropdown
     }
   }
 
-  validate(_c: AbstractControl): { [key: string]: any; } {
+  validate(_c: AbstractControl): { [key: string]: any } {
     if(this.model && this.model.length) {
       return {
         required : {
@@ -537,8 +537,10 @@ export class MultiselectDropdown
     .filter(function(option: IMultiSelectOption) {
       if (
         !option.disabled ||
-        (this.model.indexOf(option.id) === -1 &&
-        !(this.settings.ignoreLabels && option.isLabel))
+        (
+          this.model.indexOf(option.id) === -1 &&
+          !(this.settings.ignoreLabels && option.isLabel)
+        )
       ) {
         this.onAdded.emit(option.id);
         return true;
