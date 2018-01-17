@@ -535,8 +535,8 @@ export class MultiselectDropdown
   addChecks(options) {
     let checkedOptions = options
     .filter(function(option: IMultiSelectOption) {
-      if (!
-        option.disabled ||
+      if (
+        !option.disabled ||
         (this.model.indexOf(option.id) === -1 &&
         !(this.settings.ignoreLabels && option.isLabel))
       ) {
@@ -615,13 +615,16 @@ export class MultiselectDropdown
   }
 
   preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
-    if (option.disabled || (
-      this.settings.selectionLimit &&
-      !this.settings.autoUnselect &&
-      this.model.length >= this.settings.selectionLimit &&
-      this.model.indexOf(option.id) === -1 &&
-      this.maybePreventDefault(event)
-    )) {
+    if (
+      option.disabled ||
+      (
+        this.settings.selectionLimit &&
+        !this.settings.autoUnselect &&
+        this.model.length >= this.settings.selectionLimit &&
+        this.model.indexOf(option.id) === -1 &&
+        this.maybePreventDefault(event)
+      )
+    ){
       this.maybePreventDefault(event);
     }
   }
