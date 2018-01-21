@@ -2,6 +2,7 @@ import 'rxjs/add/operator/takeUntil';
 
 import {
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   DoCheck,
   ElementRef,
@@ -52,6 +53,7 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.css'],
   providers: [MULTISELECT_VALUE_ACCESSOR, MultiSelectSearchFilter],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MultiselectDropdown
   implements OnInit,
