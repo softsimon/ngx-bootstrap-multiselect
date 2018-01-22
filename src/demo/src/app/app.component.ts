@@ -1,6 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
-import { IMultiSelectOption, IMultiSelectSettings } from '../../../..';
+import { DataService } from './data.service';
+import { DataModel } from './data-model';
 
 @Component({
   selector: 'app-root',
@@ -10,22 +12,9 @@ import { IMultiSelectOption, IMultiSelectSettings } from '../../../..';
 })
 export class AppComponent {
 
-  static ITEMS = 0;
+  data$: Observable<DataModel>;
 
-  options = this.generateOptions(5);
-
-  settings: IMultiSelectSettings = {
-    enableSearch: true,
-  };
-
-  generateItem(id = AppComponent.ITEMS++): IMultiSelectOption {
-    return { id, name: `Item #${id}` };
+  constructor(private itemsService: DataService) {
+    this.data$ = this.itemsService.getData(5);
   }
-
-  generateOptions(count: number): IMultiSelectOption[] {
-    return new Array(count)
-      .fill(null)
-      .map((_, i) => this.generateItem(i));
-  }
-
 }

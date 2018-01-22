@@ -1,6 +1,8 @@
 import 'rxjs/add/operator/takeUntil';
 
 import {
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   DoCheck,
   ElementRef,
@@ -51,6 +53,7 @@ const MULTISELECT_VALUE_ACCESSOR: any = {
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.css'],
   providers: [MULTISELECT_VALUE_ACCESSOR, MultiSelectSearchFilter],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MultiselectDropdown
   implements OnInit,
@@ -175,7 +178,8 @@ export class MultiselectDropdown
     private element: ElementRef,
     private fb: FormBuilder,
     private searchFilter: MultiSelectSearchFilter,
-    differs: IterableDiffers
+    differs: IterableDiffers,
+    private cdRef: ChangeDetectorRef
   ) {
     this.differ = differs.find([]).create(null);
     this.settings = this.defaultSettings;
@@ -296,6 +300,7 @@ export class MultiselectDropdown
   writeValue(value: any): void {
     if (value !== undefined && value !== null) {
       this.model = Array.isArray(value) ? value : [value];
+      this.ngDoCheck();
     } else {
       this.model = [];
     }
@@ -478,7 +483,7 @@ export class MultiselectDropdown
       this.settings.dynamicTitleMaxItems &&
       this.settings.dynamicTitleMaxItems >= this.numSelected
     ) {
-      let useOptions = 
+      let useOptions =
         this.settings.isLazyLoad && this.lazyLoadOptions.length
         ? this.lazyLoadOptions
         : this.options;
@@ -504,6 +509,7 @@ export class MultiselectDropdown
           ? this.texts.checked
           : this.texts.checkedPlural);
     }
+    this.cdRef.markForCheck();
   }
 
   searchFilterApplied() {
