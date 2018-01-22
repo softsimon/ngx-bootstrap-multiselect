@@ -187,8 +187,12 @@ export class MultiselectDropdown
   }
 
   getItemStyle(option: IMultiSelectOption): any {
+    const style = {};
     if (!option.isLabel) {
-      return { cursor: 'pointer' };
+      style['cursor'] = 'pointer';
+    }
+    if (option.disabled) {
+      style['cursor'] = 'default';
     }
   }
 
@@ -327,13 +331,23 @@ export class MultiselectDropdown
   }
 
   validate(_c: AbstractControl): { [key: string]: any } {
-    return this.model && this.model.length
-      ? null
-      : {
-          required: {
-            valid: false,
-          },
-        };
+    if(this.model && this.model.length) {
+      return {
+        required : {
+          valid: false
+        }
+      }
+    }
+
+    if(this.options.filter(o => this.model.indexOf(o.id) && !o.disabled).length == 0) {
+      return {
+        selection : {
+          valid: false
+        }
+      }
+    }
+
+    return null;
   }
 
   registerOnValidatorChange(_fn: () => void): void {
@@ -368,6 +382,10 @@ export class MultiselectDropdown
 
   setSelected(_event: Event, option: IMultiSelectOption) {
     if (option.isLabel) {
+      return;
+    }
+
+    if (option.disabled) {
       return;
     }
 
@@ -522,17 +540,21 @@ export class MultiselectDropdown
 
   addChecks(options) {
     let checkedOptions = options
-      .filter((option: IMultiSelectOption) => {
-        if (
+    .filter(function(option: IMultiSelectOption) {
+      if (
+        !option.disabled ||
+        (
           this.model.indexOf(option.id) === -1 &&
           !(this.settings.ignoreLabels && option.isLabel)
-        ) {
-          this.onAdded.emit(option.id);
-          return true;
-        }
-        return false;
-      })
-      .map((option: IMultiSelectOption) => option.id);
+        )
+      ) {
+        this.onAdded.emit(option.id);
+        return true;
+      }
+      return false;
+    }.bind(this))
+    .map((option: IMultiSelectOption) => option.id);
+
     this.model = this.model.concat(checkedOptions);
   }
 
@@ -602,18 +624,21 @@ export class MultiselectDropdown
 
   preventCheckboxCheck(event: Event, option: IMultiSelectOption) {
     if (
-      this.settings.selectionLimit &&
-      !this.settings.autoUnselect &&
-      this.model.length >= this.settings.selectionLimit &&
-      this.model.indexOf(option.id) === -1 &&
-      this.maybePreventDefault(event)
-    ) {
+      option.disabled ||
+      (
+        this.settings.selectionLimit &&
+        !this.settings.autoUnselect &&
+        this.model.length >= this.settings.selectionLimit &&
+        this.model.indexOf(option.id) === -1 &&
+        this.maybePreventDefault(event)
+      )
+    ){
       this.maybePreventDefault(event);
     }
   }
 
-  isCheckboxDisabled(): boolean {
-    return this.disabledSelection;
+  isCheckboxDisabled(option: IMultiSelectOption): boolean {
+    return this.disabledSelection || option.disabled;
   }
 
   checkScrollPosition(ev) {

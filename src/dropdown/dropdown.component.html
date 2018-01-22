@@ -45,10 +45,11 @@
         [ngStyle]="getItemStyleSelectionDisabled()">
         <ng-container [ngSwitch]="settings.checkedStyle">
           <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
-            [disabled]="isCheckboxDisabled()" [ngStyle]="getItemStyleSelectionDisabled()" />
-          <span *ngSwitchCase="'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
+            [disabled]="isCheckboxDisabled(option)" [ngStyle]="getItemStyleSelectionDisabled()" />
+          <span *ngSwitchCase="'glyphicon'" style="width: 16px;" class="glyphicon" [class.glyphicon-ok]="isSelected(option)" [class.glyphicon-lock]="isCheckboxDisabled(option)"></span>
           <span *ngSwitchCase="'fontawesome'" style="width: 16px;display: inline-block;">
             <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
+            <i *ngIf="isCheckboxDisabled(option)" class="fa fa-lock" aria-hidden="true"></i>
           </span>
           <span *ngSwitchCase="'visual'" style="display:block;float:left; border-radius: 0.2em; border: 0.1em solid rgba(44, 44, 44, 0.63);background:rgba(0, 0, 0, 0.1);width: 5.5em;">
             <div class="slider" [ngClass]="{'slideron': isSelected(option)}">
@@ -61,11 +62,11 @@
             </div>
           </span>
         </ng-container>
-        <span [ngClass]="{'chunkyrow': settings.checkedStyle == 'visual' }" [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+        <span [ngClass]="{'chunkyrow': settings.checkedStyle == 'visual' }" [class.disabled]="isCheckboxDisabled(option)" [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
           {{ option.name }}
         </span>
       </a>
-      <ng-template #label>{{ option.name }}</ng-template>
+      <ng-template #label><span [class.disabled]="isCheckboxDisabled()">{{ option.name }}</span></ng-template>
     </li>
   </ul>
 </div>
