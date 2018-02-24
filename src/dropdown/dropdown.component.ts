@@ -69,6 +69,7 @@ export class MultiselectDropdown
   @Input() texts: IMultiSelectTexts;
   @Input() disabled: boolean = false;
   @Input() disabledSelection: boolean = false;
+
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
   @Output() dropdownOpened = new EventEmitter();
@@ -76,6 +77,10 @@ export class MultiselectDropdown
   @Output() onRemoved = new EventEmitter();
   @Output() onLazyLoad = new EventEmitter();
   @Output() onFilter: Observable<string> = this.filterControl.valueChanges;
+
+  get focusBack():boolean{
+    return this.settings.focusBack && this._focusBack
+  }
 
   @HostListener('document: click', ['$event.target'])
   @HostListener('document: touchstart', ['$event.target'])
@@ -90,7 +95,7 @@ export class MultiselectDropdown
     }
     if (!parentFound) {
       this.isVisible = false;
-      this.focusBack = true;
+      this._focusBack = true;
       this.dropdownClosed.emit();
     }
   }
@@ -117,7 +122,7 @@ export class MultiselectDropdown
   checkAllSearchRegister = new Set();
   checkAllStatus = false;
   loadedValueIds = [];
-  focusBack = false;
+  _focusBack = false;
   focusedItem: IMultiSelectOption | undefined;
 
   defaultSettings: IMultiSelectSettings = {
@@ -146,6 +151,7 @@ export class MultiselectDropdown
     selectAddedValues: false,
     ignoreLabels: false,
     maintainSelectionOrderInTitle: false,
+    focusBack: true
   };
   defaultTexts: IMultiSelectTexts = {
     checkAll: 'Check all',
@@ -363,7 +369,7 @@ export class MultiselectDropdown
     this.maybeStopPropagation(e);
 
     if (this.isVisible) {
-      this.focusBack = true;
+      this._focusBack = true;
     }
 
     this.isVisible = !this.isVisible;

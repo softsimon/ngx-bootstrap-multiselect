@@ -138,6 +138,7 @@ myOptions: IMultiSelectOption[] = [
 | selectAddedValues    | Additional lazy loaded ```Select All``` values are checked when added on scrolling | false             |
 | ignoreLabels         | Ignore label options when counting selected options                | false             |
 | maintainSelectionOrderInTitle | The title will show selections in the order they were selected   | false             |
+| focusBack | Set the focus back to the input control when the dropdown closed              | true             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |
