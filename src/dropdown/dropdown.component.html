@@ -24,13 +24,13 @@
     [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight" [style.max-height]="settings.maxHeight"
     style="display: block; height: auto; overflow-y: auto;" (keydown.tab)="focusItem(1, $event)" (keydown.shift.tab)="focusItem(-1, $event)">
     <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection" (click)="checkAll()">
-      <a href="javascript:;" role="menuitem" tabindex="-1">
+      <a role="menuitem" tabindex="-1">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome','fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
         {{ texts.checkAll }}
       </a>
     </li>
     <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !disabledSelection" (click)="uncheckAll()">
-      <a href="javascript:;" role="menuitem" tabindex="-1">
+      <a role="menuitem" tabindex="-1">
         <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome','fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
         {{ texts.uncheckAll }}
       </a>
@@ -41,7 +41,7 @@
     <li class="dropdown-item" *ngFor="let option of renderFilteredOptions" [ngClass]="{'active': isSelected(option) }" [ngStyle]="getItemStyle(option)"
       [ngClass]="option.classes" [class.dropdown-header]="option.isLabel" [ssAutofocus]="option !== focusedItem" tabindex="-1"
       (click)="setSelected($event, option)" (keydown.space)="setSelected($event, option)" (keydown.enter)="setSelected($event, option)">
-      <a *ngIf="!option.isLabel; else label" href="javascript:;" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
+      <a *ngIf="!option.isLabel; else label" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
         [ngStyle]="getItemStyleSelectionDisabled()">
         <ng-container [ngSwitch]="settings.checkedStyle">
           <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
