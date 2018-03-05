@@ -589,9 +589,7 @@ export class MultiselectDropdown
         ? this.model
         : this.filteredOptions.map((option: IMultiSelectOption) => option.id);
       // set unchecked options only to the ones that were checked
-      unCheckedOptions = checkedOptions.filter(item =>
-        this.model.includes(item)
-      );
+      unCheckedOptions = checkedOptions.filter(item => this.model.indexOf(item) > -1);
       this.model = this.model.filter((id: number) => {
         if (
           (unCheckedOptions.indexOf(id) < 0 &&
@@ -608,13 +606,8 @@ export class MultiselectDropdown
         if (this.searchFilterApplied()) {
           if (this.checkAllSearchRegister.has(this.filterControl.value)) {
             this.checkAllSearchRegister.delete(this.filterControl.value);
-            this.checkAllSearchRegister.forEach(searchTerm => {
-              let filterOptions = this.applyFilters(
-                this.options.filter(option =>
-                  unCheckedOptions.includes(option.id)
-                ),
-                searchTerm
-              );
+            this.checkAllSearchRegister.forEach(function(searchTerm) {
+              let filterOptions = this.applyFilters(this.options.filter(option => unCheckedOptions.indexOf(option.id) > -1), searchTerm);
               this.addChecks(filterOptions);
             });
           }
