@@ -1,4 +1,4 @@
-# AngularX Dropdown Multiselect for Bootstrap CSS
+# AngularX Dropdown Multiselect for Bootstrap CSS 
 
 Works with Angular Final and AOT compilation
 
@@ -117,6 +117,7 @@ myOptions: IMultiSelectOption[] = [
 | itemClasses          | CSS classes to apply to items                                      | ''                |
 | containerClasses     | CSS classes to apply to container div                              | 'dropdown-inline' |
 | selectionLimit       | Maximum number of items that may be selected (0 = no limit)        | 0                 |
+| minSelectionLimit    | Minimum number of items that may be selected                       | 0                 |
 | autoUnselect         | Unselect the previous selection(s) once selectionLimit is reached  | false             |
 | closeOnSelect        | If enabled, dropdown will be closed after selection                | false             |
 | showCheckAll         | Display the `checkAll` item to select all options                  | false             |
@@ -134,7 +135,10 @@ myOptions: IMultiSelectOption[] = [
 | isLazyLoad           | An event, ```onLazyLoad```, triggers on scrolling to a specified distance from the bottom of the dropdown, allowing additional data to load | false             |
 | loadViewDistance     | Distance from bottom of dropdown to trigger lazy load, in units of dropdown viewport height | 1             |
 | stopScrollPropagation | Scrolling the dropdown will not overflow to document              | false             |
-| SelectAddedValues    | Additional lazy loaded ```Select All``` values are checked when added on scrolling | false             |
+| selectAddedValues    | Additional lazy loaded ```Select All``` values are checked when added on scrolling | false             |
+| ignoreLabels         | Ignore label options when counting selected options                | false             |
+| maintainSelectionOrderInTitle | The title will show selections in the order they were selected   | false             |
+| focusBack | Set the focus back to the input control when the dropdown closed              | true             |
 
 ### Texts
 | Text Item             | Description                                | Default Value     |

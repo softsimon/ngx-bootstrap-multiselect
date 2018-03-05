@@ -1,10 +1,12 @@
 export interface IMultiSelectOption {
   id: any;
   name: string;
+  disabled?: boolean;
   isLabel?: boolean;
   parentId?: any;
   params?: any;
   classes?: string;
+  image?: string;
 }
 
 export interface IMultiSelectSettings {
@@ -50,6 +52,21 @@ export interface IMultiSelectSettings {
   loadViewDistance?: number;
   stopScrollPropagation?: boolean;
   selectAddedValues?: boolean;
+  /**
+   * false - By default
+   * If activated label IDs don't count and won't be written to the model.
+   */
+  ignoreLabels?: boolean;
+  /**
+   * false - By default
+   * If activated, the title will show selections in the order they were selected.
+   */
+  maintainSelectionOrderInTitle?: boolean;
+  /**
+   * @default true
+   * Set the focus back to the input control when the dropdown closed
+   */
+  focusBack?: boolean;
 }
 
 export interface IMultiSelectTexts {
