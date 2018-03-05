@@ -673,6 +673,10 @@ export class MultiselectDropdown
     }
   }
 
+  trackById(idx: number, selectOption: IMultiSelectOption) {
+    return selectOption.id;
+  }
+
   load() {
     this.onLazyLoad.emit({
       length: this.options.length,
