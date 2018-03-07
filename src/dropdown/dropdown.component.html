@@ -1,47 +1,44 @@
-<div class="dropdown" [ngClass]="settings.containerClasses" [class.open]="isVisible" (keyup.esc)="closeDropdown($event)"
-  (keydown.arrowdown)="focusItem(1, $event)" (keydown.arrowup)="focusItem(-1, $event)">
-  <button *ngIf="!isVisible || !(isVisible && settings.enableSearch); else filter" type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
-    (click)="toggleDropdown($event)" [disabled]="disabled" [ssAutofocus]="!focusBack">
+<div class="dropdown">
+  <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" (click)="toggleDropdown($event)" [disabled]="disabled"
+    [ssAutofocus]="!focusBack">
     {{ title }}
     <span class="caret"></span>
   </button>
-  <ng-template #filter>
-    <div class="input-group input-group-sm ">
-      <span class="input-group-addon " id="sizing-addon3 ">
-        <i class="fa fa-search "></i>
-      </span>
-      <input type="text" class="form-control" ssAutofocus [formControl]="filterControl" [placeholder]="texts.searchPlaceholder"
-        class="form-control">
-      <span class="input-group-btn" *ngIf="filterControl.value.length>0">
-        <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)">
-          <i class="fa fa-times"></i>
-        </button>
-      </span>
-    </div>
-  </ng-template>
-  <ul #scroller *ngIf="isVisible" class="dropdown-menu" [ngClass]="{'chunkydropdown-menu': settings.checkedStyle == 'visual' }"
+  <div #scroller *ngIf="isVisible" class="dropdown-menu" [ngClass]="{'chunkydropdown-menu': settings.checkedStyle == 'visual' }"
     (scroll)="settings.isLazyLoad ? checkScrollPosition($event) : null" (wheel)="settings.stopScrollPropagation ? checkScrollPropagation($event, scroller) : null"
     [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight" [style.max-height]="settings.maxHeight"
     style="display: block; height: auto; overflow-y: auto;" (keydown.tab)="focusItem(1, $event)" (keydown.shift.tab)="focusItem(-1, $event)">
-    <li class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection" (click)="checkAll()">
-      <a role="menuitem" tabindex="-1">
-        <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome','fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
-        {{ texts.checkAll }}
-      </a>
-    </li>
-    <li class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !disabledSelection" (click)="uncheckAll()">
-      <a role="menuitem" tabindex="-1">
-        <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome','fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
-        {{ texts.uncheckAll }}
-      </a>
-    </li>
-    <li *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></li>
-    <li *ngIf="!renderItems" class="dropdown-item empty">{{ texts.searchNoRenderText }}</li>
-    <li *ngIf="renderItems && !renderFilteredOptions.length" class="dropdown-item empty">{{ texts.searchEmptyResult }}</li>
-    <li class="dropdown-item" *ngFor="let option of renderFilteredOptions; trackBy: trackById" [class.active] = "isSelected(option)" [ngStyle]="getItemStyle(option)"
-      [ngClass]="option.classes" [class.dropdown-header]="option.isLabel" [ssAutofocus]="option !== focusedItem" tabindex="-1"
-      (click)="setSelected($event, option)" (keydown.space)="setSelected($event, option)" (keydown.enter)="setSelected($event, option)">
-      <a *ngIf="!option.isLabel; else label" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
+    <div class="input-group search-container" *ngIf="settings.enableSearch">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
+      </div>
+      <input type="text" class="form-control" ssAutofocus [formControl]="filterControl" [placeholder]="texts.searchPlaceholder"
+        class="form-control">
+      <div class="input-group-append" *ngIf="filterControl.value.length>0">
+        <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <a role="menuitem" href="javascript:;" tabindex="-1" class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll && !disabledSelection"
+      (click)="checkAll()">
+      <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome','fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
+      {{ texts.checkAll }}
+    </a>
+    <a role="menuitem" href="javascript:;" tabindex="-1" class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll && !disabledSelection"
+      (click)="uncheckAll()">
+      <span style="width: 16px;" [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome','fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
+      {{ texts.uncheckAll }}
+    </a>
+    <a *ngIf="settings.showCheckAll || settings.showUncheckAll" href="javascript:;" class="dropdown-divider divider"></a>
+    <a *ngIf="!renderItems" href="javascript:;" class="dropdown-item empty">{{ texts.searchNoRenderText }}</a>
+    <a *ngIf="renderItems && !renderFilteredOptions.length" href="javascript:;" class="dropdown-item empty">{{ texts.searchEmptyResult }}</a>
+    <a class="dropdown-item" href="javascript:;" *ngFor="let option of renderFilteredOptions; trackBy: trackById" [class.active]="isSelected(option)"
+      [ngStyle]="getItemStyle(option)" [ngClass]="option.classes" [class.dropdown-header]="option.isLabel" [ssAutofocus]="option !== focusedItem"
+      tabindex="-1" (click)="setSelected($event, option)" (keydown.space)="setSelected($event, option)" (keydown.enter)="setSelected($event, option)">
+      <span *ngIf="!option.isLabel; else label" role="menuitem" tabindex="-1" [style.padding-left]="this.parents.length>0&&this.parents.indexOf(option.id)<0&&'30px'"
         [ngStyle]="getItemStyleSelectionDisabled()">
         <ng-container [ngSwitch]="settings.checkedStyle">
           <input *ngSwitchCase="'checkboxes'" type="checkbox" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"
@@ -62,11 +59,14 @@
             </div>
           </span>
         </ng-container>
-        <span [ngClass]="{'chunkyrow': settings.checkedStyle == 'visual' }" [class.disabled]="isCheckboxDisabled(option)" [ngClass]="settings.itemClasses" [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
+        <span [ngClass]="{'chunkyrow': settings.checkedStyle == 'visual' }" [class.disabled]="isCheckboxDisabled(option)" [ngClass]="settings.itemClasses"
+          [style.font-weight]="this.parents.indexOf(option.id)>=0?'bold':'normal'">
           {{ option.name }}
         </span>
-      </a>
-      <ng-template #label><span [class.disabled]="isCheckboxDisabled()">{{ option.name }}</span></ng-template>
-    </li>
-  </ul>
+      </span>
+      <ng-template #label>
+        <span [class.disabled]="isCheckboxDisabled()">{{ option.name }}</span>
+      </ng-template>
+    </a>
+  </div>
 </div>

@@ -42,3 +42,7 @@ a {
   display: table-cell;
   vertical-align: middle;
 }
+
+.search-container {
+  padding: 0px 5px 5px 5px;
+}
