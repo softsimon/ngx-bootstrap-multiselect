@@ -6,6 +6,7 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
+    "start": "ng serve",
     "prebuild": "rimraf dist",
     "build": "npm-run-all -s build:*",
     "postbuild": "npm run prepare-package",
