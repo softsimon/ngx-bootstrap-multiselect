@@ -1,4 +1,4 @@
-import { IMultiSelectOption } from '../../../';
+import { IMultiSelectOption } from '../../../src';
 
 export const generateItem = (id: number): IMultiSelectOption => {
   return {id, name: `Item #${id}`};
