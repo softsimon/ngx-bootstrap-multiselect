@@ -301,6 +301,7 @@ export class MultiselectDropdownComponent
       this.prevModel = this.model;
       this.onModelChange(this.model);
       this.onModelTouched();
+      this.cdRef.markForCheck();
     }
   }
 
@@ -395,7 +396,11 @@ export class MultiselectDropdownComponent
       return;
     }
 
-    if (!this.disabledSelection) {
+    if (this.disabledSelection) {
+      return;
+    }
+
+    setTimeout(()=>{
       this.maybeStopPropagation(_event);
       this.maybePreventDefault(_event);
       const index = this.model.indexOf(option.id);
@@ -481,7 +486,8 @@ export class MultiselectDropdownComponent
       }
       this.model = this.model.slice();
       this.fireModelChange();
-    }
+
+    }, 0)
   }
 
   updateNumSelected() {
