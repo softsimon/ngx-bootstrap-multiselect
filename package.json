@@ -8,7 +8,8 @@
   "scripts": {
     "start": "ng serve",
     "prebuild": "rimraf dist",
-    "build": "ng-packagr -p src/ng-package.json"
+    "build": "ng-packagr -p src/ng-package.json",
+    "postbuild": "copyfiles README.md LICENSE dist"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "@angular/router": "^5.2.9",
     "@types/core-js": "^0.9.41",
     "@types/jasmine": "^2.5.47",
+    "copyfiles": "^2.0.0",
     "ng-packagr": "^2.2.0",
     "protractor": "^5.3.0",
     "rimraf": "^2.6.1",
