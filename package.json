@@ -1,6 +1,6 @@
 {
   "name": "angular-2-dropdown-multiselect",
-  "version": "1.7.1",
+  "version": "0.0.0-development",
   "description": "Customizable dropdown multiselect in Angular 2 with bootstrap css.",
   "main": "dist/bundles/dropdown.umd.js",
   "module": "dist/index.js",
@@ -8,16 +8,8 @@
   "scripts": {
     "start": "ng serve",
     "prebuild": "rimraf dist",
-    "build": "npm-run-all -s build:*",
-    "postbuild": "npm run prepare-package",
-    "build:main": "npm run ng-copy && npm run ng-inline && npm run ngc",
-    "postbuild:main": "rimraf dist/tmp",
-    "build:umd": "rollup -c rollup.config.js",
-    "postbuild:umd": "uglifyjs -c --screw-ie8 --comments -o dist/bundles/dropdown.umd.min.js dist/bundles/dropdown.umd.js",
-    "ng-copy": "copyup src/index.ts dist/tmp && ncp src dist/tmp",
-    "ng-inline": "ng2-inline -u 1 -o dist/tmp -r src/**/*.component.ts",
-    "prepare-package": "node scripts/release.js",
-    "ngc": "ngc -p tsconfig.release.json"
+    "build": "ng-packagr -p src/ng-package.json",
+    "postbuild": "copyfiles README.md LICENSE dist"
   },
   "repository": {
     "type": "git",
@@ -37,13 +29,6 @@
     "url": "https://github.com/softsimon/angular-2-dropdown-multiselect/issues"
   },
   "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
-  "dependencies": {},
-  "peerDependencies": {
-    "@angular/common": "^5.2.9",
-    "@angular/core": "^5.2.9",
-    "@angular/forms": "^5.2.9",
-    "tslib": "^1.6.1"
-  },
   "devDependencies": {
     "@angular/cli": "^1.7.3",
     "@angular/common": "^5.2.9",
@@ -59,21 +44,14 @@
     "@angular/router": "^5.2.9",
     "@types/core-js": "^0.9.41",
     "@types/jasmine": "^2.5.47",
-    "@types/node": "^7.0.15",
-    "angular2-inline-template-style": "^1.1.0",
-    "chokidar": "^1.6.1",
-    "codelyzer": "^2.0.0",
-    "copyfiles": "^1.2.0",
-    "ncp": "^2.0.0",
-    "npm-run-all": "^4.0.2",
+    "copyfiles": "^2.0.0",
+    "ng-packagr": "^2.2.0",
+    "protractor": "^5.3.0",
     "rimraf": "^2.6.1",
-    "rollup": "^0.41.6",
-    "rollup-globals-regex": "^0.0.3",
-    "rollup-plugin-node-resolve": "^3.0.0",
     "rxjs": "^5.1.0",
     "tslib": "^1.6.1",
-    "typescript": "^2.2.2",
-    "uglifyjs": "^2.4.10",
-    "zone.js": "^0.7.6"
+    "tsickle": "^0.27.2",
+    "typescript": "2.6.2",
+    "zone.js": "^0.8.4"
   }
 }

@@ -1,4 +1,4 @@
-import { IMultiSelectOption } from '../../../';
+import { IMultiSelectOption } from '../../../src';
 
 export interface DataModel {
   options: IMultiSelectOption[];
