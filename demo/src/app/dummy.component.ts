@@ -14,5 +14,7 @@ export class DummyComponent {
 
   settings: IMultiSelectSettings = {
     enableSearch: true,
+    showCheckAll: true,
+    showUncheckAll: true
   };
 }
