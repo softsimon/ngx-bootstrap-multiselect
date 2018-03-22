@@ -595,7 +595,7 @@ export class MultiselectDropdownComponent
         ? this.model
         : this.filteredOptions.map((option: IMultiSelectOption) => option.id);
       // set unchecked options only to the ones that were checked
-      unCheckedOptions = checkedOptions.filter(item => this.model.indexOf(item) > -1);
+      unCheckedOptions = checkedOptions.filter(item => unCheckedOptions.indexOf(item) > -1);
       this.model = this.model.filter((id: number) => {
         if (
           (unCheckedOptions.indexOf(id) < 0 &&
