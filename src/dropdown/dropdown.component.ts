@@ -642,8 +642,8 @@ export class MultiselectDropdownComponent
     }
   }
 
-  isCheckboxDisabled(option: IMultiSelectOption): boolean {
-    return this.disabledSelection || option.disabled;
+  isCheckboxDisabled(option?: IMultiSelectOption): boolean {
+    return this.disabledSelection || option && option.disabled;
   }
 
   checkScrollPosition(ev) {
