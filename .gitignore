@@ -9,5 +9,4 @@ src/dropdown/*.js.map
 index.js
 index.js.map
 .vscode/*
-dist/*
 .idea

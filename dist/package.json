@@ -1,0 +1,37 @@
+{
+  "name": "angular-2-dropdown-multiselect",
+  "version": "1.7.1",
+  "description": "Customizable dropdown multiselect in Angular 2 with bootstrap css.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/softsimon/angular-2-dropdown-multiselect.git"
+  },
+  "keywords": [
+    "angular 2",
+    "dropdown",
+    "multi select"
+  ],
+  "author": "Simon Lindh",
+  "contributors": [
+    "Alex Malkevich <malkevich.alex@gmail.com>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/softsimon/angular-2-dropdown-multiselect/issues"
+  },
+  "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
+  "peerDependencies": {
+    "@angular/common": "^5.2.9",
+    "@angular/core": "^5.2.9",
+    "@angular/forms": "^5.2.9",
+    "tslib": "^1.6.1"
+  },
+  "main": "bundles/angular-2-dropdown-multiselect.umd.js",
+  "module": "esm5/angular-2-dropdown-multiselect.js",
+  "es2015": "esm2015/angular-2-dropdown-multiselect.js",
+  "typings": "angular-2-dropdown-multiselect.d.ts",
+  "metadata": "angular-2-dropdown-multiselect.metadata.json",
+  "dependencies": {
+    "tslib": "^1.7.1"
+  }
+}
