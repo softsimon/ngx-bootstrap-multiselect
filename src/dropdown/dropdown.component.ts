@@ -1,8 +1,7 @@
-import 'rxjs/add/operator/takeUntil';
 
 import {
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DoCheck,
   ElementRef,
@@ -25,15 +24,11 @@ import {
   NG_VALUE_ACCESSOR,
   Validator,
 } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { MultiSelectSearchFilter } from './search-filter.pipe';
-import {
-  IMultiSelectOption,
-  IMultiSelectSettings,
-  IMultiSelectTexts,
-} from './types';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts, } from './types';
 
 /*
  * Angular 2 Dropdown Multiselect for Bootstrap
@@ -211,7 +206,7 @@ export class MultiselectDropdownComponent
   ngOnInit() {
     this.title = this.texts.defaultTitle || '';
 
-    this.filterControl.valueChanges.takeUntil(this.destroyed$).subscribe(() => {
+    this.filterControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(() => {
       this.updateRenderItems();
       if (this.settings.isLazyLoad) {
         this.load();

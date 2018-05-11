@@ -8,6 +8,6 @@ src/dropdown/*.js.map
 *.map.js
 index.js
 index.js.map
-.vscode/*
 dist/*
+.vscode/*
 .idea
