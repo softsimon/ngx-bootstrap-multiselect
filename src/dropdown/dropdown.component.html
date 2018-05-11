@@ -1,4 +1,4 @@
-<div class="dropdown">
+<div class="dropdown" [ngClass]="settings.containerClasses" [class.open]="isVisible">
   <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses" (click)="toggleDropdown($event)" [disabled]="disabled"
     [ssAutofocus]="!focusBack">
     {{ title }}
