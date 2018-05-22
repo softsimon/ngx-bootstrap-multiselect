@@ -12,4 +12,3 @@ dist/*
 .vscode/*
 .idea
 yarn-error.log
-yarn.lock
