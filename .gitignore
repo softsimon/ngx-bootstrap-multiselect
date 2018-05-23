@@ -11,3 +11,4 @@ index.js.map
 dist/*
 .vscode/*
 .idea
+yarn-error.log
