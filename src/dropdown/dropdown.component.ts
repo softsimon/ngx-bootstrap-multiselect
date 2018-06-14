@@ -77,22 +77,12 @@ export class MultiselectDropdownComponent
     return this.settings.focusBack && this._focusBack;
   }
 
-  @HostListener('document: click', ['$event.target'])
-  @HostListener('document: touchstart', ['$event.target'])
-  onClick(target: HTMLElement) {
+  public clickedOutside(): void {
     if (!this.isVisible || !this.settings.closeOnClickOutside) { return; }
-    let parentFound = false;
-    while (target != null && !parentFound) {
-      if (target === this.element.nativeElement) {
-        parentFound = true;
-      }
-      target = target.parentElement;
-    }
-    if (!parentFound) {
-      this.isVisible = false;
-      this._focusBack = true;
-      this.dropdownClosed.emit();
-    }
+
+    this.isVisible = false;
+    this._focusBack = true;
+    this.dropdownClosed.emit();
   }
 
   destroyed$ = new Subject<any>();
@@ -362,8 +352,6 @@ export class MultiselectDropdownComponent
   }
 
   toggleDropdown(e?: Event) {
-    this.maybeStopPropagation(e);
-
     if (this.isVisible) {
       this._focusBack = true;
     }
