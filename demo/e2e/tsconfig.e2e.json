@@ -10,5 +10,8 @@
       "jasminewd2",
       "node"
     ]
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true
   }
 }
