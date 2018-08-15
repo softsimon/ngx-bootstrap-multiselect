@@ -7,6 +7,9 @@
     "types": [],
     "skipLibCheck": true
   },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true
+  },
   "exclude": [
     "test.ts",
     "**/*.spec.ts"
