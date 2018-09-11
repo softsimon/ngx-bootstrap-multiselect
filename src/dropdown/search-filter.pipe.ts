@@ -20,7 +20,8 @@ export class MultiSelectSearchFilter implements PipeTransform {
     options: IMultiSelectOption[],
     str = '',
     limit = 0,
-    renderLimit = 0
+    renderLimit = 0,
+    searchFunction: (str: string) => RegExp,
   ): IMultiSelectOption[] {
     str = str.toLowerCase();
 
@@ -34,7 +35,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
     const filteredOpts = this._searchCache.hasOwnProperty(str)
       ? this._searchCache[str]
-      : this._doSearch(options, str, limit);
+      : this._doSearch(options, str, limit, searchFunction);
 
     const isUnderLimit = options.length <= limit;
 
@@ -61,7 +62,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
     return options;
   }
 
-  private _doSearch(options: IMultiSelectOption[], str: string, limit: number) {
+  private _doSearch(options: IMultiSelectOption[], str: string, limit: number, searchFunction: (str: string) => RegExp) {
     const prevStr = str.slice(0, -1);
     const prevResults = this._searchCache[prevStr];
     const prevResultShift = this._prevSkippedItems[prevStr] || 0;
@@ -72,7 +73,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
 
     const optsLength = options.length;
     const maxFound = limit > 0 ? Math.min(limit, optsLength) : optsLength;
-    const regexp = new RegExp(this._escapeRegExp(str), 'i');
+    const regexp = searchFunction(str);
     const filteredOpts: IMultiSelectOption[] = [];
 
     let i = 0, founded = 0, removedFromPrevResult = 0;
@@ -127,9 +128,4 @@ export class MultiSelectSearchFilter implements PipeTransform {
   private _limitRenderedItems<T>(items: T[], limit: number): T[] {
     return items.length > limit && limit > 0 ? items.slice(0, limit) : items;
   }
-
-  private _escapeRegExp(str: string): string {
-    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-  }
-
 }

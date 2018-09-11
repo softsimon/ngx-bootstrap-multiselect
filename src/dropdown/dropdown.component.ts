@@ -64,6 +64,7 @@ export class MultiselectDropdownComponent
   @Input() texts: IMultiSelectTexts;
   @Input() disabled: boolean = false;
   @Input() disabledSelection: boolean = false;
+  @Input() searchFunction: (str: string) => RegExp = this._escapeRegExp;
 
   @Output() selectionLimitReached = new EventEmitter();
   @Output() dropdownClosed = new EventEmitter();
@@ -277,7 +278,8 @@ export class MultiselectDropdownComponent
       options,
       value,
       this.settings.searchMaxLimit,
-      this.settings.searchMaxRenderedItems
+      this.settings.searchMaxRenderedItems,
+      this.searchFunction
     );
   }
 
@@ -709,4 +711,10 @@ export class MultiselectDropdownComponent
       e.stopPropagation();
     }
   }
+  
+  private _escapeRegExp(str: string): RegExp {
+    const regExpStr = str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    return new RegExp(regExpStr, 'i');
+  }
+
 }

@@ -17,4 +17,8 @@ export class DummyComponent {
     showCheckAll: true,
     showUncheckAll: true
   };
+
+  prefixSearchFunction(str: string): RegExp {
+    return new RegExp('^' + str, 'i');
+  }
 }
