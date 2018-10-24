@@ -168,7 +168,7 @@ Although this dropdown is designed for multiple selections, a common request is 
 
 ### Lazy Loading
 
-This Plunker link demonstrates an implementation of lazy loading: [Lazy loading Plunker](https://plnkr.co/edit/fsZHbth4kzLI79hohcMG?p=preview)
+This Stackblitz link demonstrates an implementation of lazy loading: [Lazy loading Stackblitz](https://stackblitz.com/edit/angular-oqhzcv?embed=1&file=src/app/app.component.ts)
 
 If using search during lazy load, the search term must be supplied to the back end to return the appropriate number of results. Standard inline search will not work, since the front end does not know how many items to load to retrieve the desired number of matches.
 
