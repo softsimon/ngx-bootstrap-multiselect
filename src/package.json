@@ -21,9 +21,9 @@
   },
   "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
   "peerDependencies": {
-    "@angular/common": "7.1.4",
-    "@angular/core": "7.1.4",
-    "@angular/forms": "7.1.4",
+    "@angular/common": "7.2.2",
+    "@angular/core": "7.2.2",
+    "@angular/forms": "7.2.2",
     "tslib": "^1.6.1"
   }
 }
