@@ -14,15 +14,15 @@ Customizable multiselect dropdown in Angular(9+), TypeScript with Bootstrap css.
 
 ## Usage
 
-Import `MultiselectDropdown` into your @NgModule.
+Import `NgxBootstrapMultiselectModule` into your @NgModule.
 
 ```js
-import { MultiselectDropdownModule } from 'ngx-bootrap-multiselect';
+import { NgxBootstrapMultiselectModule } from 'ngx-bootrap-multiselect';
 
 @NgModule({
   // ...
   imports: [
-    MultiselectDropdownModule,
+    NgxBootstrapMultiselectModule,
   ]
   // ...
 })
