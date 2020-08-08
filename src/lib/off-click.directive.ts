@@ -1,9 +1,5 @@
-import { Directive, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
-
-import { ComponentRef } from '@angular/core';
-import { ElementRef } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 import { EventEmitter } from '@angular/core';
-import { Host } from '@angular/core';
 import { Output } from '@angular/core';
 
 @Directive({

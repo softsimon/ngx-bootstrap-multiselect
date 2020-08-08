@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/ngx-dropdown-multiselect",
+  "dest": "../../dist/ngx-bootrap-multiselect",
   "lib": {
     "entryFile": "src/public-api.ts"
   }

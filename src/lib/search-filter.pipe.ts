@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-
 import { IMultiSelectOption } from './types';
 
 interface StringHashMap<T> {
