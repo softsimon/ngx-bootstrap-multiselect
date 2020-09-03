@@ -1,7 +1,7 @@
 /*
- * Public API Surface of ngx-bootrap-multiselect
+ * Public API Surface of ngx-bootstrap-multiselect
  */
 
 export * from './lib/types';
 export * from './lib/search-filter.pipe';
-export * from './lib/ngx-bootrap-multiselect.module';
+export * from './lib/ngx-bootstrap-multiselect.module';

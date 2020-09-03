@@ -10,14 +10,14 @@ Customizable multiselect dropdown in Angular(9+), TypeScript with Bootstrap css.
 
 ## Install
 
-* Install with [npm](https://www.npmjs.com): `npm install ngx-bootrap-multiselect --save`.
+* Install with [npm](https://www.npmjs.com): `npm install ngx-bootstrap-multiselect --save`.
 
 ## Usage
 
 Import `NgxBootstrapMultiselectModule` into your @NgModule.
 
 ```js
-import { NgxBootstrapMultiselectModule } from 'ngx-bootrap-multiselect';
+import { NgxBootstrapMultiselectModule } from 'ngx-bootstrap-multiselect';
 
 @NgModule({
   // ...
@@ -31,7 +31,7 @@ import { NgxBootstrapMultiselectModule } from 'ngx-bootrap-multiselect';
 Define options in your consuming component:
 
 ```js
-import { IMultiSelectOption } from 'ngx-bootrap-multiselect';
+import { IMultiSelectOption } from 'ngx-bootstrap-multiselect';
 
 export class MyClass implements OnInit {
     optionsModel: number[];
@@ -52,7 +52,7 @@ export class MyClass implements OnInit {
 In your template, use the component directive:
 
 ```html
-<ngx-bootrap-multiselect [options]="myOptions" [(ngModel)]="optionsModel" (ngModelChange)="onChange($event)"></ngx-bootrap-multiselect>
+<ngx-bootstrap-multiselect [options]="myOptions" [(ngModel)]="optionsModel" (ngModelChange)="onChange($event)"></ngx-bootstrap-multiselect>
 ```
 
 ## Customize
@@ -100,7 +100,7 @@ myOptions: IMultiSelectOption[] = [
 ```
 
 ```html
-<ngx-bootrap-multiselect [options]="myOptions" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="optionsModel"></ngx-bootrap-multiselect>
+<ngx-bootstrap-multiselect [options]="myOptions" [texts]="myTexts" [settings]="mySettings" [(ngModel)]="optionsModel"></ngx-bootstrap-multiselect>
 ```
 ### Settings
 | Setting              | Description                                                        | Default Value     |
@@ -180,7 +180,7 @@ The implementor will be responsible for completing checks when the form is submi
 ### Use model driven forms with ReactiveFormsModule:
 
 ```js
-import { IMultiSelectOption } from 'ngx-bootrap-multiselect';
+import { IMultiSelectOption } from 'ngx-bootstrap-multiselect';
 
 export class MyClass implements OnInit {
     myOptions: IMultiSelectOption[] = [
@@ -203,7 +203,7 @@ export class MyClass implements OnInit {
 
 ```html
 <form [formGroup]="myForm">
-    <ngx-bootrap-multiselect [options]="myOptions" formControlName="optionsModel"></ngx-bootrap-multiselect>
+    <ngx-bootstrap-multiselect [options]="myOptions" formControlName="optionsModel"></ngx-bootstrap-multiselect>
 </form>
 ```
 
