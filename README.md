@@ -52,7 +52,7 @@ export class MyClass implements OnInit {
 In your template, use the component directive:
 
 ```html
-<ngx-bootstrap-multiselect [options]="myOptions" [(ngModel)]="optionsModel" (ngModelChange)="onChange($event)"></ngx-bootstrap-multiselect>
+<ngx-bootstrap-multiselect [options]="myOptions" [(ngModel)]="optionsModel" (ngModelChange)="onChange()"></ngx-bootstrap-multiselect>
 ```
 
 ## Customize
