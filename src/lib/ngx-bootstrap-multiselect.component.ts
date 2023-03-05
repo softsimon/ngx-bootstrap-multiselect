@@ -73,7 +73,7 @@ export class NgxDropdownMultiselectComponent implements OnInit,
     return this.settings.focusBack && this._focusBack;
   }
 
-  destroyed$ = new Subject<any>();
+  destroyed$ = new Subject<void>();
 
   filteredOptions: IMultiSelectOption[] = [];
   lazyLoadOptions: IMultiSelectOption[] = [];

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "es6",
+      "dom",
+      "es7"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "useDefineForClassFields": false
+  },
+  "angularCompilerOptions": {
+    "genDir": "compiled"
+  }
+}
