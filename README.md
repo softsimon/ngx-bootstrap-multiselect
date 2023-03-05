@@ -1,6 +1,6 @@
 # Angular Multiselect Dropdown for Bootstrap CSS 
 
-Compiled for Angular 10 (Ivy disabled for backwards compatibility)
+Compiled for Angular 15 with Ivy enabled. If you are using an older version of Angular and are relying on the View Engine, you can use version 2.1 of this library.
 
 Customizable multiselect dropdown in Angular(9+), TypeScript with Bootstrap css.
 
