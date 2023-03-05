@@ -1,0 +1,23 @@
+<div class="container">
+  <h3>Dropdown Demo</h3>
+
+  <p>
+    Normal:
+    <ngx-bootstrap-multiselect [options]="data.options" [ngModel]="data.selectedItems"></ngx-bootstrap-multiselect>
+  </p>
+
+  <p>
+    With search and buttons:
+    <ngx-bootstrap-multiselect [options]="data.options" [settings]="settings" [ngModel]="data.selectedItems"></ngx-bootstrap-multiselect>
+  </p>
+
+  <p>
+    With custom prefix search and buttons:
+    <ngx-bootstrap-multiselect [options]="data.options" [settings]="settings" [ngModel]="data.selectedItems" [searchFunction]=prefixSearchFunction></ngx-bootstrap-multiselect>
+  </p>
+
+  <p>
+    With parent and child options
+    <ngx-bootstrap-multiselect [options]="multiOptions" [settings]="settings" [ngModel]="data.selectedItems" [searchFunction]=prefixSearchFunction></ngx-bootstrap-multiselect>
+  </p>
+</div>
