@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/softsimon/ngx-bootstrap-multiselect.git"
   },
-  "homepage": "https://github.com/softsimon/ngx-bootstrap-multiselect.git"
+  "homepage": "https://github.com/softsimon/ngx-bootstrap-multiselect.git",
+  "peerDependencies": {
+    "@angular/common": ">=15.0.0",
+    "@angular/core": ">=15.0.0"
+  }
 }

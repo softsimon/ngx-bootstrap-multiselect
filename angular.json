@@ -3,17 +3,54 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "library": {
-      "root": "",
+    "ngx-bootstrap-multiselect": {
+      "projectType": "library",
+      "root": "projects/ngx-bootstrap-multiselect",
+      "sourceRoot": "projects/ngx-bootstrap-multiselect/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-bootstrap-multiselect/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-bootstrap-multiselect/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-bootstrap-multiselect/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-bootstrap-multiselect/src/test.ts",
+            "tsConfig": "projects/ngx-bootstrap-multiselect/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-bootstrap-multiselect/karma.conf.js"
+          }
+        }
+      }
+    },
+    "demo": {
+      "root": "demo/",
       "sourceRoot": "demo/src",
       "projectType": "application",
-      "prefix": "app",
-      "schematics": {},
+      "prefix": "demo",
+      "schematics": {
+        "@schematics/angular:component": {
+          "inlineTemplate": true,
+          "inlineStyle": true
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/library",
+            "aot": true,
+            "outputPath": "dist/demo",
             "index": "demo/src/index.html",
             "main": "demo/src/main.ts",
             "polyfills": "demo/src/polyfills.ts",
@@ -25,18 +62,20 @@
             "styles": [
               "demo/src/styles.css"
             ],
-            "scripts": [],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "sourceMap": true,
-            "namedChunks": true
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "demo/src/environments/environment.ts",
+                  "with": "demo/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -53,34 +92,29 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "library:build"
+            "browserTarget": "demo:build",
+            "port": 4200
           },
           "configurations": {
             "production": {
-              "browserTarget": "library:build:production"
+              "browserTarget": "demo:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "library:build"
+            "browserTarget": "demo:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "styles": [
-              "src/styles.css"
+            "tsConfig": [
+              "demo/src/tsconfig.app.json"
             ],
-            "scripts": [],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
+            "exclude": [
+              "**/node_modules/**"
             ]
           }
         }

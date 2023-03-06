@@ -1,4 +1,4 @@
-import { IMultiSelectOption } from '../../../src';
+import { IMultiSelectOption } from '../../../projects/ngx-bootstrap-multiselect/src';
 
 export const generateItem = (id: number): IMultiSelectOption => {
   return {id, name: `Item #${id}`};

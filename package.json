@@ -8,9 +8,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "prebuild": "rimraf dist",
-    "build": "ng-packagr -p src/ng-package.json",
-    "postbuild": "copyfiles README.md LICENSE dist"
+    "build": "ng build ngx-bootstrap-multiselect"
   },
   "repository": {
     "type": "git",

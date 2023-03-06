@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { IMultiSelectSettings, IMultiSelectOption } from '../../../src';
+import { IMultiSelectSettings, IMultiSelectOption } from '../../../projects/ngx-bootstrap-multiselect/src';
 import { DataModel } from './data-model';
 
 @Component({
