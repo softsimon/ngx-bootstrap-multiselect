@@ -1,7 +1,15 @@
 {
   "name": "ngx-bootstrap-multiselect",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Customizable multiselect dropdown in Angular 2 with bootstrap css.",
+  "main": "dist/bundles/dropdown.umd.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build ngx-bootstrap-multiselect"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/softsimon/ngx-bootstrap-multiselect.git"
@@ -12,12 +20,31 @@
     "multi select"
   ],
   "license": "MIT",
-  "peerDependencies": {
-    "@angular/common": "^10.0.6",
-    "@angular/core": "^10.0.6",
-    "@angular/forms": "^10.0.6"
+  "bugs": {
+    "url": "https://github.com/softsimon/ngx-bootstrap-multiselect.git"
   },
-  "dependencies": {
-    "tslib": "^2.0.0"
+  "homepage": "https://github.com/softsimon/ngx-bootstrap-multiselect.git",
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^15.0.0",
+    "@angular/animations": "^15.0.0",
+    "@angular/cli": "^15.0.0",
+    "@angular/common": "^15.0.0",
+    "@angular/compiler": "^15.0.0",
+    "@angular/compiler-cli": "^15.0.0",
+    "@angular/core": "^15.0.0",
+    "@angular/forms": "^15.0.0",
+    "@angular/platform-browser": "^15.0.0",
+    "@angular/platform-browser-dynamic": "^15.0.0",
+    "@angular/platform-server": "^15.0.0",
+    "@angular/router": "^15.0.0",
+    "@types/core-js": "^2.5.3",
+    "@types/jasmine": "^4.3.1",
+    "copyfiles": "^2.0.0",
+    "ng-packagr": "^15.2.2",
+    "rimraf": "^4.2.0",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.5.0",
+    "typescript": "~4.9.5",
+    "zone.js": "~0.12.0"
   }
 }

@@ -1,0 +1,23 @@
+{
+  "name": "ngx-bootstrap-multiselect",
+  "version": "3.0.0",
+  "description": "Customizable multiselect dropdown in Angular 2 with bootstrap css.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/softsimon/ngx-bootstrap-multiselect.git"
+  },
+  "keywords": [
+    "angular 2",
+    "dropdown",
+    "multi select"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/softsimon/ngx-bootstrap-multiselect.git"
+  },
+  "homepage": "https://github.com/softsimon/ngx-bootstrap-multiselect.git",
+  "peerDependencies": {
+    "@angular/common": ">=15.0.0",
+    "@angular/core": ">=15.0.0"
+  }
+}

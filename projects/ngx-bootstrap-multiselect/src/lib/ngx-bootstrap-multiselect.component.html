@@ -14,7 +14,7 @@
           <i class="fa fa-search" aria-hidden="true"></i>
         </span>
       </div>
-      <input type="text" class="form-control" ssAutofocus [formControl]="filterControl" [placeholder]="texts.searchPlaceholder"
+      <input type="text" class="form-control" [ssAutofocus] [formControl]="filterControl" [placeholder]="texts.searchPlaceholder"
         class="form-control">
       <div class="input-group-append" *ngIf="filterControl.value.length>0">
         <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)">
